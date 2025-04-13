@@ -1,0 +1,395 @@
+
+         .phone-container {
+            width: 393px;
+            height: 852px;
+            border-radius: 30px;
+            background-color: black;
+            border: 10px black ridge;
+            position: relative;
+        }
+
+        .screen {
+            background-color: black;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+        }
+
+        .header-container {
+            text-align: center;
+            height: 35px;
+        }
+
+
+        //updated width and height of text box
+        input[type=text].search {
+          background-position: right top;
+          background-repeat: no-repeat;
+          background-image: url("https://www.w3schools.com/css/searchicon.png");
+          width: 225px;
+          height: 25px;
+        }
+
+        input[type=text], select
+        }
+          padding: 14px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          resize: vertical;
+        }
+
+        #main-container {
+            position: flex;
+            height: 90%;
+            margin-bottom: 15px;
+            overflow: hidden; /* Clearfix to contain floats */
+            background-color: blue;
+        }
+
+
+        input[type=submit] {
+          background-color: #fa3f20;
+          color: white;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+          background-color: #f78d7c;
+        }
+
+      optgroup { font-size:140px; }
+
+
+        div.leftbox button {
+          float: right;
+          width: 20%;
+          padding: 10px;
+          background: #db2002;
+          color: white;
+          font-size: 17px;
+          border: 1px solid grey;
+          border-left: none;
+          cursor: pointer;
+        }
+
+        .close {
+            font-size: 25px;
+            font-weight: 580;
+            float: right;
+            margin-right: 20px;
+        }
+
+        .image-container {
+            position: absolute;
+            display: block;
+            right: 0;
+            width: 145px;
+            height: 145px;
+            top: 0;
+            background-color: blue;
+            z-index: 900;
+        }
+
+        .app-screen {
+            width: 100%; /* Take up half of the container */
+            box-sizing: border-box; /* Include padding and border in the width */
+            display: block;
+            background-color: #434445;
+            height: 100%;
+            position: relative;
+        }
+
+        .right {
+            float: right; /* Float right for right section */
+            width: 55%; /* Take up half of the container */
+            box-sizing: border-box; /* Include padding and border in the width */
+            display: block;
+            padding: 20px;
+            background-color: red;
+            height: 100%;
+        }
+
+        .centered {
+          text-align: center;
+        }
+
+        .map-container {
+            position: relative;
+            height: 740px;
+            width: 100%; /* Adjust width as needed */
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .tooltip {
+            margin: auto;
+        }
+
+        .histogram-container {
+            width: 100%;
+            height: 33%;
+            margin:auto;
+            text-align:center;
+            background-color: #6a696b;
+        }
+
+        #histogram {
+            width: 180px;
+            height: 50px;
+            z-index: 1005;
+            top: 15px;
+        }
+
+        #heatmap {
+            width: 180px;
+            height: 50px;
+            z-index: 1005;
+        }
+
+        .heatmap-container {
+            width: 100%;
+            height: 45%;
+            margin:auto;
+            text-align:center;
+            background-color: #6a696b;
+        }
+
+        .heatmap-dropdown {
+              width: 25px;
+              height: 25px
+        }
+
+        .loc-dropdown {
+              width: 25px;
+              height: 25px
+        }
+
+        .dial-container {
+            width: 100%;
+            height: 22%;
+            margin:auto;
+            text-align:center;
+            background-color: #6a696b;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .visual-button-container {
+            position: absolute;
+            display: block;
+            z-index: 999998;
+            padding: 10px;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: grey;
+            width: 100%;
+            height: 46px;
+        }
+
+        .arrow {
+              border: solid black;
+              border-width: 0 4px 4px 0;
+              display: inline-block;
+              padding: 3px;
+              margin: 0;
+        }
+
+        .up {
+          transform: rotate(-135deg);
+          -webkit-transform: rotate(-135deg);
+        }
+
+        .bottom-element {
+            position: absolute;
+            width: 100%; /* Take up half of the container */
+            box-sizing: border-box; /* Include padding and border in the width */
+            display: block;
+            background-color: white;
+            height: 85%;
+            bottom: 0;
+            left: 0;
+             z-index: 999999;
+        }
+
+       #map {
+            position: relative;
+            height: 100%;
+            width: 50%
+            z-index: 5;
+        }
+
+          .select-container {
+            width: 100%;
+            background-color: grey;
+            display: block;
+            left: 0;
+            position: absolute;
+            top: 0;
+            z-index: 900;
+            padding: 10px;
+        }
+
+
+        .loading-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 485px;
+            background-color: #f0f0f0;
+         }
+
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .highcharts-figure,
+        .highcharts-data-table table {
+            min-width: 310px;
+            max-width: 500px;
+            margin: 1em auto;
+        }
+
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+
+        input[type=submit] {
+          background-color: #fa3f20;
+          color: white;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+          background-color: #f78d7c;
+        }
+
+      select {
+        width: 150px;
+      }
+
+      select option {
+        width: 150px;
+      }
+
+        .select-size {
+            font-size: 14px;
+        }
+
+         .leftbox {
+            font-size: 16px;
+            position: fixed;
+            display: none;
+            box-sizing: border-box;
+            background-color: white;
+            padding-left: 15px;
+            opacity: 0.95;
+            width: 285px;
+            height: 585px;
+            z-index: 999999;
+            top: 150px;
+        }
+
+        //updated width and height of text box
+        input[type=text].search {
+          background-position: right top;
+          background-repeat: no-repeat;
+          background-image: url("https://www.w3schools.com/css/searchicon.png");
+          width: 225px;
+          height: 25px;
+        }
+
+        input[type=text], select
+        }
+          padding: 14px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          resize: vertical;
+        }
+
+        label {
+          padding: 12px 12px 12px 0;
+          display: inline-block;
+        }
+
+        button {
+          background-color: #807877;
+          border: none;
+          padding: 6px;
+        }
+
+        button:hover {
+          background-color: #C0C0C0;
+        }
+
+        .button-container {
+            width: 100%;
+            background-color: #db2002;
+            display: block;
+            left: 0;
+            position: absolute;
+            top: 0;
+            z-index: 997;
+            padding: 10px;
+        }
+
+       #map {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
