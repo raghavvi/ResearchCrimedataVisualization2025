@@ -2,7 +2,7 @@ import json
 import math
 from collections import defaultdict, Counter
 from datetime import datetime
-# import logging
+import logging
 from flask import Flask, request, render_template, redirect, url_for, jsonify
 import time
 from shapely.geometry import box
@@ -18,6 +18,7 @@ from models import db, CustomJSONEncoder, IntervalOne, IntervalTwo, \
 from models import Model
 import pandas as pd
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 
@@ -30,14 +31,21 @@ app.config['MONGODB_SETTINGS'] = {
 }
 db.init_app(app)
 
+#Create indexes for queried fields MR
+# IntervalOne.create_index(['point','2dsphere']) #Geospatial index
+# IntervalOne.create_index('year')
+# IntervalOne.create_index('OFFENSE')
+# IntervalOne.create_index([('year', 1), ('OFFENSE', 1)])
+
+
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Configure logging
-# logging.basicConfig(
-#     filename="output.log",
-#     level=logging.INFO,
-#     format="%(asctime)s - %(levelname)s - %(message)s",
-# )
+logging.basicConfig(
+    filename="crimedata_app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 #
 # # Log messages
 # logging.info("This is an info message")
@@ -427,11 +435,11 @@ def filter_dataset(interval, data):
     return filtered_results
 
 
-def get_grid_from_df(fp):
-    # read file path
-    df = pd.read_json(fp)
-    col2_list = df["col2"].tolist()
-    return col2_list
+# def get_grid_from_df(fp):
+#     # read file path
+#     df = pd.read_json(fp)
+#     col2_list = df["col2"].tolist()
+#     return col2_list
 
 
 def read_dial_grid(grid, interval):
@@ -941,183 +949,9 @@ def read_dial_grid(grid, interval):
         except FileNotFoundError as e:
             print("Error", e)
 
-
-def switch_grids2(grid, interval):
-    file_all_700meters = os.path.join('static', 'data', 'histogramdf', '700metersAll.json')
-    file_12am_3am_700meters = os.path.join('static', 'data', 'histogramdf', '700meters12AM-3AM.json')
-    file_4am_7am_700meters = os.path.join('static', 'data', 'histogramdf', '700meters4AM-7AM.json')
-    file_8am_11am_700meters = os.path.join('static', 'data', 'histogramdf', '700meters8AM-11AM.json')
-    file_12pm_3pm_700meters = os.path.join('static', 'data', 'histogramdf', '700meters12PM-3PM.json')
-    file_4pm_7pm_700meters = os.path.join('static', 'data', 'histogramdf', '700meters4PM-7PM.json')
-    file_8pm_11pm_700meters = os.path.join('static', 'data', 'histogramdf', '700meters8PM-11PM.json')
-    file_all_750meters = os.path.join('static', 'data', 'histogramdf', '750metersAll.json')
-    file_12am_3am_750meters = os.path.join('static', 'data', 'histogramdf', '750meters12AM-3AM.json')
-    file_4am_7am_750meters = os.path.join('static', 'data', 'histogramdf', '750meters4AM-7AM.json')
-    file_8am_11am_750meters = os.path.join('static', 'data', 'histogramdf', '750meters8AM-11AM.json')
-    file_12pm_3pm_750meters = os.path.join('static', 'data', 'histogramdf', '750meters12PM-3PM.json')
-    file_4pm_7pm_750meters = os.path.join('static', 'data', 'histogramdf', '750meters4PM-7PM.json')
-    file_8pm_11pm_750meters = os.path.join('static', 'data', 'histogramdf', '750meters8PM-11PM.json')
-    file_all_800meters = os.path.join('static', 'data', 'histogramdf', '800metersAll.json')
-    file_12am_3am_800meters = os.path.join('static', 'data', 'histogramdf', '800meters12AM-3AM.json')
-    file_4am_7am_800meters = os.path.join('static', 'data', 'histogramdf', '800meters4AM-7AM.json')
-    file_8am_11am_800meters = os.path.join('static', 'data', 'histogramdf', '800meters8AM-11AM.json')
-    file_12pm_3pm_800meters = os.path.join('static', 'data', 'histogramdf', '800meters12PM-3PM.json')
-    file_4pm_7pm_800meters = os.path.join('static', 'data', 'histogramdf', '800meters4PM-7PM.json')
-    file_8pm_11pm_800meters = os.path.join('static', 'data', 'histogramdf', '800meters8PM-11PM.json')
-    file_all_850meters = os.path.join('static', 'data', 'histogramdf', '850metersAll.json')
-    file_12am_3am_850meters = os.path.join('static', 'data', 'histogramdf', '850meters12AM-3AM.json')
-    file_4am_7am_850meters = os.path.join('static', 'data', 'histogradfm', '850meters4AM-7AM.json')
-    file_8am_11am_850meters = os.path.join('static', 'data', 'histogramdf', '850meters8AM-11AM.json')
-    file_12pm_3pm_850meters = os.path.join('static', 'data', 'histogramdf', '850meters12PM-3PM.json')
-    file_4pm_7pm_850meters = os.path.join('static', 'data', 'histogramdf', '850meters4PM-7PM.json')
-    file_8pm_11pm_850meters = os.path.join('static', 'data', 'histogramdf', '850meters8PM-11PM.json')
-    file_all_900meters = os.path.join('static', 'data', 'histogramdf', '900metersAll.json')
-    file_12am_3am_900meters = os.path.join('static', 'data', 'histogramdf', '900meters12AM-3AM.json')
-    file_4am_7am_900meters = os.path.join('static', 'data', 'histogramdf', '900meters4AM-7AM.json')
-    file_8am_11am_900meters = os.path.join('static', 'data', 'histogramdf', '900meters8AM-11AM.json')
-    file_12pm_3pm_900meters = os.path.join('static', 'data', 'histogramdf', '900meters12PM-3PM.json')
-    file_4pm_7pm_900meters = os.path.join('static', 'data', 'histogramdf', '900meters4PM-7PM.json')
-    file_8pm_11pm_900meters = os.path.join('static', 'data', 'histogramdf', '900meters8PM-11PM.json')
-    file_all_950meters = os.path.join('static', 'data', 'histogramdf', '950metersAll.json')
-    file_12am_3am_950meters = os.path.join('static', 'data', 'histogramdf', '950meters12AM-3AM.json')
-    file_4am_7am_950meters = os.path.join('static', 'data', 'histogramdf', '950meters4AM-7AM.json')
-    file_8am_11am_950meters = os.path.join('static', 'data', 'histogramdf', '950meters8AM-11AM.json')
-    file_12pm_3pm_950meters = os.path.join('static', 'data', 'histogramdf', '950meters12PM-3PM.json')
-    file_4pm_7pm_950meters = os.path.join('static', 'data', 'histogramdf', '950meters4PM-7PM.json')
-    file_8pm_11pm_950meters = os.path.join('static', 'data', 'histogramdf', '950meters8PM-11PM.json')
-    file_all_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometerAll.json')
-    file_12am_3am_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometer12AM-3AM.json')
-    file_4am_7am_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometer4AM-7AM.json')
-    file_8am_11am_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometer8AM-11AM.json')
-    file_12pm_3pm_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometer12PM-3PM.json')
-    file_4pm_7pm_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometer4PM-7PM.json')
-    file_8pm_11pm_1kilometer = os.path.join('static', 'data', 'histogramdf', '1kilometer8PM-11PM.json')
-    file_all_1mile = os.path.join('static', 'data', 'histogramdf', '1mileAll.json')
-    file_12am_3am_1mile = os.path.join('static', 'data', 'histogramdf', '1mile12AM-3AM.json')
-    file_4am_7am_1mile = os.path.join('static', 'data', 'histogramdf', '1mile4AM-7AM.json')
-    file_8am_11am_1mile = os.path.join('static', 'data', 'histogramdf', '1mile8AM-11AM.json')
-    file_12pm_3pm_1mile = os.path.join('static', 'data', 'histogramdf', '1mile12PM-3PM.json')
-    file_4pm_7pm_1mile = os.path.join('static', 'data', 'histogramdf', '1mile4PM-7PM.json')
-    file_8pm_11pm_1mile = os.path.join('static', 'data', 'histogramdf', '1mile8PM-11PM.json')
-
-    if grid == "700 meters" and interval == "12AM-11PM":
-        return file_all_700meters
-    elif grid == "700 meters" and interval == "12AM-3AM":
-        return file_12am_3am_700meters
-    elif grid == "700 meters" and interval == "4AM-7AM":
-        return file_4am_7am_700meters
-    elif grid == "700 meters" and interval == "8AM-11AM":
-        return file_8am_11am_700meters
-    elif grid == "700 meters" and interval == "12PM-3PM":
-        return file_12pm_3pm_700meters
-    elif grid == "700 meters" and interval == "4PM-7PM":
-        return file_4pm_7pm_700meters
-    elif grid == "700 meters" and interval == "8PM-11PM":
-        return file_8pm_11pm_700meters
-    elif grid == "750 meters" and interval == "12AM-11PM":
-        return file_all_750meters
-    elif grid == "750 meters" and interval == "12AM-3AM":
-        return file_12am_3am_750meters
-    elif grid == "750 meters" and interval == "4AM-7AM":
-        return file_4am_7am_750meters
-    elif grid == "750 meters" and interval == "8AM-11AM":
-        return file_8am_11am_750meters
-    elif grid == "750 meters" and interval == "12PM-3PM":
-        return file_12pm_3pm_750meters
-    elif grid == "750 meters" and interval == "4PM-7PM":
-        return file_4pm_7pm_750meters
-    elif grid == "750 meters" and interval == "8PM-11PM":
-        return file_8pm_11pm_750meters
-    elif grid == "800 meters" and interval == "12AM-11PM":
-        return file_all_800meters
-    elif grid == "800 meters" and interval == "12AM-3AM":
-        return file_12am_3am_800meters
-    elif grid == "800 meters" and interval == "4AM-7AM":
-        return file_4am_7am_800meters
-    elif grid == "800 meters" and interval == "8AM-11AM":
-        return file_8am_11am_800meters
-    elif grid == "800 meters" and interval == "12PM-3PM":
-        return file_12pm_3pm_800meters
-    elif grid == "800 meters" and interval == "4PM-7PM":
-        return file_4pm_7pm_800meters
-    elif grid == "800 meters" and interval == "8PM-11PM":
-        return file_8pm_11pm_800meters
-    elif grid == "850 meters" and interval == "12AM-11PM":
-        return file_all_850meters
-    elif grid == "850 meters" and interval == "12AM-3AM":
-        return file_12am_3am_850meters
-    elif grid == "850 meters" and interval == "4AM-7AM":
-        return file_4am_7am_850meters
-    elif grid == "850 meters" and interval == "8AM-11AM":
-        return file_8am_11am_850meters
-    elif grid == "850 meters" and interval == "12PM-3PM":
-        return file_12pm_3pm_850meters
-    elif grid == "850 meters" and interval == "4PM-7PM":
-        return file_4pm_7pm_850meters
-    elif grid == "850 meters" and interval == "8PM-11PM":
-        return file_8pm_11pm_850meters
-    elif grid == "900 meters" and interval == "12AM-11PM":
-        return file_all_900meters
-    elif grid == "900 meters" and interval == "12AM-3AM":
-        return file_12am_3am_900meters
-    elif grid == "900 meters" and interval == "4AM-7AM":
-        return file_4am_7am_900meters
-    elif grid == "900 meters" and interval == "8AM-11AM":
-        return file_8am_11am_900meters
-    elif grid == "900 meters" and interval == "12PM-3PM":
-        return file_12pm_3pm_900meters
-    elif grid == "900 meters" and interval == "4PM-7PM":
-        return file_4pm_7pm_900meters
-    elif grid == "900 meters" and interval == "8PM-11PM":
-        return file_8pm_11pm_900meters
-    elif grid == "950 meters" and interval == "12AM-11PM":
-        return file_all_950meters
-    elif grid == "950 meters" and interval == "12AM-3AM":
-        return file_12am_3am_950meters
-    elif grid == "950 meters" and interval == "4AM-7AM":
-        return file_4am_7am_950meters
-    elif grid == "950 meters" and interval == "8AM-11AM":
-        return file_8am_11am_950meters
-    elif grid == "950 meters" and interval == "12PM-3PM":
-        return file_12pm_3pm_950meters
-    elif grid == "950 meters" and interval == "4PM-7PM":
-        return file_4pm_7pm_950meters
-    elif grid == "950 meters" and interval == "8PM-11PM":
-        return file_8pm_11pm_950meters
-    elif grid == "1 kilometer" and interval == "12AM-11PM":
-        return file_all_1kilometer
-    elif grid == "1 kilometer" and interval == "12AM-3AM":
-        return file_12am_3am_1kilometer
-    elif grid == "1 kilometer" and interval == "4AM-7AM":
-        return file_4am_7am_1kilometer
-    elif grid == "1 kilometer" and interval == "8AM-11AM":
-        return file_8am_11am_1kilometer
-    elif grid == "1 kilometer" and interval == "12PM-3PM":
-        return file_12pm_3pm_1kilometer
-    elif grid == "1 kilometer" and interval == "4PM-7PM":
-        return file_4pm_7pm_1kilometer
-    elif grid == "1 kilometer" and interval == "8PM-11PM":
-        return file_8pm_11pm_1kilometer
-    elif grid == "1 mile" and interval == "12AM-11PM":
-        return file_all_1mile
-    elif grid == "1 mile" and interval == "12AM-3AM":
-        return file_12am_3am_1mile
-    elif grid == "1 mile" and interval == "4AM-7AM":
-        return file_4am_7am_1mile
-    elif grid == "1 mile" and interval == "8AM-11AM":
-        return file_8am_11am_1mile
-    elif grid == "1 mile" and interval == "12PM-3PM":
-        return file_12pm_3pm_1mile
-    elif grid == "1 mile" and interval == "4PM-7PM":
-        return file_4pm_7pm_1mile
-    elif grid == "1 mile" and interval == "8PM-11PM":
-        return file_8pm_11pm_1mile
-
-
 def coord_lister(geom):
     coords = list(geom.exterior.coords)
     return (coords)
-
 
 def get_radius(radius, unit):
     radius = float(radius)
@@ -1145,40 +979,6 @@ def get_meters(radius, unit):
         return radius * 1609.34
     else:
         return radius * 1000
-
-
-def get_crimecounts_forlocation(coordinates, data, distance):
-    Model.create_index([("point", "2dsphere")])
-
-    # Return counts of documents
-    count = Model.objects.all().count()
-    print("count", count)
-
-    longitude = coordinates[0]
-    latitude = coordinates[1]
-
-    pipeline = [
-        {
-            "$geoNear": {
-                "near": {
-                    "type": "Point",
-                    "coordinates": [longitude, latitude]
-                },
-                "distanceField": "point",
-                "maxDistance": distance,
-                "spherical": True
-            }
-        }
-    ]
-
-    result = Model.objects().aggregate(*pipeline)
-    distance_near_list = [doc['INCIDENT_NO'] for doc in result]
-
-    if len(distance_near_list) != 0:
-        print("distance_near_list", distance_near_list)
-    else:
-        print("query does not return a result", distance_near_list)
-    return len(distance_near_list)
 
 
 def create_dataframe(rowlist, collist, countlist, centerlist):
@@ -1288,29 +1088,43 @@ def get_middle_element_of_count_list(count_list):
 def get_count_of_grid_dial(polygon_dict, interval):
     start_time = time.time()
     sublists = [polygon_dict[i:i + 5] for i in range(0, len(polygon_dict), 5)]
-    polygon_list = [search_within_polygon_dial(sublist, interval) for sublist in sublists]
+    # Define a helper function to process each sublist
+
+    def process_sublist(sublist):
+        return search_within_polygon_dial(sublist, interval)
+
+    # Use ThreadPoolExecutor for parallel processing
+    with ThreadPoolExecutor() as executor:
+        polygon_list = list(executor.map(process_sublist, sublists))
     print("polygon_list", polygon_list)
     print("--- %s secconds ---" % (time.time() - start_time))
     return polygon_list
 
 
 def search_within_polygon_dial(sublistelement, interval):
-    polygon_pipeline = [
-        {
-            "$match": {
-                "point": {
-                    "$geoWithin": {
-                        "$geometry": {
-                            "type": "Polygon",
-                            "coordinates": [
-                                sublistelement
-                            ]
-                        }
+    polygon_pipeline = [{
+        "$match": {
+            "point": {
+                "$geoWithin": {
+                    "$geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            sublistelement
+                        ]
                     }
                 }
             }
         }
-    ]
+    } ]
+
+    polygon_pipeline.append({
+        "$project": {
+            "INCIDENT_NO": 1,
+            "OFFENSE": 1,
+            "point": 1
+        }
+    })
+
 
     if interval == "12AM-3AM":
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
@@ -1377,11 +1191,11 @@ def search_within_polygon_dial(sublistelement, interval):
 
 
 def get_count_of_grid_histogram(polygon_dict, interval):
-    start_time = time.time()
+    # start_time = time.time()
     sublists = [polygon_dict[i:i + 5] for i in range(0, len(polygon_dict), 5)]
     polygon_list = [search_within_polygon_histogram(sublist, interval) for sublist in sublists]
     print("polygon_list", polygon_list)
-    print("--- %s secconds ---" % (time.time() - start_time))
+    # print("--- %s secconds ---" % (time.time() - start_time))
     return polygon_list
 
 
@@ -1576,30 +1390,43 @@ def get_count_of_grid_heatmap(polygon_dict, interval):
     # print("Calling get_count_of_grid_heatmap")
     start_time = time.time()
     sublists = [polygon_dict[i:i + 5] for i in range(0, len(polygon_dict), 5)]
-    count_list = [search_within_polygon_heatmap(sublist, interval) for sublist in sublists]
-    # print("count_list", count_list)
+
+    # Define a helper function to process each sublist
+
+    def process_sublist(sublist):
+        return search_within_polygon_heatmap(sublist, interval)
+
+    # Use ThreadPoolExecutor for parallel processing
+    with ThreadPoolExecutor() as executor:
+        count_list = list(executor.map(process_sublist, sublists))
+
+    # count_list = [search_within_polygon_heatmap(sublist, interval) for sublist in sublists]
+
     print("--- %s secconds ---" % (time.time() - start_time))
     return count_list
 
 
 def search_within_polygon_heatmap(sublistelement, interval):
-    # start_time = time.time()
-    polygon_pipeline = [
-        {
-            "$match": {
-                "point": {
-                    "$geoWithin": {
-                        "$geometry": {
-                            "type": "Polygon",
-                            "coordinates": [
-                                sublistelement
-                            ]
-                        }
+    polygon_pipeline = [{
+        "$match": {
+            "point": {
+                "$geoWithin": {
+                    "$geometry": {
+                        "type": "Polygon",
+                        "coordinates": [
+                            sublistelement
+                        ]
                     }
                 }
             }
         }
-    ]
+    }, {
+        "$project": {
+            "INCIDENT_NO": 1,
+            "OFFENSE": 1,
+            "point": 1
+        }
+    }]
 
     if interval == "12AM-3AM":
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
@@ -2413,6 +2240,7 @@ def process_histogram_todf():
 
 @app.route('/testgrids')
 def test_grids():
+    logging.info("Entering test grids route")
     distance = get_meters(950, "meters")
     grid = create_grid2(distance)
     grid_geojson = grid.to_json()
@@ -2438,6 +2266,7 @@ def success(safe, work, current, destination, interval, gridsize):
     geolocator = Nominatim(user_agent="project-flask")
     # delete_heatmap_files()
     try:
+        start_time = time.time()
         safelocation = geolocator.geocode(safe)
         worklocation = geolocator.geocode(work)
         currentlocation = geolocator.geocode(current)
@@ -2459,11 +2288,6 @@ def success(safe, work, current, destination, interval, gridsize):
         radius = gridsplit[0]
         unit = gridsplit[1]
 
-        print("gridsize", gridsize)
-        start_time = time.time()
-        file_path = switch_grids2(gridsize, interval)
-        print("selected_grid", file_path)
-        print("--- %s selected_grid secconds ---" % (time.time() - start_time))
 
         user.interval = interval
         user.radius = radius
@@ -2471,27 +2295,23 @@ def success(safe, work, current, destination, interval, gridsize):
 
         meters = get_meters(user.radius, user.units)
 
-        start_time = time.time()
         safepolygon = create_heatmap_polygon(meters, safelocation)
         workpolygon = create_heatmap_polygon(meters, worklocation)
         currentpolygon = create_heatmap_polygon(meters, currentlocation)
         destinationpolygon = create_heatmap_polygon(meters, destinationlocation)
-        print("--- %s create_heatmap_polygon secconds ---" % (time.time() - start_time))
 
         current_box = create_current_polygon(meters, currentlocation)
-        print("current_box", current_box)
+        # print("current_box", current_box)
         count_dataframe = get_count_of_polygon(current_box, user.interval)
         years = count_dataframe['Year'].tolist()
         counts = count_dataframe['Count'].tolist()
-        print("count_dataframe years", years)
-        print("count_dataframe counts", counts)
+        # print("count_dataframe years", years)
+        # print("count_dataframe counts", counts)
 
-        start_time = time.time()
         safe_count_list = get_count_of_grid_heatmap(safepolygon, user.interval)
         work_count_list = get_count_of_grid_heatmap(workpolygon, user.interval)
         current_count_list = get_count_of_grid_heatmap(currentpolygon, user.interval)
         destination_count_list = get_count_of_grid_heatmap(destinationpolygon, user.interval)
-        print("--- %s get_count_of_grid_heatmap secconds ---" % (time.time() - start_time))
 
         middle_index = get_middle_element_of_count_list(safe_count_list)
         conditional_safe_center_point_list = [True if index == middle_index else
@@ -2519,7 +2339,6 @@ def success(safe, work, current, destination, interval, gridsize):
 
         print("conditional_safe_center_point_list", conditional_safe_center_point_list)
 
-        start_time = time.time()
         current_all_interval_count_list = []
         # generate list of middle elements for all current counts. Iterate through the list of intervals
         interval_list = ["12AM-3AM",
@@ -2537,9 +2356,7 @@ def success(safe, work, current, destination, interval, gridsize):
 
         # print("current_all_interval_count_list", current_all_interval_count_list)
         # print("interval_list", interval_list)
-        print("--- %s current_all_interval_count_list secconds ---" % (time.time() - start_time))
 
-        start_time = time.time()
         bounding_box_safe = create_bounding_box(user.safecoordinates[1], user.safecoordinates[0], meters)
         bounding_box_current = create_bounding_box(user.currentcoordinates[1], user.currentcoordinates[0], meters)
         bounding_box_work = create_bounding_box(user.workcoordinates[1], user.workcoordinates[0], meters)
@@ -2549,42 +2366,42 @@ def success(safe, work, current, destination, interval, gridsize):
         # print("bounding_box_current", bounding_box_current)
         # print("bounding_box_work", bounding_box_work)
         # print("bounding_box_destination", bounding_box_destination)
-        print("--- %s bounding_box_ secconds ---" % (time.time() - start_time))
 
-        user.grid = get_grid_from_df(file_path)
+
         # print("dataframe for grid", user.grid)
 
         dial_list = read_dial_grid(gridsize, interval)
-        # print("The dial list is:", dial_list)
+        print("The dial list is:", dial_list)
+        # user.grid = get_grid_from_df(file_path)
+        user.grid = dial_list
         # comment out user.grid to contain dataframe value based on input
         interval_lists = create_interval_for_dial(dial_list)
         interval_list1 = interval_lists[0]
         interval_list2 = interval_lists[1]
         interval_list3 = interval_lists[2]
 
-        print("interval_list1:", interval_list1)
-        print("interval_list2:", interval_list2)
-        print("interval_list3:", interval_list3)
+        # print("interval_list1:", interval_list1)
+        # print("interval_list2:", interval_list2)
+        # print("interval_list3:", interval_list3)
 
         rows_list = ["A", "A", "A", "A", "A", "B", "B", "B", "B", "B", "C", "C", "C", "C", "C", "D", "D", "D", "D", "D",
                      "E", "E", "E", "E", "E"]
         col_list = ["v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5",
                     "v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5"]
 
-        start_time = time.time()
         safe_dataframe = create_dataframe(rows_list, col_list, safe_count_list, conditional_safe_center_point_list)
-        print("safe_dataframe", safe_dataframe)
+        # print("safe_dataframe", safe_dataframe)
 
         work_dataframe = create_dataframe(rows_list, col_list, work_count_list, conditional_work_center_point_list)
-        print("work_dataframe", work_dataframe)
+        # print("work_dataframe", work_dataframe)
 
         current_dataframe = create_dataframe(rows_list, col_list, current_count_list,
                                              conditional_current_center_point_list)
-        print("current_dataframe", current_dataframe)
+        # print("current_dataframe", current_dataframe)
 
         destination_dataframe = create_dataframe(rows_list, col_list, destination_count_list,
                                                  conditional_destination_center_point_list)
-        print("destination_dataframe", destination_dataframe)
+        # print("destination_dataframe", destination_dataframe)
 
         df_safe = pd.DataFrame(safe_dataframe)
         df_work = pd.DataFrame(work_dataframe)
@@ -2596,9 +2413,7 @@ def success(safe, work, current, destination, interval, gridsize):
         df_work.to_csv('static/data/heatmap/heatmap_data_work.csv', index=False)
         df_current.to_csv('static/data/heatmap/heatmap_data_current.csv', index=False)
         df_destination.to_csv('static/data/heatmap/heatmap_data_destination.csv', index=False)
-        print("--- %s create_dataframe secconds ---" % (time.time() - start_time))
 
-        start_time = time.time()
         # safe_statistic = compute_range_percentage(middle_element_safe_count, safe_count_list)
         # current_statistic = compute_range_percentage(middle_element_current_count, current_count_list)
         # work_statistic = compute_range_percentage(middle_element_work_count, work_count_list)
@@ -2613,28 +2428,29 @@ def success(safe, work, current, destination, interval, gridsize):
         # print("current_percentage", current_percentage)
         # print("work_percentage", work_percentage)
         # print("destination_percentage", destination_percentage)
-        print("interval", interval)
+        # print("interval", interval)
 
-        print("middle_element_current_count", middle_element_current_count)
-        print("current_count_list", current_count_list)
+        # print("middle_element_current_count", middle_element_current_count)
+        # print("current_count_list", current_count_list)
         # current_statistic_new = compute_range_percentage(middle_element_current_count, current_count_list)
         current_statistic_new = compute_range_percentage(middle_element_current_count, dial_list)
-        print("current_statistic", current_statistic_new)
+        # print("current_statistic", current_statistic_new)
 
         current_percentage, current_text = current_statistic_new[1], current_statistic_new[0]
 
-        print("--- %s compute_range_percentage secconds ---" % (time.time() - start_time))
-
-
+        print("--- Total time taken: %s seconds ---" % (time.time() - start_time))
 
         # number_of_years = get_difference_in_years()
         # print("number_of_years",number_of_years)
 
-        return render_template('success.html', key=key, griddf=file_path, maxgridelement=max(user.grid),
+        return render_template('success.html', key=key, maxgridelement=max(user.grid),
                                radius=user.radius, interval=user.interval,
                                dial_list=dial_list,
                                years=13,
                                currentaddress=current,
+                               safeaddress=safe,
+                               workaddress=work,
+                               destinationaddress=destination,
                                latsafecoordinate=user.safecoordinates[1],
                                lonsafecoordinate=user.safecoordinates[0],
                                latcurrentcoordinate=user.currentcoordinates[1],

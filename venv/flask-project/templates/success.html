@@ -64,12 +64,13 @@
                         <div class="tab-content">
 
                             <div id="menu1" class="tab-pane fade in active">
-                                <div style="height: 300px;">
+                                <div style="height: 270px;">
                                     <p id="textelement2"></p>
                                     <p id="textelement"></p>
                                     <div id="histogram"></div>
                                 </div>
-                                <div id="container2" style="height: 250px;">
+<!--                                <p id="histogram-descriptor" style="font-size: 10px;" ></p>-->
+                                <div id="container2" style="height: 250px; width: 250px;">
                                 </div>
                             </div>
 
@@ -82,6 +83,9 @@
                                         <option value="destination">destination</option>
                                     </select>
                                 </div>
+                                <p id="heatmap-title" style="text-align: center; font-size: 10px;
+                                word-wrap: break-word; margin-bottom: 5px;">
+                                    </p>
                                 <div id="heatmap"></div>
                             </div>
 
@@ -124,6 +128,12 @@
 
 function addHistogram() {
     let currentValue = parseFloat("{{ middle_element_current_count }}");
+    var interval = "{{interval}}";
+    var address = "{{currentaddress}}";
+
+<!--    document.getElementById("histogram-descriptor").innerHTML =-->
+<!--  `<strong>${address}</strong> from ${interval} falls under`;-->
+
     console.log("Histogram function");
 
     var grid = JSON.parse("{{ dial_list | tojson }}");
@@ -137,8 +147,8 @@ function addHistogram() {
     console.log("tickCount", tickCount);
 
     const margin = { top: 40, right: 30, bottom: 40, left: 52 },
-          width = 300 - margin.left - margin.right,
-          height = 160 - margin.top - margin.bottom;
+          width = 315 - margin.left - margin.right,
+          height = 180 - margin.top - margin.bottom;
 
     const svg = d3.select("#histogram")
         .append("svg")
@@ -152,8 +162,13 @@ function addHistogram() {
         .range([0, width]);
 
     svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-0.8em")
+        .attr("dy", "0.15em")
+        .attr("transform", "rotate(-40)");
 
     const histogram = d3.histogram()
         .value(d => d)
@@ -191,7 +206,7 @@ function addHistogram() {
         .attr("y", -margin.top / 2 + 5)
         .attr("text-anchor", "middle")
         .style("font-size", "10px")
-        .text("Distribution of hazardous crimes from 12AM to 3AM over 13 years");
+        .text(`Distribution of hazardous crimes from ${interval} over 13 years`);
 
     const tooltip = d3.select("#histogram")
         .append("div")
@@ -306,14 +321,15 @@ function createAreaChart() {
     var counts = JSON.parse("{{ time_counts | tojson }}");
     var years = JSON.parse("{{ time_years | tojson }}");
     var interval = "{{interval}}"
+    var location = "{{currentaddress}}";
 
     Highcharts.chart('container2', {
         chart: { type: 'area' },
         title: {
-            text: 'Current location Crime Count for Interval ' + interval,
+            text: location + ' crimes for Interval ' + interval + ' over years',
             useHTML: true,
             style: {
-                fontSize: '12px'  // Correct way to set font size
+                fontSize: '12px',
             }
         },
         xAxis: {
@@ -355,6 +371,7 @@ function createAreaChart() {
             return message;
     }
     document.getElementById("textelement").textContent = textForPercentage();
+
 
     function val() {
 
@@ -405,28 +422,32 @@ function createAreaChart() {
            let destinationLocationArray = [];
            let locationStr = "";
            let locationColor = "";
+           var currentLocation = "{{currentaddress}}";
+           var safeLocation = "{{safeaddress}}";
+           var workLocation = "{{workaddress}}";
+           var destinationLocation = "{{destinationaddress}}";
 
            if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_current.csv"){
-               locationStr = "Current Center";
-               locationColor = "#FFC0CB";
+               locationStr = currentLocation;
+               locationColor = "#89CFF0";
                currentLocationArray.push(locationStr);
                currentLocationArray.push(locationColor);
                return currentLocationArray;
            } else if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_safe.csv"){
-               locationStr = "Safe Center";
-               locationColor = "#13D27E";
+               locationStr = safeLocation;
+               locationColor = "#89CFF0";
                safeLocationArray.push(locationStr);
                safeLocationArray.push(locationColor);
                return safeLocationArray;
            } else if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_work.csv"){
-               locationStr = "Work Center";
-               locationColor = "#3549EB";
+               locationStr = workLocation;
+               locationColor = "#89CFF0";
                workLocationArray.push(locationStr);
                workLocationArray.push(locationColor);
                return workLocationArray;
            } else if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_destination.csv"){
-               locationStr = "Destination Center";
-               locationColor = "#8D70E0";
+               locationStr = destinationLocation;
+               locationColor = "#89CFF0";
                destinationLocationArray.push(locationStr);
                destinationLocationArray.push(locationColor);
                return destinationLocationArray;
@@ -436,11 +457,19 @@ function createAreaChart() {
 
     function addHeatmap(dropDownReturnValue) {
         var maxGridElement = parseFloat("{{maxgridelement}}");
+        var interval = "{{interval}}";
+
         console.log("maxGridElement", maxGridElement);
 
+      locationArray = setHeatMapLabels(dropDownReturnValue)
+      let locationStr = locationArray[0].toString();
+        document.getElementById("heatmap-title").innerHTML =
+          `Hazardous crimes relative to <strong>${locationStr}</strong> from ${interval} over 13 years`;
+
+
         // set the dimensions and margins of the graph
-        const margin = {top: 30, right: 30, bottom: 35, left: 30},
-          width = 280 - margin.left - margin.right,
+        const margin = {top: 20, right: 35, bottom: 35, left: 30},
+          width = 300 - margin.left - margin.right,
           height = 150 - margin.top - margin.bottom;
 
         // append the svg object to the body of the page
@@ -472,18 +501,17 @@ function createAreaChart() {
         svg.append("g")
           .call(d3.axisLeft(y));
 
-          svg.append("text")
-            .attr("x", (width / 2))
-            .attr("y", 0 - (margin.top / 2))
-            .attr("text-anchor", "middle")
-            .style("font-size", "16px")
-            .style("text-decoration", "underline")
-            .text("Heatmap");
+<!--          svg.append("text")-->
+<!--            .attr("x", (width / 2) + 30)-->
+<!--            .attr("y", 0 - (margin.top / 2))-->
+<!--            .attr("text-anchor", "middle")-->
+<!--            .style("font-size", "10px")-->
+<!--            .text(`Hazardous crimes relative to ${locationStr} from ${interval} over 13 years`);-->
 
         // Build color scale
-        const myColor = d3.scaleLinear()
-          .range(["white", "#69b3a2"])
-          .domain([1,maxGridElement])
+        const myColor = d3.scaleSequential()
+          .interpolator(d3.interpolatePurples)
+          .domain([1, maxGridElement]);
 
     const legendWidth = 100;
     const legendHeight = 10;
@@ -503,12 +531,19 @@ function createAreaChart() {
         .attr("x2", "100%")
         .attr("y2", "0%");
 
-    linearGradient.append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", "white");
-    linearGradient.append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", "#69b3a2");
+        const gradientStops = [
+          { offset: "0%", color: d3.interpolatePurples(0) },
+          { offset: "25%", color: d3.interpolatePurples(0.25) },
+          { offset: "50%", color: d3.interpolatePurples(0.5) },
+          { offset: "75%", color: d3.interpolatePurples(0.75) },
+          { offset: "100%", color: d3.interpolatePurples(1) },
+        ];
+
+        gradientStops.forEach(stop => {
+          linearGradient.append("stop")
+            .attr("offset", stop.offset)
+            .attr("stop-color", stop.color);
+        });
 
     legendSvg.append("rect")
         .attr("width", legendWidth)
@@ -561,8 +596,7 @@ function createAreaChart() {
             tooltip.style("opacity", 1)
           }
 
-          locationArray = setHeatMapLabels(dropDownReturnValue)
-          let locationStr = locationArray[0].toString();
+          console.log("locationStr", locationStr);
 
           const mousemove = function(event,d) {
             let tooltipContent = '';

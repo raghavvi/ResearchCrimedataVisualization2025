@@ -139,7 +139,13 @@ class IntervalOne(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'police_data_one',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {
