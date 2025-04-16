@@ -992,7 +992,7 @@ def compute_range_percentage(count, countlist):
     count_dict = defaultdict(int, zip(unique_elements, counts))
 
     arr_length = len(arr)
-    print("arr_length:", arr_length)
+    # print("arr_length:", arr_length)
 
     if count in range(0, 50):
         filtered_dict = {key: value for key, value in count_dict.items() if 0 <= key <= 50}
@@ -1022,6 +1022,7 @@ def compute_range_percentage(count, countlist):
         return ["heaviest", rounded_up_heavy_percentage]
 
 
+
 def get_middle_element_of_count_list(count_list):
     # if even
     if len(count_list) % 2 == 0:
@@ -1041,8 +1042,8 @@ def get_count_of_grid_dial(polygon_dict, interval):
     # Use ThreadPoolExecutor for parallel processing
     with ThreadPoolExecutor() as executor:
         polygon_list = list(executor.map(process_sublist, sublists))
-    print("polygon_list", polygon_list)
-    print("--- %s secconds ---" % (time.time() - start_time))
+    # print("polygon_list", polygon_list)
+    print("--- %s get_count_of_grid_dial secconds ---" % (time.time() - start_time))
     return polygon_list
 
 
@@ -1136,11 +1137,9 @@ def search_within_polygon_dial(sublistelement, interval):
 
 
 def get_count_of_grid_histogram(polygon_dict, interval):
-    # start_time = time.time()
     sublists = [polygon_dict[i:i + 5] for i in range(0, len(polygon_dict), 5)]
     polygon_list = [search_within_polygon_histogram(sublist, interval) for sublist in sublists]
     print("polygon_list", polygon_list)
-    # print("--- %s secconds ---" % (time.time() - start_time))
     return polygon_list
 
 
@@ -1229,14 +1228,12 @@ def search_within_polygon_histogram(sublistelement, interval):
 
 
 def get_count_of_polygon(polygon_dict, interval):
+    start_time = time.time()
     polygon_objects = search_within_polygon(polygon_dict, interval)
-    # return list of objects
-    #print("list of objects", polygon_objects[0:10])
-    # retrieve by date field. Order objects by year
     mid_date_list = [element["MID_DATE"] for element in polygon_objects]
     # print("mid_date_list", mid_date_list)
     years = [datetime.strptime(date, "%m/%d/%Y %I:%M:%S %p").year for date in mid_date_list]
-    print(years)
+    # print(years)
     # Count occurrences per year
     year_counts = dict(Counter(years))
 
@@ -1250,6 +1247,7 @@ def get_count_of_polygon(polygon_dict, interval):
     # Count crimes by time interval
     # map to a dataframe
     # x axis: year y axis: count
+    print("--- %s get_count_of_polygon secconds ---" % (time.time() - start_time))
     return df
 
 
@@ -1346,7 +1344,7 @@ def get_count_of_grid_heatmap(polygon_dict, interval):
 
     # count_list = [search_within_polygon_heatmap(sublist, interval) for sublist in sublists]
 
-    print("--- %s secconds ---" % (time.time() - start_time))
+    print("--- %s get_count_of_grid_heatmap secconds ---" % (time.time() - start_time))
     return count_list
 
 
@@ -2201,7 +2199,6 @@ def test_heatmap_grid():
 @app.route('/success/<safe>/<work>/<current>/<destination>/<interval>/<gridsize>')
 def success(safe, work, current, destination, interval, gridsize):
     geolocator = Nominatim(user_agent="project-flask")
-    # delete_heatmap_files()
     try:
         start_time = time.time()
         safelocation = geolocator.geocode(safe)
@@ -2225,7 +2222,6 @@ def success(safe, work, current, destination, interval, gridsize):
         radius = gridsplit[0]
         unit = gridsplit[1]
 
-
         user.interval = interval
         user.radius = radius
         user.units = unit
@@ -2238,12 +2234,9 @@ def success(safe, work, current, destination, interval, gridsize):
         destinationpolygon = create_heatmap_polygon(meters, destinationlocation)
 
         current_box = create_current_polygon(meters, currentlocation)
-        # print("current_box", current_box)
         count_dataframe = get_count_of_polygon(current_box, user.interval)
         years = count_dataframe['Year'].tolist()
         counts = count_dataframe['Count'].tolist()
-        # print("count_dataframe years", years)
-        # print("count_dataframe counts", counts)
 
         safe_count_list = get_count_of_grid_heatmap(safepolygon, user.interval)
         work_count_list = get_count_of_grid_heatmap(workpolygon, user.interval)
@@ -2272,43 +2265,15 @@ def success(safe, work, current, destination, interval, gridsize):
         conditional_destination_center_point_list = [True if index == middle_index else
                                                      False for index, num in enumerate(destination_count_list)]
         middle_element_destination_count = destination_count_list[middle_index]
-        # print("middle_element_destination_count", middle_element_destination_count)
-
-        # print("conditional_safe_center_point_list", conditional_safe_center_point_list)
-
-        # current_all_interval_count_list = []
-        # # generate list of middle elements for all current counts. Iterate through the list of intervals
-        # interval_list = ["12AM-3AM",
-        #                  "4AM-7AM",
-        #                  "8AM-11AM",
-        #                  "12PM-3PM",
-        #                  "4PM-7PM",
-        #                  "8PM-11PM"]
-        #
-        # for i in interval_list:
-        #     current_count_list = get_count_of_grid_heatmap(currentpolygon, i)
-        #     # get middle element of current_count_list
-        #     middle_element_current_count = current_count_list[middle_index]
-        #     current_all_interval_count_list.append(middle_element_current_count)
-
-        # print("current_all_interval_count_list", current_all_interval_count_list)
-        # print("interval_list", interval_list)
 
         bounding_box_safe = create_bounding_box(user.safecoordinates[1], user.safecoordinates[0], meters)
         bounding_box_current = create_bounding_box(user.currentcoordinates[1], user.currentcoordinates[0], meters)
         bounding_box_work = create_bounding_box(user.workcoordinates[1], user.workcoordinates[0], meters)
         bounding_box_destination = create_bounding_box(user.destinationcoordinates[1], user.destinationcoordinates[0],
                                                        meters)
-        # print("bounding_box_safe", bounding_box_safe)
-        # print("bounding_box_current", bounding_box_current)
-        # print("bounding_box_work", bounding_box_work)
-        # print("bounding_box_destination", bounding_box_destination)
 
         dial_list = read_dial_grid(gridsize, interval)
-        # print("The dial list is:", dial_list)
-        # user.grid = get_grid_from_df(file_path)
         user.grid = dial_list
-        # comment out user.grid to contain dataframe value based on input
         interval_lists = create_interval_for_dial(dial_list)
         interval_list1 = interval_lists[0]
         interval_list2 = interval_lists[1]
@@ -2324,18 +2289,14 @@ def success(safe, work, current, destination, interval, gridsize):
                     "v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5"]
 
         safe_dataframe = create_dataframe(rows_list, col_list, safe_count_list, conditional_safe_center_point_list)
-        # print("safe_dataframe", safe_dataframe)
 
         work_dataframe = create_dataframe(rows_list, col_list, work_count_list, conditional_work_center_point_list)
-        # print("work_dataframe", work_dataframe)
 
         current_dataframe = create_dataframe(rows_list, col_list, current_count_list,
                                              conditional_current_center_point_list)
-        # print("current_dataframe", current_dataframe)
 
         destination_dataframe = create_dataframe(rows_list, col_list, destination_count_list,
                                                  conditional_destination_center_point_list)
-        # print("destination_dataframe", destination_dataframe)
 
         df_safe = pd.DataFrame(safe_dataframe)
         df_work = pd.DataFrame(work_dataframe)
@@ -2348,27 +2309,21 @@ def success(safe, work, current, destination, interval, gridsize):
         df_current.to_csv('static/data/heatmap/heatmap_data_current.csv', index=False)
         df_destination.to_csv('static/data/heatmap/heatmap_data_destination.csv', index=False)
 
-        # safe_statistic = compute_range_percentage(middle_element_safe_count, safe_count_list)
-        # current_statistic = compute_range_percentage(middle_element_current_count, current_count_list)
-        # work_statistic = compute_range_percentage(middle_element_work_count, work_count_list)
-        # destination_statistic = compute_range_percentage(middle_element_destination_count, destination_count_list)
-        #
+        # safe_statistic = compute_range_percentage(middle_element_safe_count, dial_list)
+        # current_statistic = compute_range_percentage(middle_element_current_count, dial_list)
+        # work_statistic = compute_range_percentage(middle_element_work_count, dial_list)
+        # destination_statistic = compute_range_percentage(middle_element_destination_count, dial_list)
         # safe_percentage, safe_text = safe_statistic[1], safe_statistic[0]
         # current_percentage, current_text = current_statistic[1], current_statistic[0]
         # work_percentage, work_text = work_statistic[1], work_statistic[0]
         # destination_percentage, destination_text = destination_statistic[1], destination_statistic[0]
-        #
         # print("safe_percentage", safe_percentage)
         # print("current_percentage", current_percentage)
         # print("work_percentage", work_percentage)
         # print("destination_percentage", destination_percentage)
         # print("interval", interval)
 
-        # print("middle_element_current_count", middle_element_current_count)
-        # print("current_count_list", current_count_list)
-        # current_statistic_new = compute_range_percentage(middle_element_current_count, current_count_list)
         current_statistic_new = compute_range_percentage(middle_element_current_count, dial_list)
-        # print("current_statistic", current_statistic_new)
 
         current_percentage, current_text = current_statistic_new[1], current_statistic_new[0]
 
