@@ -987,6 +987,7 @@ def create_dataframe(rowlist, collist, countlist, centerlist):
 
 
 def compute_range_percentage(count, countlist):
+    start_time = time.time()
     arr = np.array(countlist)
     unique_elements, counts = np.unique(arr, return_counts=True)
     count_dict = defaultdict(int, zip(unique_elements, counts))
@@ -1005,6 +1006,7 @@ def compute_range_percentage(count, countlist):
         rounded_up_safe_percentage = math.ceil(safe_percentage * 100) / 100
         # print("rounded_up_safe_percentage:", rounded_up_safe_percentage)
         return_value = ["safest", rounded_up_safe_percentage]
+        print("--- compute_range_percentage: %s seconds ---" % (time.time() - start_time))
         return return_value
 
     elif count in range(50, 100):
@@ -1024,11 +1026,11 @@ def compute_range_percentage(count, countlist):
 
 
 def get_middle_element_of_count_list(count_list):
-    # if even
     if len(count_list) % 2 == 0:
         return (len(count_list) // 2) - 1
     else:
         return (len(count_list) - 1) // 2
+
 
 
 def get_count_of_grid_dial(polygon_dict, interval):
@@ -1076,7 +1078,7 @@ def search_within_polygon_dial(sublistelement, interval):
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return len(polygon_result_list)
         else:
             return 0
@@ -1085,7 +1087,7 @@ def search_within_polygon_dial(sublistelement, interval):
         polygon_result_list = [doc for doc in result]
         print("polygon_result_list", polygon_result_list)
         if len(polygon_result_list) != 0:
-            print("len_polygon_result_list", len(polygon_result_list))
+            # print("len_polygon_result_list", len(polygon_result_list))
             return len(polygon_result_list)
         else:
             return 0
@@ -1093,7 +1095,7 @@ def search_within_polygon_dial(sublistelement, interval):
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return len(polygon_result_list)
         else:
             return 0
@@ -1101,7 +1103,7 @@ def search_within_polygon_dial(sublistelement, interval):
         result = IntervalFour.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return len(polygon_result_list)
         else:
             return 0
@@ -1109,7 +1111,7 @@ def search_within_polygon_dial(sublistelement, interval):
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return len(polygon_result_list)
         else:
             return 0
@@ -1117,7 +1119,7 @@ def search_within_polygon_dial(sublistelement, interval):
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return len(polygon_result_list)
         else:
             return 0
@@ -1126,8 +1128,8 @@ def search_within_polygon_dial(sublistelement, interval):
         result = FilteredModel.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("foundsublistelement", sublistelement)
-            print("polygon_result_list", polygon_result_list)
+            # print("foundsublistelement", sublistelement)
+            # print("polygon_result_list", polygon_result_list)
             return len(polygon_result_list)
         else:
             return 0
@@ -1165,18 +1167,18 @@ def search_within_polygon_histogram(sublistelement, interval):
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return polygon_result_list
         else:
-            with open("not_found_sublist_elements.txt", "a") as file:
-                file.write(f"notfoundsublistelement: {sublistelement}\n")
+            # with open("not_found_sublist_elements.txt", "a") as file:
+            #     file.write(f"notfoundsublistelement: {sublistelement}\n")
             return 0
     elif interval == "4AM-7AM":
         result = IntervalTwo.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
-        print("polygon_result_list", polygon_result_list)
+        # print("polygon_result_list", polygon_result_list)
         if len(polygon_result_list) != 0:
-            print("len_polygon_result_list", len(polygon_result_list))
+            # print("len_polygon_result_list", len(polygon_result_list))
             return polygon_result_list
         else:
             return 0
@@ -1184,7 +1186,7 @@ def search_within_polygon_histogram(sublistelement, interval):
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return polygon_result_list
         else:
             return 0
@@ -1192,7 +1194,7 @@ def search_within_polygon_histogram(sublistelement, interval):
         result = IntervalFour.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return polygon_result_list
         else:
             return 0
@@ -1200,7 +1202,7 @@ def search_within_polygon_histogram(sublistelement, interval):
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return polygon_result_list
         else:
             return 0
@@ -1208,7 +1210,7 @@ def search_within_polygon_histogram(sublistelement, interval):
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("polygon_result_list", len(polygon_result_list))
+            # print("polygon_result_list", len(polygon_result_list))
             return polygon_result_list
         else:
             return 0
@@ -1219,8 +1221,8 @@ def search_within_polygon_histogram(sublistelement, interval):
         result = FilteredModel.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            print("foundsublistelement", sublistelement)
-            print("polygon_result_list", polygon_result_list)
+            # print("foundsublistelement", sublistelement)
+            # print("polygon_result_list", polygon_result_list)
             return polygon_result_list
         else:
             # print("notfoundelement", sublistelement)
@@ -1239,9 +1241,9 @@ def get_count_of_polygon(polygon_dict, interval):
 
     # Sort years for plotting
     sorted_years = sorted(year_counts.keys())
-    print("sorted_years",sorted_years)
+    # print("sorted_years",sorted_years)
     sorted_counts = [year_counts[year] for year in sorted_years]
-    print("sorted_counts", sorted_counts)
+    # print("sorted_counts", sorted_counts)
     df = pd.DataFrame({'Year': sorted_years, 'Count': sorted_counts})
     # group objects by year (sum objects by year)
     # Count crimes by time interval
@@ -1374,53 +1376,59 @@ def search_within_polygon_heatmap(sublistelement, interval):
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
     elif interval == "4AM-7AM":
         result = IntervalTwo.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
     elif interval == "8AM-11AM":
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
     elif interval == "12PM-3PM":
         result = IntervalFour.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
     elif interval == "4PM-7PM":
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
     elif interval == "8PM-11PM":
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
     else:
         # All intervals
         result = FilteredModel.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
-            # print("returned sublist element", sublistelement)
-            # print("new_data_list", polygon_result_list[0])
-            print("polygon_result_list", len(polygon_result_list))
-        return len(polygon_result_list)
+            # print("polygon_result_list", len(polygon_result_list))
+            return len(polygon_result_list)
+        else:
+            return 0
 
 
 def reverse_coordinates(geojson):
@@ -1549,10 +1557,12 @@ def create_grid(cell_size_meters):
 
 def create_interval_for_dial(grid):
     # return unique elements from list
+    start_time = time.time()
     grid_set = set(grid)
     sorted_grid_set = sorted(grid_set)
     number_of_intervals = 3
     split_data = np.array_split(sorted_grid_set, number_of_intervals)
+    print("--- create_interval_for_dial: %s seconds ---" % (time.time() - start_time))
     return split_data
 
 
@@ -1674,18 +1684,22 @@ def create_grid_heatmap_new_bbox(distance, latitude, longitude):
 
 
 def create_heatmap_polygon(distance, point):
+    start_time = time.time()
     grid = create_grid_heatmap_new(distance, point[1][0], point[1][1])
     grid_geojson = grid.to_json()
     grid_geojson_parsed = json.loads(grid_geojson)
     polygon = reverse_coordinates(grid_geojson_parsed)
+    print("--- create_heatmap_polygon time taken: %s seconds ---" % (time.time() - start_time))
     return polygon
 
 
 def create_current_polygon(distance, point):
+    start_time = time.time()
     box_polygon = create_polygon(distance, point[1][0], point[1][1])
     box_geojson = box_polygon.to_json()
     box_geojson_parsed = json.loads(box_geojson)
     polygon = reverse_coordinates(box_geojson_parsed)
+    print("--- create_current_polygon %s seconds ---" % (time.time() - start_time))
     return polygon
 
 def delete_heatmap_files():
@@ -2200,23 +2214,27 @@ def test_heatmap_grid():
 def success(safe, work, current, destination, interval, gridsize):
     geolocator = Nominatim(user_agent="project-flask")
     try:
+        total_start_time = time.time()
         start_time = time.time()
         safelocation = geolocator.geocode(safe)
         worklocation = geolocator.geocode(work)
         currentlocation = geolocator.geocode(current)
         destinationlocation = geolocator.geocode(destination)
+        print("--- geocoding time: %s seconds ---" % (time.time() - start_time))
+
+        start_time = time.time()
         user = UserData()
         user.add_safe_coordinates(safelocation.latitude, safelocation.longitude)
-        print("safecoordinates", user.safecoordinates)
+        # print("safecoordinates", user.safecoordinates)
 
         user.add_work_coordinates(worklocation.latitude, worklocation.longitude)
-        print("workcoordinates", user.workcoordinates)
+        # print("workcoordinates", user.workcoordinates)
 
         user.add_current_coordinates(currentlocation.latitude, currentlocation.longitude)
-        print("currentcoordinates", user.currentcoordinates)
+        # print("currentcoordinates", user.currentcoordinates)
 
         user.add_destination_coordinates(destinationlocation.latitude, destinationlocation.longitude)
-        print("destinationcoordinates", user.destinationcoordinates)
+        # print("destinationcoordinates", user.destinationcoordinates)
 
         gridsplit = gridsize.split()
         radius = gridsplit[0]
@@ -2227,6 +2245,7 @@ def success(safe, work, current, destination, interval, gridsize):
         user.units = unit
 
         meters = get_meters(user.radius, user.units)
+        print("--- assigning class and meter conversions %s seconds ---" % (time.time() - start_time))
 
         safepolygon = create_heatmap_polygon(meters, safelocation)
         workpolygon = create_heatmap_polygon(meters, worklocation)
@@ -2243,6 +2262,7 @@ def success(safe, work, current, destination, interval, gridsize):
         current_count_list = get_count_of_grid_heatmap(currentpolygon, user.interval)
         destination_count_list = get_count_of_grid_heatmap(destinationpolygon, user.interval)
 
+        start_time = time.time()
         middle_index = get_middle_element_of_count_list(safe_count_list)
         conditional_safe_center_point_list = [True if index == middle_index else
                                               False for index, num in enumerate(safe_count_list)]
@@ -2265,12 +2285,15 @@ def success(safe, work, current, destination, interval, gridsize):
         conditional_destination_center_point_list = [True if index == middle_index else
                                                      False for index, num in enumerate(destination_count_list)]
         middle_element_destination_count = destination_count_list[middle_index]
+        print("--- middle_element_destination_count : %s seconds ---" % (time.time() - start_time))
 
+        start_time = time.time()
         bounding_box_safe = create_bounding_box(user.safecoordinates[1], user.safecoordinates[0], meters)
         bounding_box_current = create_bounding_box(user.currentcoordinates[1], user.currentcoordinates[0], meters)
         bounding_box_work = create_bounding_box(user.workcoordinates[1], user.workcoordinates[0], meters)
         bounding_box_destination = create_bounding_box(user.destinationcoordinates[1], user.destinationcoordinates[0],
                                                        meters)
+        print("--- create_bounding_box : %s seconds ---" % (time.time() - start_time))
 
         dial_list = read_dial_grid(gridsize, interval)
         user.grid = dial_list
@@ -2279,15 +2302,16 @@ def success(safe, work, current, destination, interval, gridsize):
         interval_list2 = interval_lists[1]
         interval_list3 = interval_lists[2]
 
-        print("interval_list1:", interval_list1)
-        print("interval_list2:", interval_list2)
-        print("interval_list3:", interval_list3)
+        # print("interval_list1:", interval_list1)
+        # print("interval_list2:", interval_list2)
+        # print("interval_list3:", interval_list3)
 
         rows_list = ["A", "A", "A", "A", "A", "B", "B", "B", "B", "B", "C", "C", "C", "C", "C", "D", "D", "D", "D", "D",
                      "E", "E", "E", "E", "E"]
         col_list = ["v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5",
                     "v1", "v2", "v3", "v4", "v5", "v1", "v2", "v3", "v4", "v5"]
 
+        start_time = time.time()
         safe_dataframe = create_dataframe(rows_list, col_list, safe_count_list, conditional_safe_center_point_list)
 
         work_dataframe = create_dataframe(rows_list, col_list, work_count_list, conditional_work_center_point_list)
@@ -2309,6 +2333,8 @@ def success(safe, work, current, destination, interval, gridsize):
         df_current.to_csv('static/data/heatmap/heatmap_data_current.csv', index=False)
         df_destination.to_csv('static/data/heatmap/heatmap_data_destination.csv', index=False)
 
+        print("--- create_dataframe : %s seconds ---" % (time.time() - start_time))
+
         # safe_statistic = compute_range_percentage(middle_element_safe_count, dial_list)
         # current_statistic = compute_range_percentage(middle_element_current_count, dial_list)
         # work_statistic = compute_range_percentage(middle_element_work_count, dial_list)
@@ -2327,10 +2353,9 @@ def success(safe, work, current, destination, interval, gridsize):
 
         current_percentage, current_text = current_statistic_new[1], current_statistic_new[0]
 
-        print("--- Total time taken: %s seconds ---" % (time.time() - start_time))
-
         # number_of_years = get_difference_in_years()
         # print("number_of_years",number_of_years)
+        print("=== Total time taken: %s seconds ===" % (time.time() - total_start_time))
 
         return render_template('success.html', key=key, maxgridelement=max(user.grid),
                                radius=user.radius, interval=user.interval,
