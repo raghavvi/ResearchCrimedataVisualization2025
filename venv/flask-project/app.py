@@ -19,6 +19,8 @@ from models import Model
 import pandas as pd
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
+import requests
+import requests_cache
 
 load_dotenv()
 
@@ -164,40 +166,6 @@ def get_difference_in_years():
 # filtered_records.delete()
 # print("Records starting with 'COPY OF' have been deleted.")
 # print("Updated Model count", Model.objects.count())
-
-# @app.route('/removeduplicates')
-# def remove_duplicates():
-#     try:
-#         print("Initial IntervalTwo count:", IntervalTwo.objects.count())
-#
-#         # Group records by INCIDENT_NO
-#         incident_count = defaultdict(list)
-#         for record in IntervalTwo.objects():
-#             incident_no = record.INCIDENT_NO
-#             if incident_no:
-#                 incident_count[incident_no].append(record)
-#
-#         # Identify duplicates
-#         duplicates = {key: value for key, value in incident_count.items() if len(value) > 1}
-#         print("Duplicate keys before cleanup:", duplicates.keys())
-#
-#         # Safeguard: Log the duplicates to be deleted
-#         total_deletes = 0
-#
-#         # Process duplicates
-#         for incident_no, records in duplicates.items():
-#             # Keep the first record, delete the rest
-#             for duplicate in records[1:]:
-#                 print(f"Deleting record with ADDRESS_X: {duplicate.ADDRESS_X}, INCIDENT_NO: {incident_no}")
-#                 duplicate.delete()
-#                 total_deletes += 1
-#
-#         print(f"Total records deleted: {total_deletes}")
-#         print("Updated IntervalTwo count:", IntervalTwo.objects.count())
-#
-#         return jsonify({"status": "success", "message": f"Duplicates removed. Total deleted: {total_deletes}"}), 200
-#     except Exception as e:
-#         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # iterate through model objects list
@@ -2212,7 +2180,8 @@ def test_heatmap_grid():
 
 @app.route('/success/<safe>/<work>/<current>/<destination>/<interval>/<gridsize>')
 def success(safe, work, current, destination, interval, gridsize):
-    geolocator = Nominatim(user_agent="project-flask")
+    requests_cache.install_cache('geolocator_cache', expire_after=3600)
+    geolocator = Nominatim(user_agent="project-flask", timeout=10)
     try:
         total_start_time = time.time()
         start_time = time.time()
@@ -2396,7 +2365,11 @@ def success(safe, work, current, destination, interval, gridsize):
                                time_counts=counts
                                )
     except GeocoderTimedOut as e:
-        return render_template('404.html'), 404
+        print("Geocoding timed out. Please try again.", str(e))
+        return redirect(url_for("home"))
+    except Exception as e:
+        print("Unexpected error. Please try again", str(e))
+        return redirect(url_for("home"))
 
 
 @app.route("/", methods=["GET", "POST"])

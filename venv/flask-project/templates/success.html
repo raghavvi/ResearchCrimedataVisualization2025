@@ -369,10 +369,11 @@ function createAreaChart() {
 
     function textForPercentage(){
             let text = "{{current_text}}";
+            var location = "{{currentaddress}}";
             let percentage = parseFloat("{{current_percentage}}");
             console.log("text", text);
             console.log("percentage", percentage);
-            let message = "This falls within the "  + text + " " + percentage + "% of locations";
+            let message = location + " falls within the "  + text + " " + percentage + "% of locations";
             console.log("message", message);
             return message;
     }
