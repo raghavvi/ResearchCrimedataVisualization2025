@@ -13,6 +13,12 @@ class CustomJSONEncoder(json.JSONEncoder):
             return obj.hex()
         return super(CustomJSONEncoder, self).default(obj)
 
+class GeocodeCache(db.Document):
+    address = db.StringField(required=True, unique=True)
+    latitude = db.FloatField()
+    longitude = db.FloatField()
+    created_at = db.DateTimeField()
+
 
 # data should be filtered by frontend user. Need to validate
 class Model(db.DynamicDocument):

@@ -15,7 +15,7 @@ from geopy.geocoders import Nominatim
 from dotenv import load_dotenv
 import os
 from models import db, CustomJSONEncoder, IntervalOne, IntervalTwo, \
-    IntervalThree, IntervalFour, IntervalFive, IntervalSix, FilteredModel
+    IntervalThree, IntervalFour, IntervalFive, IntervalSix, FilteredModel, GeocodeCache
 from models import Model
 import pandas as pd
 import numpy as np
@@ -2190,6 +2190,24 @@ def test_heatmap_grid():
 
     return render_template('gridmap.html', polygon=grid_geojson_parsed, key=key)
 
+def get_geocoded_value(address):
+    cached_value = GeocodeCache.objects(address=address).first()
+    if cached_value:
+        return cached_value.latitude, cached_value.longitude
+    else:
+        # Perform geocoding
+        geolocator = Nominatim(user_agent="project-flask", timeout=10)
+        location = geolocator.geocode(address)
+        if location:
+            GeocodeCache(
+                address=address,
+                latitude=location.latitude,
+                longitude=location.longitude
+            ).save()
+            return location.latitude, location.longitude
+        else:
+            return None, None
+
 
 @app.route('/success/<safe>/<work>/<current>/<destination>/<interval>/<gridsize>')
 def success(safe, work, current, destination, interval, gridsize):
@@ -2198,14 +2216,28 @@ def success(safe, work, current, destination, interval, gridsize):
     try:
         total_start_time = time.time()
         start_time = time.time()
+        # Vr recomment
         safelocation = geolocator.geocode(safe)
         worklocation = geolocator.geocode(work)
         currentlocation = geolocator.geocode(current)
         destinationlocation = geolocator.geocode(destination)
+
+        # safelocation = get_geocoded_value(safe)
+        # worklocation = get_geocoded_value(work)
+        # currentlocation = get_geocoded_value(current)
+        # destinationlocation = get_geocoded_value(destination)
+
+        print("safelocation", safelocation)
+
         print("--- geocoding time: %s seconds ---" % (time.time() - start_time))
 
         start_time = time.time()
         user = UserData()
+
+        # safelocation = get_geocoded_value(safe)
+        # safelocation.latitude safelocation[0]
+        # safelocation.longitude safelocation[1]
+
         user.add_safe_coordinates(safelocation.latitude, safelocation.longitude)
         # print("safecoordinates", user.safecoordinates)
 
