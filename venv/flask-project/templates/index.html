@@ -132,6 +132,17 @@
 
 <br>
 
+<!-- Display flashed messages -->
+{% with messages = get_flashed_messages(with_categories=True) %}
+{% if messages %}
+<div>
+    {% for category, message in messages %}
+    <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
 <script>
     function openForm() {
         console.log("Button is clicked");

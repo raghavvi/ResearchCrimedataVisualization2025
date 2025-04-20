@@ -3,7 +3,8 @@ import math
 from collections import defaultdict, Counter
 from datetime import datetime
 import logging
-from flask import Flask, request, render_template, redirect, url_for, jsonify
+from logging.handlers import TimedRotatingFileHandler
+from flask import Flask, request, render_template, redirect, url_for, jsonify, flash
 import time
 from shapely.geometry import box
 from pyproj import Transformer, Proj, transform
@@ -22,10 +23,19 @@ from concurrent.futures import ThreadPoolExecutor
 import requests
 import requests_cache
 
+
+# check if the log directory exists.
+log_dir = os.path.join(os.path.dirname(__file__),'logs')
+os.makedirs(log_dir,exist_ok=True)
+
+
+
+
 load_dotenv()
 
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
+app.secret_key = 'your_secret_key'
 
 app.config['MONGODB_SETTINGS'] = {
     'db': 'sample_geospatial',
@@ -43,16 +53,19 @@ db.init_app(app)
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Configure logging
-logging.basicConfig(
-    filename="crimedata_app.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-)
+log_filename=os.path.join(log_dir,'crimedata_app.log')
+handler = TimedRotatingFileHandler(log_filename,when='midnight', interval=1, backupCount=2)
+handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+
 #
 # # Log messages
-# logging.info("This is an info message")
-# logging.warning("This is a warning")
-# logging.error("This is an error")
+logging.info("This is an info message")
+logging.warning("This is a warning")
+logging.error("This is an error")
 
 
 class UserData:
@@ -2180,7 +2193,7 @@ def test_heatmap_grid():
 
 @app.route('/success/<safe>/<work>/<current>/<destination>/<interval>/<gridsize>')
 def success(safe, work, current, destination, interval, gridsize):
-    requests_cache.install_cache('geolocator_cache', expire_after=3600)
+    requests_cache.install_cache(os.path.join(log_dir,'geolocator_cache'), expire_after=3600)
     geolocator = Nominatim(user_agent="project-flask", timeout=10)
     try:
         total_start_time = time.time()
@@ -2368,7 +2381,8 @@ def success(safe, work, current, destination, interval, gridsize):
         print("Geocoding timed out. Please try again.", str(e))
         return redirect(url_for("home"))
     except Exception as e:
-        print("Unexpected error. Please try again", str(e))
+        flash('An error occurred. Please try again.', 'e')
+        print("An error occurred. Please try again", str(e))
         return redirect(url_for("home"))
 
 

@@ -8,6 +8,19 @@
             position: relative;
         }
 
+        .flash-message {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+            border-radius: 5px;
+        }
+
+        .flash-message.error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
         .screen {
             background-color: black;
             width: 100%;
