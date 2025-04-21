@@ -29,8 +29,6 @@ log_dir = os.path.join(os.path.dirname(__file__),'logs')
 os.makedirs(log_dir,exist_ok=True)
 
 
-
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -57,15 +55,15 @@ log_filename=os.path.join(log_dir,'crimedata_app.log')
 handler = TimedRotatingFileHandler(log_filename,when='midnight', interval=1, backupCount=2)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
-logger = logging.getLogger()
+logger = logging.getLogger("crimedata_logger")
 logger.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 #
 # # Log messages
-logging.info("This is an info message")
-logging.warning("This is a warning")
-logging.error("This is an error")
+logger.info("This is an info message")
+logger.warning("This is a warning")
+logger.error("This is an error")
 
 
 class UserData:
@@ -423,13 +421,7 @@ def filter_dataset(interval, data):
 #     return col2_list
 
 def read_dial_grid(grid, interval):
-
-
-
-
-
     PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-
     base_path = os.path.join(PROJECT_DIR, 'static', 'data', 'dial')
 
     # Define a mapping of grid and interval combinations to file names
@@ -1050,7 +1042,7 @@ def compute_range_percentage(count, countlist):
         safe_percentage = np.sum(arr >= 100) / arr_length * 100
         category = "unsafe"
     rounded_percentage = round(safe_percentage, 2)
-    print("--- compute_range_percentage: %s seconds ---" % (time.time() - start_time))
+    #print("--- compute_range_percentage: %s seconds ---" % (time.time() - start_time))
     return [category, rounded_percentage]
 
 
@@ -1323,7 +1315,7 @@ def get_count_of_polygon(polygon_dict, interval):
     # Count crimes by time interval
     # map to a dataframe
     # x axis: year y axis: count
-    print("--- %s get_count_of_polygon secconds ---" % (time.time() - start_time))
+    logger.info("---  get_count_of_polygon %s seconds ---", time.time() - start_time)
     return df
 
 
@@ -1420,7 +1412,7 @@ def get_count_of_grid_heatmap(polygon_dict, interval):
 
     # count_list = [search_within_polygon_heatmap(sublist, interval) for sublist in sublists]
 
-    print("--- %s get_count_of_grid_heatmap secconds ---" % (time.time() - start_time))
+    logger.info("---  get_count_of_grid_heatmap %s seconds ---" , time.time() - start_time)
     return count_list
 
 
@@ -1636,7 +1628,7 @@ def create_interval_for_dial(grid):
     sorted_grid_set = sorted(grid_set)
     number_of_intervals = 3
     split_data = np.array_split(sorted_grid_set, number_of_intervals)
-    print("--- create_interval_for_dial: %s seconds ---" % (time.time() - start_time))
+    #print("--- create_interval_for_dial: %s seconds ---" % (time.time() - start_time))
     return split_data
 
 
@@ -1763,7 +1755,7 @@ def create_heatmap_polygon(distance, latitude, longitude):
     grid_geojson = grid.to_json()
     grid_geojson_parsed = json.loads(grid_geojson)
     polygon = reverse_coordinates(grid_geojson_parsed)
-    print("--- create_heatmap_polygon time taken: %s seconds ---" % (time.time() - start_time))
+    logger.info("--- create_heatmap_polygon time taken: %s seconds ---", time.time() - start_time)
     return polygon
 
 
@@ -1773,7 +1765,7 @@ def create_current_polygon(distance, latitude, longitude):
     box_geojson = box_polygon.to_json()
     box_geojson_parsed = json.loads(box_geojson)
     polygon = reverse_coordinates(box_geojson_parsed)
-    print("--- create_current_polygon %s seconds ---" % (time.time() - start_time))
+    logger.info("--- create_current_polygon %s seconds ---", time.time() - start_time)
     return polygon
 
 def delete_heatmap_files():
@@ -2353,7 +2345,7 @@ def success(safe, work, current, destination, interval, gridsize):
         else:
             print(f"Could not geocode the destination location: {destination}")
 
-        print("--- geocoding time: %s seconds ---" % (time.time() - start_time))
+        logger.info("--- geocoding time: %s seconds --- ", time.time() - start_time)
 
         start_time = time.time()
         user = UserData()
@@ -2382,7 +2374,7 @@ def success(safe, work, current, destination, interval, gridsize):
         user.units = unit
 
         meters = get_meters(user.radius, user.units)
-        print("--- assigning class and meter conversions %s seconds ---" % (time.time() - start_time))
+        logger.info("--- assigning class and meter conversions %s seconds ---", time.time() - start_time)
 
     #     currentpolygon = create_heatmap_polygon(meters, currentlocation[2])
     # destinationpolygon = create_heatmap_polygon(meters, destinationlocation[2])
@@ -2426,7 +2418,7 @@ def success(safe, work, current, destination, interval, gridsize):
         conditional_destination_center_point_list = [True if index == middle_index else
                                                      False for index, num in enumerate(destination_count_list)]
         middle_element_destination_count = destination_count_list[middle_index]
-        print("--- middle_element_destination_count : %s seconds ---" % (time.time() - start_time))
+        logger.info("--- middle_element_destination_count : %s seconds ---" , time.time() - start_time)
 
         start_time = time.time()
         bounding_box_safe = create_bounding_box(user.safecoordinates[1], user.safecoordinates[0], meters)
@@ -2434,7 +2426,7 @@ def success(safe, work, current, destination, interval, gridsize):
         bounding_box_work = create_bounding_box(user.workcoordinates[1], user.workcoordinates[0], meters)
         bounding_box_destination = create_bounding_box(user.destinationcoordinates[1], user.destinationcoordinates[0],
                                                        meters)
-        print("--- create_bounding_box : %s seconds ---" % (time.time() - start_time))
+        logger.info("--- create_bounding_box : %s seconds ---" , time.time() - start_time)
 
         dial_list = read_dial_grid(gridsize, interval)
         user.grid = dial_list
@@ -2474,7 +2466,7 @@ def success(safe, work, current, destination, interval, gridsize):
         df_current.to_csv('static/data/heatmap/heatmap_data_current.csv', index=False)
         df_destination.to_csv('static/data/heatmap/heatmap_data_destination.csv', index=False)
 
-        print("--- create_dataframe : %s seconds ---" % (time.time() - start_time))
+        logger.info("--- create_dataframe : %s seconds ---", time.time() - start_time)
 
         # safe_statistic = compute_range_percentage(middle_element_safe_count, dial_list)
         # current_statistic = compute_range_percentage(middle_element_current_count, dial_list)
@@ -2497,7 +2489,7 @@ def success(safe, work, current, destination, interval, gridsize):
 
         # number_of_years = get_difference_in_years()
         # print("number_of_years",number_of_years)
-        print("=== Total time taken: %s seconds ===" % (time.time() - total_start_time))
+        logger.info("=== Total time taken: %s seconds === ", time.time() - total_start_time)
 
         return render_template('success.html', key=key, maxgridelement=max(user.grid),
                                radius=user.radius, interval=user.interval,
@@ -2539,11 +2531,11 @@ def success(safe, work, current, destination, interval, gridsize):
                                )
     except GeocoderTimedOut as e:
         flash('Geocoding timed out. Please try again.')
-        print("Geocoding timed out. Please try again.", str(e))
+        logger.error("Geocoding timed out. Please try again. %s", str(e))
         return redirect(url_for("home"))
     except Exception as e:
         flash('An error occurred. Please try again.')
-        print("An error occurred. Please try again", str(e))
+        logger.error("An error occurred. Please try again. %s", str(e))
         return redirect(url_for("home"))
 
 
@@ -2559,6 +2551,7 @@ def home():
 
         if not all([safe, work, current, destination, interval, gridsize]):
             flash("All fields are required. Please fill in every input.")
+            logger.error("All fields are required.")
             return redirect(url_for("home"))
 
         return redirect(url_for('success', safe=safe, work=work, current=current, destination=destination,
