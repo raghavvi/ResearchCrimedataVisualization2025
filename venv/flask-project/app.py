@@ -2538,10 +2538,11 @@ def success(safe, work, current, destination, interval, gridsize):
                                time_counts=counts
                                )
     except GeocoderTimedOut as e:
+        flash('Geocoding timed out. Please try again.')
         print("Geocoding timed out. Please try again.", str(e))
         return redirect(url_for("home"))
     except Exception as e:
-        flash('An error occurred. Please try again.', 'e')
+        flash('An error occurred. Please try again.')
         print("An error occurred. Please try again", str(e))
         return redirect(url_for("home"))
 
@@ -2555,6 +2556,10 @@ def home():
         destination = request.form.get("destination")
         interval = request.form.get("interval")
         gridsize = request.form.get("gridsize")
+
+        if not all([safe, work, current, destination, interval, gridsize]):
+            flash("All fields are required. Please fill in every input.")
+            return redirect(url_for("home"))
 
         return redirect(url_for('success', safe=safe, work=work, current=current, destination=destination,
                                 interval=interval, gridsize=gridsize))
