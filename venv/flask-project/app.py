@@ -422,8 +422,75 @@ def filter_dataset(interval, data):
 #     col2_list = df["col2"].tolist()
 #     return col2_list
 
-
 def read_dial_grid(grid, interval):
+
+
+
+
+
+    PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    base_path = os.path.join(PROJECT_DIR, 'static', 'data', 'dial')
+
+    # Define a mapping of grid and interval combinations to file names
+
+    file_mapping = {
+
+        ("700 meters", "12AM-11PM"): "700metersAll.json",
+
+        ("700 meters", "12AM-3AM"): "700meters12AM-3AM.json",
+
+        ("700 meters", "4AM-7AM"): "700meters4AM-7AM.json",
+
+        ("700 meters", "8AM-11AM"): "700meters8AM-11AM.json",
+
+        ("700 meters", "12PM-3PM"): "700meters12PM-3PM.json",
+
+        ("700 meters", "4PM-7PM"): "700meters4PM-7PM.json",
+
+        ("700 meters", "8PM-11PM"): "700meters8PM-11PM.json",
+
+        ("750 meters", "12AM-11PM"): "750metersAll.json",
+
+        ("750 meters", "12AM-3AM"): "750meters12AM-3AM.json",
+
+        ("750 meters", "4AM-7AM"): "750meters4AM-7AM.json",
+
+        ("750 meters", "8AM-11AM"): "750meters8AM-11AM.json",
+
+        ("750 meters", "12PM-3PM"): "750meters12PM-3PM.json",
+
+        ("750 meters", "4PM-7PM"): "750meters4PM-7PM.json",
+
+        ("750 meters", "8PM-11PM"): "750meters8PM-11PM.json",
+
+        ("1 mile", "12AM-11PM"): "1mileAll.json",
+
+        ("1 mile", "12AM-3AM"): "1mile12AM-3AM.json",
+
+        ("1 mile", "4AM-7AM"): "1mile4AM-7AM.json",
+
+        ("1 mile", "8AM-11AM"): "1mile8AM-11AM.json",
+        ("1 mile", "12PM-3PM"): "1mile12PM-3PM.json",
+        ("1 mile", "4PM-7PM"): "1mile4PM-7PM.json",
+        ("1 mile", "8PM-11PM"): "1mile8PM-11PM.json",
+        # Add other grid and interval combinations as needed
+    }
+    # Get the file name based on the grid and interval
+    file_name = file_mapping.get((grid, interval))
+    if not file_name:
+        raise ValueError(f"No file mapping found for grid: {grid}, interval: {interval}")
+    # Construct the full file path
+    file_path = os.path.join(base_path, file_name)
+    # Read and return the JSON data
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        appended_list = data.get("diallist", [])
+    return appended_list
+
+
+
+def read_dial_grid2(grid, interval):
     file_all_700meters = os.path.join('static', 'data', 'dial', '700metersAll.json')
     file_12am_3am_700meters = os.path.join('static', 'data', 'dial', '700meters12AM-3AM.json')
     file_4am_7am_700meters = os.path.join('static', 'data', 'dial', '700meters4AM-7AM.json')
@@ -970,13 +1037,35 @@ def create_dataframe(rowlist, collist, countlist, centerlist):
 def compute_range_percentage(count, countlist):
     start_time = time.time()
     arr = np.array(countlist)
+    arr_length = len(arr)
+    if arr_length == 0:
+        return ["unknown", 0]
+    if count < 50:
+        safe_percentage = np.sum((arr >= 0) & (arr <= 50)) / arr_length * 100
+        category = "safest"
+    elif 50 <= count < 100:
+        safe_percentage = np.sum((arr >= 50) & (arr < 100)) / arr_length * 100
+        category = "moderate"
+    else:
+        safe_percentage = np.sum(arr >= 100) / arr_length * 100
+        category = "unsafe"
+    rounded_percentage = round(safe_percentage, 2)
+    print("--- compute_range_percentage: %s seconds ---" % (time.time() - start_time))
+    return [category, rounded_percentage]
+
+
+def compute_range_percentage2(count, countlist):
+    start_time = time.time()
+    arr = np.array(countlist)
     unique_elements, counts = np.unique(arr, return_counts=True)
     count_dict = defaultdict(int, zip(unique_elements, counts))
+    print("count_dict", count_dict)
 
     arr_length = len(arr)
-    # print("arr_length:", arr_length)
+    print("arr_length:", arr_length)
 
     if count in range(0, 50):
+        print("safe count", count)
         filtered_dict = {key: value for key, value in count_dict.items() if 0 <= key <= 50}
         # print("filtered_dict:", filtered_dict)
 
@@ -991,6 +1080,7 @@ def compute_range_percentage(count, countlist):
         return return_value
 
     elif count in range(50, 100):
+        print("moderate count", count)
         filtered_dict = {key: value for key, value in count_dict.items() if 50 <= key < 100}
         count_sum = sum(filtered_dict.values())
         moderate_percentage = count_sum / arr_length * 100
@@ -998,11 +1088,14 @@ def compute_range_percentage(count, countlist):
         return ["moderate", rounded_up_moderate_percentage]
 
     elif count in range(100, max(arr) + 1):
+        print("heavy count", count)
         filtered_dict = {key: value for key, value in count_dict.items() if 100 <= key <= max(arr)}
         count_sum = sum(filtered_dict.values())
         heavy_percentage = count_sum / arr_length * 100
         rounded_up_heavy_percentage = math.ceil(heavy_percentage * 100) / 100
         return ["heaviest", rounded_up_heavy_percentage]
+    else:
+        print("No range found")
 
 
 
@@ -1664,9 +1757,9 @@ def create_grid_heatmap_new_bbox(distance, latitude, longitude):
     return grid_gdf
 
 
-def create_heatmap_polygon(distance, point):
+def create_heatmap_polygon(distance, latitude, longitude):
     start_time = time.time()
-    grid = create_grid_heatmap_new(distance, point[1][0], point[1][1])
+    grid = create_grid_heatmap_new(distance, latitude, longitude)
     grid_geojson = grid.to_json()
     grid_geojson_parsed = json.loads(grid_geojson)
     polygon = reverse_coordinates(grid_geojson_parsed)
@@ -1674,9 +1767,9 @@ def create_heatmap_polygon(distance, point):
     return polygon
 
 
-def create_current_polygon(distance, point):
+def create_current_polygon(distance, latitude, longitude):
     start_time = time.time()
-    box_polygon = create_polygon(distance, point[1][0], point[1][1])
+    box_polygon = create_polygon(distance, latitude, longitude)
     box_geojson = box_polygon.to_json()
     box_geojson_parsed = json.loads(box_geojson)
     polygon = reverse_coordinates(box_geojson_parsed)
@@ -2192,18 +2285,22 @@ def test_heatmap_grid():
 
 def get_geocoded_value(address):
     cached_value = GeocodeCache.objects(address=address).first()
-    if cached_value:
+
+    if cached_value and 'latitude' in cached_value and 'longitude' in cached_value:
+        print("---found in cached value ----")
         return cached_value.latitude, cached_value.longitude
     else:
         # Perform geocoding
         geolocator = Nominatim(user_agent="project-flask", timeout=10)
         location = geolocator.geocode(address)
         if location:
+            #store the new geo-coded value in the cache
             GeocodeCache(
                 address=address,
                 latitude=location.latitude,
                 longitude=location.longitude
             ).save()
+            print("---performed caching and stored----")
             return location.latitude, location.longitude
         else:
             return None, None
@@ -2212,42 +2309,68 @@ def get_geocoded_value(address):
 @app.route('/success/<safe>/<work>/<current>/<destination>/<interval>/<gridsize>')
 def success(safe, work, current, destination, interval, gridsize):
     requests_cache.install_cache(os.path.join(log_dir,'geolocator_cache'), expire_after=3600)
-    geolocator = Nominatim(user_agent="project-flask", timeout=10)
+   # geolocator = Nominatim(user_agent="project-flask", timeout=10)
     try:
         total_start_time = time.time()
         start_time = time.time()
         # Vr recomment
-        safelocation = geolocator.geocode(safe)
-        worklocation = geolocator.geocode(work)
-        currentlocation = geolocator.geocode(current)
-        destinationlocation = geolocator.geocode(destination)
+        # safelocation = geolocator.geocode(safe)
+        # worklocation = geolocator.geocode(work)
+        # currentlocation = geolocator.geocode(current)
+        # destinationlocation = geolocator.geocode(destination)
 
         # safelocation = get_geocoded_value(safe)
         # worklocation = get_geocoded_value(work)
         # currentlocation = get_geocoded_value(current)
         # destinationlocation = get_geocoded_value(destination)
 
-        print("safelocation", safelocation)
+        #call the function with the safe location
+        safe_latitude, safe_longitude = get_geocoded_value(safe)
+        if safe_latitude and safe_longitude:
+            print(f"Geocoded coordinates for 'Safe location': Latitude={safe_latitude}, Longitude ={safe_longitude}")
+        else:
+            print(f"Could not geocode the safe location: {safe}")
+
+        #call the function with the work location
+        work_latitude, work_longitude = get_geocoded_value(work)
+        if work_latitude and work_longitude:
+            print(f"Geocoded coordinates for 'Work location': Latitude={work_latitude}, Longitude ={work_longitude}")
+        else:
+            print(f"Could not geocode the work location: {work}")
+
+        #call the function with the current location
+        current_latitude, current_longitude = get_geocoded_value(current)
+        if current_latitude and current_longitude:
+            print(f"Geocoded coordinates for 'current location': Latitude={current_latitude}, Longitude ={current_longitude}")
+        else:
+            print(f"Could not geocode the current location: {current}")
+
+
+        #call the function with the destination location
+        destination_latitude, destination_longitude = get_geocoded_value(destination)
+        if destination_latitude and destination_longitude:
+            print(f"Geocoded coordinates for 'destination location': Latitude={destination_latitude}, Longitude ={destination_longitude}")
+        else:
+            print(f"Could not geocode the destination location: {destination}")
 
         print("--- geocoding time: %s seconds ---" % (time.time() - start_time))
 
         start_time = time.time()
         user = UserData()
 
-        # safelocation = get_geocoded_value(safe)
-        # safelocation.latitude safelocation[0]
-        # safelocation.longitude safelocation[1]
+        user.add_safe_coordinates(safe_latitude, safe_longitude)
+        user.add_work_coordinates(work_latitude, work_longitude)
+        user.add_current_coordinates(current_latitude, current_longitude)
+        user.add_destination_coordinates(destination_latitude, destination_longitude)
 
-        user.add_safe_coordinates(safelocation.latitude, safelocation.longitude)
+        # user.add_safe_coordinates(safelocation.latitude, safelocation.longitude)
+        # user.add_work_coordinates(worklocation.latitude, worklocation.longitude)
+        # user.add_current_coordinates(currentlocation.latitude, currentlocation.longitude)
+        # user.add_destination_coordinates(destinationlocation.latitude, destinationlocation.longitude)
+
         # print("safecoordinates", user.safecoordinates)
-
-        user.add_work_coordinates(worklocation.latitude, worklocation.longitude)
         # print("workcoordinates", user.workcoordinates)
-
-        user.add_current_coordinates(currentlocation.latitude, currentlocation.longitude)
         # print("currentcoordinates", user.currentcoordinates)
-
-        user.add_destination_coordinates(destinationlocation.latitude, destinationlocation.longitude)
         # print("destinationcoordinates", user.destinationcoordinates)
 
         gridsplit = gridsize.split()
@@ -2261,12 +2384,16 @@ def success(safe, work, current, destination, interval, gridsize):
         meters = get_meters(user.radius, user.units)
         print("--- assigning class and meter conversions %s seconds ---" % (time.time() - start_time))
 
-        safepolygon = create_heatmap_polygon(meters, safelocation)
-        workpolygon = create_heatmap_polygon(meters, worklocation)
-        currentpolygon = create_heatmap_polygon(meters, currentlocation)
-        destinationpolygon = create_heatmap_polygon(meters, destinationlocation)
+    #     currentpolygon = create_heatmap_polygon(meters, currentlocation[2])
+    # destinationpolygon = create_heatmap_polygon(meters, destinationlocation[2])
 
-        current_box = create_current_polygon(meters, currentlocation)
+        safepolygon = create_heatmap_polygon(meters, safe_latitude, safe_longitude)
+        workpolygon = create_heatmap_polygon(meters, work_latitude, work_longitude)
+        currentpolygon = create_heatmap_polygon(meters, current_latitude, current_longitude)
+        destinationpolygon = create_heatmap_polygon(meters, destination_latitude, destination_longitude)
+
+        # current_box = create_current_polygon(meters, currentlocation[2])
+        current_box = create_current_polygon(meters, current_latitude, current_longitude)
         count_dataframe = get_count_of_polygon(current_box, user.interval)
         years = count_dataframe['Year'].tolist()
         counts = count_dataframe['Count'].tolist()
@@ -2364,6 +2491,7 @@ def success(safe, work, current, destination, interval, gridsize):
         # print("interval", interval)
 
         current_statistic_new = compute_range_percentage(middle_element_current_count, dial_list)
+
 
         current_percentage, current_text = current_statistic_new[1], current_statistic_new[0]
 

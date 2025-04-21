@@ -18,6 +18,11 @@ class GeocodeCache(db.Document):
     latitude = db.FloatField()
     longitude = db.FloatField()
     created_at = db.DateTimeField()
+    meta = {
+        'indexes': [
+            "address"
+        ]
+    }
 
 
 # data should be filtered by frontend user. Need to validate
