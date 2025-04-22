@@ -1,5 +1,4 @@
-<!DOCTYPE html>'
-<html lang="en">
+<!DOCTYPE html>' <html lang="en">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 <script src="https://rawcdn.githack.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
@@ -9,31 +8,23 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
 <head>
-
     <script src="https://d3js.org/d3.v6.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 
 <body>
 <div class="container">
     <div class="phone-container">
         <div class="screen">
             <div class="header-container">
-
             </div>
-
-
-            <div id ="main-container">
-
+            <div id="main-container">
                 <div class="app-screen">
-
                     <div class="select-container">
                         <select name="location" id="location">
                             <option value="current">current</option>
@@ -42,59 +33,39 @@
                             <option value="destination">destination</option>
                         </select>
                     </div>
-
                     <div class="map-container">
                         <div id="map"></div>
                     </div>
-
                     <div class="visual-button-container">
                         <i onclick="openVisualization()" class="arrow up"></i>
                     </div>
-
                     <div class="bottom-element" id="visualizationForm">
-                        <span class="closeVis" onclick="closeVisualization()"
-                        style="float: right; margin-right: 10px">&times;</span>
-
+                        <span class="closeVis" onclick="closeVisualization()" style="float: right; margin-right: 10px">&times;</span>
                         <ul class="nav nav-tabs">
                             <li><a data-toggle="tab" href="#menu1">Histogram</a></li>
                             <li><a data-toggle="tab" href="#menu2">Area</a></li>
                             <li><a data-toggle="tab" href="#menu3">Heatmap</a></li>
                             <li><a data-toggle="tab" href="#menu4">Dial</a></li>
                         </ul>
-
-
                         <div class="tab-content">
-
                             <div id="menu1" class="tab-pane fade in active">
                                 <div style="height: 270px;">
                                     <p id="textelement2"></p>
                                     <p id="textelement"></p>
                                     <div id="histogram"></div>
                                 </div>
-<!--                                <p id="histogram-descriptor" style="font-size: 10px;" ></p>-->
-
+                                <!--                                <p id="histogram-descriptor" style="font-size: 10px;" ></p>-->
                             </div>
-
                             <div id="menu2" class="tab-pane fade">
                                 <div id="container2" style="height: 250px; width: 250px;">
                                 </div>
                             </div>
-
                             <div id="menu3" class="tab-pane fade">
-                                <div class="heatmap-dropdown">
-                                    <select name="heatmap-dropdown" onchange="val()" id="heatmap-dropdown">
-                                        <option value="current">current</option>
-                                        <option value="safe">safe</option>
-                                        <option value="work">work</option>
-                                        <option value="destination">destination</option>
-                                    </select>
-                                </div>
                                 <p id="heatmap-title" style="text-align: center; font-size: 10px;
                                 word-wrap: break-word; margin-bottom: 5px;">
-                                    </p>
+                                </p>
                                 <div id="heatmap"></div>
                             </div>
-
                             <div id="menu4" class="tab-pane fade">
                                 <br>
                                 <div id="container" style="height: 300px;">
@@ -102,888 +73,621 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 </div>
 </div>
-
 </body>
-
-
-
 <script>
-    function openVisualization() {
-        console.log("Button is clicked.");
-        document.getElementById("visualizationForm").style.display = "block";
-    }
+function openVisualization() {
+	console.log("Button is clicked.");
+	document.getElementById("visualizationForm").style.display = "block";
+}
 
-    function closeVisualization() {
-        console.log("Close Button is clicked Function is accessed");
-        document.getElementById("visualizationForm").style.display = "none";
-    }
+function closeVisualization() {
+	console.log("Close Button is clicked Function is accessed");
+	document.getElementById("visualizationForm").style.display = "none";
+}
 </script>
-
 <script>
+var map;
+var latsafecoordinate = parseFloat("{{latsafecoordinate}}");
+var lonsafecoordinate = parseFloat("{{lonsafecoordinate}}");
+var latcurrentcoordinate = parseFloat("{{latcurrentcoordinate}}");
+var loncurrentcoordinate = parseFloat("{{loncurrentcoordinate}}");
+var latworkcoordinate = parseFloat("{{latworkcoordinate}}");
+var lonworkcoordinate = parseFloat("{{lonworkcoordinate}}");
+var latdestinationcoordinate = parseFloat("{{latdestinationcoordinate}}");
+var londestinationcoordinate = parseFloat("{{londestinationcoordinate}}");
+var radius = parseFloat("{{radius}}");
+var currentBoxNorth = parseFloat("{{bounding_box_current["
+	north "]}}");
+var currentBoxEast = parseFloat("{{bounding_box_current["
+	east "]}}");
+var currentBoxWest = parseFloat("{{bounding_box_current["
+	west "]}}");
+var currentBoxSouth = parseFloat("{{bounding_box_current["
+	south "]}}");
+var safeBoxNorth = parseFloat("{{bounding_box_safe["
+	north "]}}");
+var safeBoxEast = parseFloat("{{bounding_box_safe["
+	east "]}}");
+var safeBoxWest = parseFloat("{{bounding_box_safe["
+	west "]}}");
+var safeBoxSouth = parseFloat("{{bounding_box_safe["
+	south "]}}");
+var workBoxNorth = parseFloat("{{bounding_box_work["
+	north "]}}");
+var workBoxEast = parseFloat("{{bounding_box_work["
+	east "]}}");
+var workBoxWest = parseFloat("{{bounding_box_work["
+	west "]}}");
+var workBoxSouth = parseFloat("{{bounding_box_work["
+	south "]}}");
+var destinationBoxNorth = parseFloat("{{bounding_box_destination["
+	north "]}}");
+var destinationBoxEast = parseFloat("{{bounding_box_destination["
+	east "]}}");
+var destinationBoxWest = parseFloat("{{bounding_box_destination["
+	west "]}}");
+var destinationBoxSouth = parseFloat("{{bounding_box_destination["
+	south "]}}");
+var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
+var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
+var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
+var middle_element_destination_count = parseFloat("{{middle_element_destination_count}}");
+const currentLocation = "{{currentaddress}}";
+const safeLocation = "{{safeaddress}}";
+const workLocation = "{{workaddress}}";
+const destinationLocation = "{{destinationaddress}}"
+let currentArray = [];
+let safeArray = [];
+let workArray = [];
+let destinationArray = [];
+let locationType = "current";
 
+function updatedMap() {
+	var latitude = 39.134556;
+	var longitude = -84.515413;
+	var mapProp = {
+		center: new google.maps.LatLng(latitude, longitude),
+		zoom: 17,
+	};
+	map = new google.maps.Map(document.getElementById("map"), mapProp);
+	const rectangle1 = new google.maps.Rectangle({
+		strokeColor: "#FFC0CB",
+		strokeOpacity: 0.8,
+		strokeWeight: 2,
+		fillColor: "#FFC0CB",
+		fillOpacity: 0.35,
+		map,
+		bounds: {
+			north: currentBoxNorth,
+			south: currentBoxSouth,
+			east: currentBoxEast,
+			west: currentBoxWest,
+		},
+		title: "Current Location: " + middle_element_current_count.toString()
+	});
+	const rectangle2 = new google.maps.Rectangle({
+		strokeColor: "#13D27E",
+		strokeOpacity: 0.8,
+		strokeWeight: 2,
+		fillColor: "#13D27E",
+		fillOpacity: 0.35,
+		map,
+		bounds: {
+			north: safeBoxNorth,
+			south: safeBoxSouth,
+			east: safeBoxEast,
+			west: safeBoxWest,
+		},
+		title: "Safe Location: " + middle_element_safe_count.toString()
+	});
+	const rectangle3 = new google.maps.Rectangle({
+		strokeColor: "#3549EB",
+		strokeOpacity: 0.8,
+		strokeWeight: 2,
+		fillColor: "#3549EB",
+		fillOpacity: 0.35,
+		map,
+		bounds: {
+			north: workBoxNorth,
+			south: workBoxSouth,
+			east: workBoxEast,
+			west: workBoxWest,
+		},
+		title: "Work Location: " + middle_element_work_count.toString()
+	});
+	const rectangle4 = new google.maps.Rectangle({
+		strokeColor: "#8D70E0",
+		strokeOpacity: 0.8,
+		strokeWeight: 2,
+		fillColor: "#8D70E0",
+		fillOpacity: 0.35,
+		map,
+		bounds: {
+			north: destinationBoxNorth,
+			south: destinationBoxSouth,
+			east: destinationBoxEast,
+			west: destinationBoxWest,
+		},
+		title: "Destination Location: " + middle_element_destination_count.toString()
+	});
+	google.maps.event.addListener(rectangle1, 'mouseover', function() {
+		this.getMap().getDiv().setAttribute('title', this.get('title'));
+	});
+	google.maps.event.addListener(rectangle1, 'mouseout', function() {
+		this.getMap().getDiv().removeAttribute('title');
+	});
+	google.maps.event.addListener(rectangle2, 'mouseover', function() {
+		this.getMap().getDiv().setAttribute('title', this.get('title'));
+	});
+	google.maps.event.addListener(rectangle2, 'mouseout', function() {
+		this.getMap().getDiv().removeAttribute('title');
+	});
+	google.maps.event.addListener(rectangle3, 'mouseover', function() {
+		this.getMap().getDiv().setAttribute('title', this.get('title'));
+	});
+	google.maps.event.addListener(rectangle3, 'mouseout', function() {
+		this.getMap().getDiv().removeAttribute('title');
+	});
+	google.maps.event.addListener(rectangle4, 'mouseover', function() {
+		this.getMap().getDiv().setAttribute('title', this.get('title'));
+	});
+	google.maps.event.addListener(rectangle4, 'mouseout', function() {
+		this.getMap().getDiv().removeAttribute('title');
+	});
+}
+document.getElementById("location").addEventListener("change", function() {
+	var selectedValue = this.value;
+	console.log("selectedValue", selectedValue);
+	const heatmapPaths = {
+		current: "/static/data/heatmap/heatmap_data_current.csv",
+		safe: "/static/data/heatmap/heatmap_data_safe.csv",
+		work: "/static/data/heatmap/heatmap_data_work.csv",
+		destination: "/static/data/heatmap/heatmap_data_destination.csv",
+	};
+	if(selectedValue === "current") {
+		var latLng = {
+			lat: latcurrentcoordinate,
+			lng: loncurrentcoordinate
+		};
+		// Zoom into the selected coordinates
+		map.setCenter(latLng);
+		map.setZoom(14.5); // Adjust the zoom level as necessary
+		//return current path and address
+		const currentPath = heatmapPaths["current"]
+		currentArray = [currentLocation, currentPath];
+		console.log("currentArray", currentArray);
+		locationType = "current";
+		return currentArray;
+	} else if(selectedValue === "safe") {
+		var latLng = {
+			lat: latsafecoordinate,
+			lng: lonsafecoordinate
+		};
+		// Zoom into the selected coordinates
+		map.setCenter(latLng);
+		map.setZoom(14.5); // Adjust the zoom level as necessary
+		const safePath = heatmapPaths["safe"]
+		safeArray = [safeLocation, safePath];
+		console.log("safeArray", safeArray);
+		locationType = "safe";
+		return safeArray;
+	} else if(selectedValue === "work") {
+		var latLng = {
+			lat: latworkcoordinate,
+			lng: lonworkcoordinate
+		};
+		// Zoom into the selected coordinates
+		map.setCenter(latLng);
+		map.setZoom(14.5);
+		const workPath = heatmapPaths["work"]
+		workArray = [workLocation, workPath];
+		console.log("workArray", workArray);
+		locationType = "work";
+		return workArray;
+	} else if(selectedValue === "destination") {
+		var latLng = {
+			lat: latdestinationcoordinate,
+			lng: londestinationcoordinate
+		};
+		// Zoom into the selected coordinates
+		map.setCenter(latLng);
+		map.setZoom(14.5);
+		const destinationPath = heatmapPaths["destination"]
+		destinationArray = [destinationLocation, destinationPath];
+		console.log("destinationArray", destinationArray);
+		locationType = "destination";
+		return destinationArray;
+	}
+});
+
+function val() {
+	let safePath = "/static/data/heatmap/heatmap_data_safe.csv";
+	let workPath = "/static/data/heatmap/heatmap_data_work.csv";
+	let currentPath = "/static/data/heatmap/heatmap_data_current.csv";
+	let destinationPath = "/static/data/heatmap/heatmap_data_destination.csv";
+	dropdownValue = document.getElementById("location").value;
+	if(locationType == "safe") {
+		return safeArray[1];
+	} else if(locationType == "work") {
+		return workArray[1];
+	} else if(locationType == "current") {
+		return currentArray[1];
+	} else if(locationType == "destination") {
+		return destinationArray[1];
+	}
+}
+
+function callHeatmap() {
+	const dropdown = document.getElementById("location");
+	dropdown.removeEventListener("change", handleLocationChange);
+	dropdown.addEventListener("change", handleLocationChange);
+	document.addEventListener("DOMContentLoaded", function() {
+		d3.select("#heatmap").selectAll("*").remove();
+		let defaultValue = "/static/data/heatmap/heatmap_data_current.csv";
+		addHeatmap(defaultValue);
+	});
+}
+
+function handleLocationChange() {
+	d3.select("#heatmap").selectAll("*").remove();
+	let dropDownReturnValue = val();
+	console.log("dropDownReturnValue", dropDownReturnValue);
+	addHeatmap(dropDownReturnValue);
+}
+
+function setHeatMapLabels(dropDownReturnValue) {
+	// pass dropDownReturnValue to tooltip to return string and color in array
+	let currentLocationArray = [];
+	let safeLocationArray = [];
+	let workLocationArray = [];
+	let destinationLocationArray = [];
+	let locationStr = "";
+	let locationColor = "";
+	var currentLocation = "{{currentaddress}}";
+	var safeLocation = "{{safeaddress}}";
+	var workLocation = "{{workaddress}}";
+	var destinationLocation = "{{destinationaddress}}";
+	if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_current.csv") {
+		locationStr = currentLocation;
+		locationColor = "#89CFF0";
+		currentLocationArray.push(locationStr);
+		currentLocationArray.push(locationColor);
+		return currentLocationArray;
+	} else if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_safe.csv") {
+		locationStr = safeLocation;
+		locationColor = "#89CFF0";
+		safeLocationArray.push(locationStr);
+		safeLocationArray.push(locationColor);
+		return safeLocationArray;
+	} else if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_work.csv") {
+		locationStr = workLocation;
+		locationColor = "#89CFF0";
+		workLocationArray.push(locationStr);
+		workLocationArray.push(locationColor);
+		return workLocationArray;
+	} else if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_destination.csv") {
+		locationStr = destinationLocation;
+		locationColor = "#89CFF0";
+		destinationLocationArray.push(locationStr);
+		destinationLocationArray.push(locationColor);
+		return destinationLocationArray;
+	}
+}
+
+function addHeatmap(dropDownReturnValue) {
+	var maxGridElement = parseFloat("{{maxgridelement}}");
+	var interval = "{{interval}}";
+	console.log("maxGridElement", maxGridElement);
+	locationArray = setHeatMapLabels(dropDownReturnValue)
+	let locationStr = locationArray[0].toString();
+	document.getElementById("heatmap-title").innerHTML = `Hazardous crimes relative to <strong>${locationStr}</strong> from ${interval} over 13 years`;
+	// set the dimensions and margins of the graph
+	const margin = {
+			top: 20,
+			right: 35,
+			bottom: 35,
+			left: 30
+		},
+		width = 300 - margin.left - margin.right,
+		height = 150 - margin.top - margin.bottom;
+	// append the svg object to the body of the page
+	const svg = d3.select("#heatmap").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom + 30).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+	// Labels of row and columns
+	const myGroups = ["A", "B", "C", "D", "E"]
+	const myVars = ["v1", "v2", "v3", "v4", "v5"]
+	// Build X scales and axis:
+	const x = d3.scaleBand().range([0, width]).domain(myGroups).padding(0.01);
+	svg.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(x))
+	// Build X scales and axis:
+	const y = d3.scaleBand().range([height, 0]).domain(myVars).padding(0.01);
+	svg.append("g").call(d3.axisLeft(y));
+	// Build color scale
+	const myColor = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([1, maxGridElement]);
+	const legendWidth = 100;
+	const legendHeight = 10;
+	const legendSvg = svg.append("g").attr("class", "legend").attr("transform", `translate(${(width - legendWidth) / 2}, ${height + margin.bottom - 5})`);
+	// Append gradient defs
+	const defs = svg.append("defs");
+	const linearGradient = defs.append("linearGradient").attr("id", "linear-gradient");
+	linearGradient.attr("x1", "0%").attr("y1", "0%").attr("x2", "100%").attr("y2", "0%");
+	const gradientStops = [{
+		offset: "0%",
+		color: d3.interpolatePurples(0)
+	}, {
+		offset: "25%",
+		color: d3.interpolatePurples(0.25)
+	}, {
+		offset: "50%",
+		color: d3.interpolatePurples(0.5)
+	}, {
+		offset: "75%",
+		color: d3.interpolatePurples(0.75)
+	}, {
+		offset: "100%",
+		color: d3.interpolatePurples(1)
+	}, ];
+	gradientStops.forEach(stop => {
+		linearGradient.append("stop").attr("offset", stop.offset).attr("stop-color", stop.color);
+	});
+	legendSvg.append("rect").attr("width", legendWidth).attr("height", legendHeight).style("fill", "url(#linear-gradient)").style("stroke", "black");
+	legendSvg.append("text").attr("x", 0).attr("y", legendHeight + 10).attr("font-size", "8px").attr("text-anchor", "start").text("1");
+	legendSvg.append("text").attr("x", legendWidth).attr("y", legendHeight + 10).attr("font-size", "8px").attr("text-anchor", "end").text(maxGridElement);
+	// Load the CSV file
+	d3.csv(dropDownReturnValue).then(function(data) {
+		// This code runs after the CSV file has been loaded
+		console.log("file", dropDownReturnValue);
+		console.log("data", data);
+		// Example: Process the CSV data
+		data.forEach(function(d) {
+			d.countlist = +d.countlist; // Convert a column to a number
+		});
+		// create a tooltip
+		const tooltip = d3.select("#heatmap").append("div").style("opacity", 0).attr("class", "tooltip").style("background-color", "#466c9e").style("border-radius", "5px").style("width", "55px").style("height", "15px").style("font-size", ".575rem").style("text-align", "center").style("line-height", "15px").style("color", "#fff");
+		// Three function that change the tooltip when user hover / move / leave a cell
+		const mouseover = function(event, d) {
+			tooltip.style("opacity", 1)
+		}
+		console.log("locationStr", locationStr);
+		const mousemove = function(event, d) {
+			let tooltipContent = '';
+			if(d.centerlist === "True") {
+				tooltipContent = `Count: ${d.countlist}`;
+			} else {
+				tooltipContent = `Count: ${d.countlist}`;
+			}
+			tooltip.html(tooltipContent).style("left", (event.x) / 2 + "px").style("top", (event.y) / 2 + "px")
+		}
+		const mouseleave = function(d) {
+			tooltip.style("opacity", 0)
+		}
+		// add the squares
+		svg.selectAll().data(data, function(d) {
+			return d.rows + ':' + d.cols;
+		}).enter().append("rect").attr("x", function(d) {
+			return x(d.rows)
+		}).attr("y", function(d) {
+			return y(d.cols)
+		}).attr("width", x.bandwidth()).attr("height", y.bandwidth()).style("fill", function(d) {
+			if(d.centerlist === "True") {
+				return locationArray[1];
+			} else {
+				return myColor(d.countlist);
+			}
+		}).style("stroke", "black").style("stroke-width", "1px").on("mouseover", mouseover).on("mousemove", mousemove).on("mouseleave", mouseleave)
+	}).catch(function(error) {
+		// Handle any errors that occur during the loading process
+		console.error('Error loading the CSV file:', error);
+	});
+}
 
 function addHistogram() {
-    let currentValue = parseFloat("{{ middle_element_current_count }}");
-    var interval = "{{interval}}";
-    var address = "{{currentaddress}}";
-
-<!--    document.getElementById("histogram-descriptor").innerHTML =-->
-<!--  `<strong>${address}</strong> from ${interval} falls under`;-->
-
-    console.log("Histogram function");
-
-    var grid = JSON.parse("{{ dial_list | tojson }}");
-    var maxElement = Math.max(...grid);
-
-    console.log("dial_list grid", grid);
-    console.log("maxElement", maxElement);
-
-    const binSize = 10;
-    const tickCount = Math.ceil(maxElement / binSize);
-    console.log("tickCount", tickCount);
-
-    const margin = { top: 40, right: 30, bottom: 40, left: 52 },
-          width = 315 - margin.left - margin.right,
-          height = 180 - margin.top - margin.bottom;
-
-    const svg = d3.select("#histogram")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    const x = d3.scaleLinear()
-        .domain([0, maxElement])
-        .range([0, width]);
-
-    svg.append("g")
-      .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x))
-      .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("dx", "-0.8em")
-        .attr("dy", "0.15em")
-        .attr("transform", "rotate(-40)");
-
-    const histogram = d3.histogram()
-        .value(d => d)
-        .domain(x.domain())
-        .thresholds(x.ticks(tickCount));
-
-    const bins = histogram(grid);
-    console.log("bins", bins);
-    console.log("The number of bins is " + bins.length);
-
-    const y = d3.scaleLog()
-        .range([height, 0])
-        .domain([1, d3.max(bins, d => d.length)]);
-
-    svg.append("g")
-        .call(d3.axisLeft(y).ticks(5, d3.format(",.0f")));
-
-    svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("x", width)
-        .attr("y", height + margin.top)
-        .attr("font-size", "10px")
-        .text("Crime Counts");
-
-    svg.append("text")
-        .attr("text-anchor", "middle")
-        .attr("transform", "rotate(-90)")
-        .attr("x", -height / 2)
-        .attr("y", -margin.left + 10)
-        .attr("font-size", "10px")
-        .text("Frequency");
-
-    svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", -margin.top / 2 + 5)
-        .attr("text-anchor", "middle")
-        .style("font-size", "10px")
-        .text(`Distribution of hazardous crimes from ${interval} over 13 years`);
-
-    const tooltip = d3.select("#histogram")
-        .append("div")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .style("background-color", "#466c9e")
-        .style("color", "white")
-        .style("border-radius", "5px")
-        .style("width", "55px")
-        .style("height", "15px")
-        .style("font-size", ".575rem")
-        .style("text-align", "center")
-        .style("line-height", "15px");
-
-    const showTooltip = function(event, d) {
-        tooltip.transition()
-            .duration(100)
-            .style("opacity", 1);
-        tooltip.html(d.length)
-            .style("left", (event.pageX - 100) + "px")
-            .style("top", (event.pageY - 30) + "px");
-    };
-
-    const moveTooltip = function(event, d) {
-        const tooltipWidth = parseFloat(tooltip.style("width"));
-        const tooltipHeight = parseFloat(tooltip.style("height"));
-        tooltip
-            .style("left", (event.pageX - (tooltipWidth / 2)) + "px")
-            .style("top", (event.pageY - tooltipHeight - 10) + "px");
-    };
-
-    const hideTooltip = function(event, d) {
-        tooltip.transition()
-            .duration(100)
-            .style("opacity", 0);
-    };
-
-    svg.selectAll("rect")
-        .data(bins)
-        .join("rect")
-        .attr("class", "bar")
-        .attr("x", 1)
-        .attr("transform", d => `translate(${x(d.x0)}, ${y(d.length)})`)
-        .attr("width", d => x(d.x1) - x(d.x0) - 0.375)
-        .attr("height", d => height - y(d.length))
-        .on("mouseover", showTooltip)
-        .on("mousemove", moveTooltip)
-        .on("mouseleave", hideTooltip)
-        .attr("fill", d => {
-            if (d.x0 < 50) return "green";
-            else if (d.x0 <= 100) return "yellow";
-            else return "orange";
-        });
-
-    const legend = svg.append("g")
-        .attr("class", "legend")
-        .attr("transform", `translate(${width - 100}, -10)`);
-
-    legend.append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 15)
-        .attr("height", 15)
-        .style("fill", "green");
-
-    legend.append("text")
-        .attr("x", 20)
-        .attr("y", 12)
-        .attr("font-size", "12px")
-        .text("0 to 50");
-
-    legend.append("rect")
-        .attr("x", 0)
-        .attr("y", 20)
-        .attr("width", 15)
-        .attr("height", 15)
-        .style("fill", "yellow");
-
-    legend.append("text")
-        .attr("x", 20)
-        .attr("y", 32)
-        .attr("font-size", "12px")
-        .text("50 to 100");
-
-    legend.append("rect")
-        .attr("x", 0)
-        .attr("y", 40)
-        .attr("width", 15)
-        .attr("height", 15)
-        .style("fill", "orange");
-
-    legend.append("text")
-        .attr("x", 20)
-        .attr("y", 52)
-        .attr("font-size", "12px")
-        .text(`100 to ${maxElement}`);
-
-        svg.selectAll("rect")
-             .data(bins)
-            .filter(function(d) {
-                // Check if the current value falls within the bin range
-                return currentValue >= d.x0 && currentValue < d.x1;
-            })
-          .style("fill", "blue")
-          .style("fill-opacity", 0.5);
-
+	let currentValue = parseFloat("{{ middle_element_current_count }}");
+	var interval = "{{interval}}";
+	var address = "{{currentaddress}}";
+	var grid = JSON.parse("{{ dial_list | tojson }}");
+	var maxElement = Math.max(...grid);
+	console.log("dial_list grid", grid);
+	console.log("maxElement", maxElement);
+	const binSize = 10;
+	const tickCount = Math.ceil(maxElement / binSize);
+	console.log("tickCount", tickCount);
+	const margin = {
+			top: 40,
+			right: 30,
+			bottom: 40,
+			left: 52
+		},
+		width = 315 - margin.left - margin.right,
+		height = 180 - margin.top - margin.bottom;
+	const svg = d3.select("#histogram").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+	const x = d3.scaleLinear().domain([0, maxElement]).range([0, width]);
+	svg.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(x)).selectAll("text").style("text-anchor", "end").attr("dx", "-0.8em").attr("dy", "0.15em").attr("transform", "rotate(-40)");
+	const histogram = d3.histogram().value(d => d).domain(x.domain()).thresholds(x.ticks(tickCount));
+	const bins = histogram(grid);
+	console.log("bins", bins);
+	console.log("The number of bins is " + bins.length);
+	const y = d3.scaleLog().range([height, 0]).domain([1, d3.max(bins, d => d.length)]);
+	svg.append("g").call(d3.axisLeft(y).ticks(5, d3.format(",.0f")));
+	svg.append("text").attr("text-anchor", "end").attr("x", width).attr("y", height + margin.top).attr("font-size", "10px").text("Crime Counts");
+	svg.append("text").attr("text-anchor", "middle").attr("transform", "rotate(-90)").attr("x", -height / 2).attr("y", -margin.left + 10).attr("font-size", "10px").text("Frequency");
+	svg.append("text").attr("x", width / 2).attr("y", -margin.top / 2 + 5).attr("text-anchor", "middle").style("font-size", "10px").text(`Distribution of hazardous crimes from ${interval} over 13 years`);
+	const tooltip = d3.select("#histogram").append("div").style("opacity", 0).attr("class", "tooltip").style("background-color", "#466c9e").style("color", "white").style("border-radius", "5px").style("width", "55px").style("height", "15px").style("font-size", ".575rem").style("text-align", "center").style("line-height", "15px");
+	const showTooltip = function(event, d) {
+		tooltip.transition().duration(100).style("opacity", 1);
+		tooltip.html(d.length).style("left", (event.pageX - 100) + "px").style("top", (event.pageY - 30) + "px");
+	};
+	const moveTooltip = function(event, d) {
+		const tooltipWidth = parseFloat(tooltip.style("width"));
+		const tooltipHeight = parseFloat(tooltip.style("height"));
+		tooltip.style("left", (event.pageX - (tooltipWidth / 2)) + "px").style("top", (event.pageY - tooltipHeight - 10) + "px");
+	};
+	const hideTooltip = function(event, d) {
+		tooltip.transition().duration(100).style("opacity", 0);
+	};
+	svg.selectAll("rect").data(bins).join("rect").attr("class", "bar").attr("x", 1).attr("transform", d => `translate(${x(d.x0)}, ${y(d.length)})`).attr("width", d => x(d.x1) - x(d.x0) - 0.375).attr("height", d => height - y(d.length)).on("mouseover", showTooltip).on("mousemove", moveTooltip).on("mouseleave", hideTooltip).attr("fill", d => {
+		if(d.x0 < 50) return "green";
+		else if(d.x0 <= 100) return "yellow";
+		else return "orange";
+	});
+	const legend = svg.append("g").attr("class", "legend").attr("transform", `translate(${width - 100}, -10)`);
+	legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 15).attr("height", 15).style("fill", "green");
+	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("0 to 50");
+	legend.append("rect").attr("x", 0).attr("y", 20).attr("width", 15).attr("height", 15).style("fill", "yellow");
+	legend.append("text").attr("x", 20).attr("y", 32).attr("font-size", "12px").text("50 to 100");
+	legend.append("rect").attr("x", 0).attr("y", 40).attr("width", 15).attr("height", 15).style("fill", "orange");
+	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text(`100 to ${maxElement}`);
+	svg.selectAll("rect").data(bins).filter(function(d) {
+		// Check if the current value falls within the bin range
+		return currentValue >= d.x0 && currentValue < d.x1;
+	}).style("fill", "blue").style("fill-opacity", 0.5);
 }
-
-
 
 function createAreaChart() {
-    var counts = JSON.parse("{{ time_counts | tojson }}");
-    var years = JSON.parse("{{ time_years | tojson }}");
-    var interval = "{{interval}}"
-    var location = "{{currentaddress}}";
-
-    Highcharts.chart('container2', {
-        chart: { type: 'area' },
-        title: {
-            text: location + ' crimes for Interval ' + interval + ' over years',
-            useHTML: true,
-            style: {
-                fontSize: '12px',
-            }
-        },
-        xAxis: {
-            categories: years,
-            title: { text: 'Year' }
-        },
-        yAxis: {
-            title: { text: 'Crime Count' }
-        },
-        series: [{
-            name: 'Crimes',
-            data: counts
-        }]
-    });
+	var counts = JSON.parse("{{ time_counts | tojson }}");
+	var years = JSON.parse("{{ time_years | tojson }}");
+	var interval = "{{interval}}"
+	var location = "{{currentaddress}}";
+	Highcharts.chart('container2', {
+		chart: {
+			type: 'area'
+		},
+		title: {
+			text: location + ' crimes for Interval ' + interval + ' over years',
+			useHTML: true,
+			style: {
+				fontSize: '12px',
+			}
+		},
+		xAxis: {
+			categories: years,
+			title: {
+				text: 'Year'
+			}
+		},
+		yAxis: {
+			title: {
+				text: 'Crime Count'
+			}
+		},
+		series: [{
+			name: 'Crimes',
+			data: counts
+		}]
+	});
 }
 
-    function textForInfo(){
-        //  3 crimes within 500 m, between 1-3pm in the last 5 years
-        var currentCount = parseFloat("{{middle_element_current_count}}");
-        var years = parseFloat("{{years}}");
-        var radius = parseFloat("{{radius}}");
-        var interval = "{{interval}}";
-        console.log("currentCount", currentCount);
-        console.log("years", years);
-        console.log("radius", radius);
-        console.log("interval", interval);
-        let message = currentCount + " crimes within " + radius + " m, between " + interval + " in the last " + years + " years";
-        return message;
-    }
-    document.getElementById("textelement2").textContent = textForInfo();
-
-    function textForPercentage(){
-            let text = "{{current_text}}";
-            var location = "{{currentaddress}}";
-            let percentage = parseFloat("{{current_percentage}}");
-            console.log("text", text);
-            console.log("percentage", percentage);
-            let message = location + " falls within the "  + text + " " + percentage + "% of locations";
-            console.log("message", message);
-            return message;
-    }
-    document.getElementById("textelement").textContent = textForPercentage();
-
-
-    function val() {
-
-        let safePath = "/static/data/heatmap/heatmap_data_safe.csv";
-        let workPath = "/static/data/heatmap/heatmap_data_work.csv";
-        let currentPath = "/static/data/heatmap/heatmap_data_current.csv";
-        let destinationPath = "/static/data/heatmap/heatmap_data_destination.csv";
-
-        dropdownValue = document.getElementById("heatmap-dropdown").value;
-        if (dropdownValue == "safe") {
-            // console.log("safePath", safePath);
-            return safePath;
-        } else if (dropdownValue == "work") {
-            console.log("workPath", workPath);
-            return workPath;
-        } else if (dropdownValue == "current") {
-            // console.log("currentPath", currentPath);
-            return currentPath;
-        } else if (dropdownValue == "destination") {
-            // console.log("destinationPath", destinationPath);
-            return destinationPath;
-        }
+function textForInfo() {
+	//  3 crimes within 500 m, between 1-3pm in the last 5 years
+	var currentCount = parseFloat("{{middle_element_current_count}}");
+	var years = parseFloat("{{years}}");
+	var radius = parseFloat("{{radius}}");
+	var interval = "{{interval}}";
+	console.log("currentCount", currentCount);
+	console.log("years", years);
+	console.log("radius", radius);
+	console.log("interval", interval);
+	let message = currentCount + " crimes within " + radius + " m, between " + interval + " in the last " + years + " years";
+	return message;
 }
+document.getElementById("textelement2").textContent = textForInfo();
 
-    function callHeatmap() {
-         document.getElementById("heatmap-dropdown").addEventListener("change", function() {
-            d3.select("#heatmap").selectAll("*").remove();
-            let dropDownReturnValue = val();
-            console.log("dropDownReturnValue", dropDownReturnValue);
-            addHeatmap(dropDownReturnValue);
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            d3.select("#heatmap").selectAll("*").remove();
-            let defaultValue = "/static/data/heatmap/heatmap_data_current.csv";
-            addHeatmap(defaultValue);
-        });
-
-    }
-
-
-      function setHeatMapLabels(dropDownReturnValue) {
-           // pass dropDownReturnValue to tooltip to return string and color in array
-
-           let currentLocationArray = [];
-           let safeLocationArray = [];
-           let workLocationArray = [];
-           let destinationLocationArray = [];
-           let locationStr = "";
-           let locationColor = "";
-           var currentLocation = "{{currentaddress}}";
-           var safeLocation = "{{safeaddress}}";
-           var workLocation = "{{workaddress}}";
-           var destinationLocation = "{{destinationaddress}}";
-
-           if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_current.csv"){
-               locationStr = currentLocation;
-               locationColor = "#89CFF0";
-               currentLocationArray.push(locationStr);
-               currentLocationArray.push(locationColor);
-               return currentLocationArray;
-           } else if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_safe.csv"){
-               locationStr = safeLocation;
-               locationColor = "#89CFF0";
-               safeLocationArray.push(locationStr);
-               safeLocationArray.push(locationColor);
-               return safeLocationArray;
-           } else if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_work.csv"){
-               locationStr = workLocation;
-               locationColor = "#89CFF0";
-               workLocationArray.push(locationStr);
-               workLocationArray.push(locationColor);
-               return workLocationArray;
-           } else if (dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_destination.csv"){
-               locationStr = destinationLocation;
-               locationColor = "#89CFF0";
-               destinationLocationArray.push(locationStr);
-               destinationLocationArray.push(locationColor);
-               return destinationLocationArray;
-           }
-       }
-
-
-    function addHeatmap(dropDownReturnValue) {
-        var maxGridElement = parseFloat("{{maxgridelement}}");
-        var interval = "{{interval}}";
-
-        console.log("maxGridElement", maxGridElement);
-
-      locationArray = setHeatMapLabels(dropDownReturnValue)
-      let locationStr = locationArray[0].toString();
-        document.getElementById("heatmap-title").innerHTML =
-          `Hazardous crimes relative to <strong>${locationStr}</strong> from ${interval} over 13 years`;
-
-
-        // set the dimensions and margins of the graph
-        const margin = {top: 20, right: 35, bottom: 35, left: 30},
-          width = 300 - margin.left - margin.right,
-          height = 150 - margin.top - margin.bottom;
-
-        // append the svg object to the body of the page
-        const svg = d3.select("#heatmap")
-        .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom + 30)
-        .append("g")
-          .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        // Labels of row and columns
-        const myGroups = ["A", "B", "C", "D", "E"]
-        const myVars = ["v1", "v2", "v3", "v4", "v5"]
-
-        // Build X scales and axis:
-        const x = d3.scaleBand()
-          .range([ 0, width ])
-          .domain(myGroups)
-          .padding(0.01);
-        svg.append("g")
-          .attr("transform", `translate(0, ${height})`)
-          .call(d3.axisBottom(x))
-
-        // Build X scales and axis:
-        const y = d3.scaleBand()
-          .range([ height, 0 ])
-          .domain(myVars)
-          .padding(0.01);
-        svg.append("g")
-          .call(d3.axisLeft(y));
-
-<!--          svg.append("text")-->
-<!--            .attr("x", (width / 2) + 30)-->
-<!--            .attr("y", 0 - (margin.top / 2))-->
-<!--            .attr("text-anchor", "middle")-->
-<!--            .style("font-size", "10px")-->
-<!--            .text(`Hazardous crimes relative to ${locationStr} from ${interval} over 13 years`);-->
-
-        // Build color scale
-        const myColor = d3.scaleSequential()
-          .interpolator(d3.interpolatePurples)
-          .domain([1, maxGridElement]);
-
-    const legendWidth = 100;
-    const legendHeight = 10;
-
-    const legendSvg = svg.append("g")
-        .attr("class", "legend")
-        .attr("transform", `translate(${(width - legendWidth) / 2}, ${height + margin.bottom - 5})`);
-
-    // Append gradient defs
-    const defs = svg.append("defs");
-    const linearGradient = defs.append("linearGradient")
-        .attr("id", "linear-gradient");
-
-    linearGradient
-        .attr("x1", "0%")
-        .attr("y1", "0%")
-        .attr("x2", "100%")
-        .attr("y2", "0%");
-
-        const gradientStops = [
-          { offset: "0%", color: d3.interpolatePurples(0) },
-          { offset: "25%", color: d3.interpolatePurples(0.25) },
-          { offset: "50%", color: d3.interpolatePurples(0.5) },
-          { offset: "75%", color: d3.interpolatePurples(0.75) },
-          { offset: "100%", color: d3.interpolatePurples(1) },
-        ];
-
-        gradientStops.forEach(stop => {
-          linearGradient.append("stop")
-            .attr("offset", stop.offset)
-            .attr("stop-color", stop.color);
-        });
-
-    legendSvg.append("rect")
-        .attr("width", legendWidth)
-        .attr("height", legendHeight)
-        .style("fill", "url(#linear-gradient)")
-        .style("stroke", "black");
-
-    legendSvg.append("text")
-        .attr("x", 0)
-        .attr("y", legendHeight + 10)
-        .attr("font-size", "8px")
-        .attr("text-anchor", "start")
-        .text("1");
-
-    legendSvg.append("text")
-        .attr("x", legendWidth)
-        .attr("y", legendHeight + 10)
-        .attr("font-size", "8px")
-        .attr("text-anchor", "end")
-        .text(maxGridElement);
-
-
-        // Load the CSV file
-        d3.csv(dropDownReturnValue).then(function(data) {
-            // This code runs after the CSV file has been loaded
-            console.log("file",dropDownReturnValue);
-            console.log("data",data);
-
-            // Example: Process the CSV data
-            data.forEach(function(d) {
-                d.countlist = +d.countlist; // Convert a column to a number
-            });
-
-           // create a tooltip
-          const tooltip = d3.select("#heatmap")
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .style("background-color", "#466c9e")
-            .style("border-radius", "5px")
-            .style("width", "55px")
-            .style("height", "15px")
-            .style("font-size", ".575rem")
-            .style("text-align", "center")
-            .style("line-height", "15px")
-            .style("color", "#fff");
-
-          // Three function that change the tooltip when user hover / move / leave a cell
-          const mouseover = function(event,d) {
-            tooltip.style("opacity", 1)
-          }
-
-          console.log("locationStr", locationStr);
-
-          const mousemove = function(event,d) {
-            let tooltipContent = '';
-
-               if (d.centerlist === "True") {
-                tooltipContent = `Count: ${d.countlist}`;
-              } else {
-                tooltipContent = `Count: ${d.countlist}`;
-              }
-
-            tooltip
-              .html(tooltipContent)
-              .style("left", (event.x)/2 + "px")
-              .style("top", (event.y)/2 + "px")
-          }
-
-          const mouseleave = function(d) {
-            tooltip.style("opacity", 0)
-          }
-          // add the squares
-          svg.selectAll()
-            .data(data, function(d) {return d.rows+':'+d.cols;})
-            .enter()
-            .append("rect")
-              .attr("x", function(d) { return x(d.rows) })
-              .attr("y", function(d) { return y(d.cols) })
-              .attr("width", x.bandwidth() )
-              .attr("height", y.bandwidth() )
-              .style("fill", function(d) {
-                  if (d.centerlist === "True"){
-                      return locationArray[1];
-                  } else {
-                      return myColor(d.countlist);
-                  }
-                })
-              .style("stroke", "black")          // Add border color
-              .style("stroke-width", "1px")      // Add border thickness
-              .on("mouseover", mouseover)
-              .on("mousemove", mousemove)
-              .on("mouseleave", mouseleave)
-
-        }).catch(function(error) {
-            // Handle any errors that occur during the loading process
-            console.error('Error loading the CSV file:', error);
-        });
-
-    }
-
+function textForPercentage() {
+	let text = "{{current_text}}";
+	var location = "{{currentaddress}}";
+	let percentage = parseFloat("{{current_percentage}}");
+	console.log("text", text);
+	console.log("percentage", percentage);
+	let message = location + " falls within the " + text + " " + percentage + "% of locations";
+	console.log("message", message);
+	return message;
+}
+document.getElementById("textelement").textContent = textForPercentage();
 
 function createGauge() {
-
-        var firstIntervalOne = parseFloat("{{intervalOne[0]}}");
-        var lastIntervalOne = parseFloat("{{intervalOne[-1]}}");
-        var firstIntervalTwo = parseFloat("{{intervalTwo[0]}}");
-        var lastIntervalTwo = parseFloat("{{intervalTwo[-1]}}");
-        var firstIntervalThree = parseFloat("{{intervalThree[0]}}");
-        var lastIntervalThree = parseFloat("{{intervalThree[-1]}}");
-        var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
-        var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
-        var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
-        var middle_element_destination_count = parseFloat("{{middle_element_destination_count}}");
-
-        console.log("firstIntervalOne", firstIntervalOne);
-        console.log("lastIntervalOne", lastIntervalOne);
-
-        console.log("firstIntervalTwo", firstIntervalTwo);
-        console.log("lastIntervalTwo", lastIntervalTwo);
-
-        console.log("firstIntervalThree", firstIntervalThree);
-        console.log("lastIntervalThree", lastIntervalThree);
-
-        Highcharts.chart('container', {
-
-        chart: {
-            type: 'gauge',
-            plotBackgroundColor: null,
-            plotBackgroundImage: null,
-            plotBorderWidth: 0,
-            plotShadow: false,
-            height: '80%'
-        },
-
-        title: {
-            text: 'Gauge for Crime Score'
-        },
-
-        pane: {
-            startAngle: -90,
-            endAngle: 89.9,
-            background: null,
-            center: ['50%', '75%'],
-            size: '110%'
-        },
-
-        // the value axis
-        yAxis: {
-            min: 0,
-            max: lastIntervalThree,
-            tickPixelInterval: 72,
-            tickPosition: 'inside',
-            tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
-            tickLength: 20,
-            tickWidth: 2,
-            minorTickInterval: null,
-            labels: {
-                distance: 15,
-                style: {
-                    fontSize: '14px'
-                }
-            },
-            lineWidth: 0,
-            plotBands: [{
-                from: firstIntervalOne,
-                to: lastIntervalOne,
-                color: '#55BF3B', // green
-                thickness: 20
-            }, {
-                from: lastIntervalOne,
-                to: firstIntervalThree,
-                color: '#DDDF0D', // yellow
-                thickness: 20
-            }, {
-                from: firstIntervalThree,
-                to: lastIntervalThree,
-                color: '#DF5353', // red
-                thickness: 20
-            }]
-        },
-
-        series: [{
-            name: 'Current',
-            data: [middle_element_current_count]
-        }]
-
-    });
-
+	var firstIntervalOne = parseFloat("{{intervalOne[0]}}");
+	var lastIntervalOne = parseFloat("{{intervalOne[-1]}}");
+	var firstIntervalTwo = parseFloat("{{intervalTwo[0]}}");
+	var lastIntervalTwo = parseFloat("{{intervalTwo[-1]}}");
+	var firstIntervalThree = parseFloat("{{intervalThree[0]}}");
+	var lastIntervalThree = parseFloat("{{intervalThree[-1]}}");
+	var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
+	var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
+	var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
+	var middle_element_destination_count = parseFloat("{{middle_element_destination_count}}");
+	console.log("firstIntervalOne", firstIntervalOne);
+	console.log("lastIntervalOne", lastIntervalOne);
+	console.log("firstIntervalTwo", firstIntervalTwo);
+	console.log("lastIntervalTwo", lastIntervalTwo);
+	console.log("firstIntervalThree", firstIntervalThree);
+	console.log("lastIntervalThree", lastIntervalThree);
+	Highcharts.chart('container', {
+		chart: {
+			type: 'gauge',
+			plotBackgroundColor: null,
+			plotBackgroundImage: null,
+			plotBorderWidth: 0,
+			plotShadow: false,
+			height: '80%'
+		},
+		title: {
+			text: 'Gauge for Crime Score'
+		},
+		pane: {
+			startAngle: -90,
+			endAngle: 89.9,
+			background: null,
+			center: ['50%', '75%'],
+			size: '110%'
+		},
+		// the value axis
+		yAxis: {
+			min: 0,
+			max: lastIntervalThree,
+			tickPixelInterval: 72,
+			tickPosition: 'inside',
+			tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+			tickLength: 20,
+			tickWidth: 2,
+			minorTickInterval: null,
+			labels: {
+				distance: 15,
+				style: {
+					fontSize: '14px'
+				}
+			},
+			lineWidth: 0,
+			plotBands: [{
+				from: firstIntervalOne,
+				to: lastIntervalOne,
+				color: '#55BF3B', // green
+				thickness: 20
+			}, {
+				from: lastIntervalOne,
+				to: firstIntervalThree,
+				color: '#DDDF0D', // yellow
+				thickness: 20
+			}, {
+				from: firstIntervalThree,
+				to: lastIntervalThree,
+				color: '#DF5353', // red
+				thickness: 20
+			}]
+		},
+		series: [{
+			name: 'Current',
+			data: [middle_element_current_count]
+		}]
+	});
 }
-
-    addHistogram()
-    createAreaChart()
-    callHeatmap()
-    createGauge()
-
+addHistogram()
+createAreaChart()
+callHeatmap()
+createGauge()
 </script>
-
-<script>
-
-     var latsafecoordinate = parseFloat("{{latsafecoordinate}}");
-     var lonsafecoordinate = parseFloat("{{lonsafecoordinate}}");
-     var latcurrentcoordinate = parseFloat("{{latcurrentcoordinate}}");
-     var loncurrentcoordinate = parseFloat("{{loncurrentcoordinate}}");
-     var latworkcoordinate = parseFloat("{{latworkcoordinate}}");
-     var lonworkcoordinate = parseFloat("{{lonworkcoordinate}}");
-     var latdestinationcoordinate = parseFloat("{{latdestinationcoordinate}}");
-     var londestinationcoordinate = parseFloat("{{londestinationcoordinate}}");
-     var radius = parseFloat("{{radius}}");
-
-     var currentBoxNorth = parseFloat("{{bounding_box_current["north"]}}");
-     var currentBoxEast = parseFloat("{{bounding_box_current["east"]}}");
-     var currentBoxWest = parseFloat("{{bounding_box_current["west"]}}");
-     var currentBoxSouth = parseFloat("{{bounding_box_current["south"]}}");
-
-     var safeBoxNorth = parseFloat("{{bounding_box_safe["north"]}}");
-     var safeBoxEast = parseFloat("{{bounding_box_safe["east"]}}");
-     var safeBoxWest = parseFloat("{{bounding_box_safe["west"]}}");
-     var safeBoxSouth = parseFloat("{{bounding_box_safe["south"]}}");
-
-     var workBoxNorth = parseFloat("{{bounding_box_work["north"]}}");
-     var workBoxEast = parseFloat("{{bounding_box_work["east"]}}");
-     var workBoxWest = parseFloat("{{bounding_box_work["west"]}}");
-     var workBoxSouth = parseFloat("{{bounding_box_work["south"]}}");
-
-     var destinationBoxNorth = parseFloat("{{bounding_box_destination["north"]}}");
-     var destinationBoxEast = parseFloat("{{bounding_box_destination["east"]}}");
-     var destinationBoxWest = parseFloat("{{bounding_box_destination["west"]}}");
-     var destinationBoxSouth = parseFloat("{{bounding_box_destination["south"]}}");
-
-     var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
-     var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
-     var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
-     var middle_element_destination_count = parseFloat("{{middle_element_destination_count}}");
-
-<!--     console.log("safeBoxEast",safeBoxEast);-->
-
-    // pass coordinates submitted by form
-<!--    const locations = {-->
-<!--      current: {-->
-<!--        center: { lat: latcurrentcoordinate, lng: loncurrentcoordinate },-->
-<!--        radius: radius,-->
-<!--        color: "#FFC0CB",-->
-<!--        title: "Current Location: " + middle_element_current_count.toString()-->
-<!--      },-->
-<!--      safe: {-->
-<!--        center: { lat: latsafecoordinate, lng: lonsafecoordinate },-->
-<!--        radius: radius,-->
-<!--        color: "#13D27E",-->
-<!--        title: "Safe Location: " + middle_element_safe_count.toString()-->
-<!--      },-->
-<!--      work: {-->
-<!--        center: { lat: latworkcoordinate, lng: lonworkcoordinate },-->
-<!--        radius: radius,-->
-<!--        color: "#3549EB",-->
-<!--        title: "Work Location: " + middle_element_work_count.toString()-->
-<!--      },-->
-<!--      destination: {-->
-<!--        center: { lat: latdestinationcoordinate, lng: londestinationcoordinate},-->
-<!--        radius: radius,-->
-<!--        color: "#8D70E0",-->
-<!--        title: "Destination Location: " + middle_element_destination_count.toString()-->
-<!--      },-->
-<!--    };-->
-
-    function updatedMap() {
-        var latitude = 39.134556;
-        var longitude = -84.515413;
-        var mapProp= {
-          center:new google.maps.LatLng(latitude,longitude),
-          zoom:17,
-        };
-
-        var map = new google.maps.Map(document.getElementById("map"),mapProp);
-
-<!--        for (const item in locations) {-->
-<!--             const set_radius = new google.maps.Circle({-->
-<!--                strokeColor: locations[item].color,-->
-<!--                strokeOpacity: 0.8,-->
-<!--                strokeWeight: 2,-->
-<!--                fillColor: locations[item].color,-->
-<!--                fillOpacity: 0.35,-->
-<!--                map,-->
-<!--                center: locations[item].center,-->
-<!--                radius: locations[item].radius,-->
-<!--                title: locations[item].title-->
-<!--            });-->
-
-<!--        }-->
-
-          const rectangle1 = new google.maps.Rectangle({
-            strokeColor: "#FFC0CB",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#FFC0CB",
-            fillOpacity: 0.35,
-            map,
-            bounds: {
-              north: currentBoxNorth,
-              south: currentBoxSouth,
-              east: currentBoxEast,
-              west: currentBoxWest,
-            },
-            title: "Current Location: " + middle_element_current_count.toString()
-          });
-
-          const rectangle2 = new google.maps.Rectangle({
-            strokeColor: "#13D27E",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#13D27E",
-            fillOpacity: 0.35,
-            map,
-            bounds: {
-              north: safeBoxNorth,
-              south: safeBoxSouth,
-              east: safeBoxEast,
-              west: safeBoxWest,
-            },
-            title: "Safe Location: " + middle_element_safe_count.toString()
-          });
-
-          const rectangle3 = new google.maps.Rectangle({
-            strokeColor: "#3549EB",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#3549EB",
-            fillOpacity: 0.35,
-            map,
-            bounds: {
-              north: workBoxNorth,
-              south: workBoxSouth,
-              east: workBoxEast,
-              west: workBoxWest,
-            },
-            title: "Work Location: " + middle_element_work_count.toString()
-          });
-
-          const rectangle4 = new google.maps.Rectangle({
-            strokeColor: "#8D70E0",
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: "#8D70E0",
-            fillOpacity: 0.35,
-            map,
-            bounds: {
-              north: destinationBoxNorth,
-              south: destinationBoxSouth,
-              east: destinationBoxEast,
-              west: destinationBoxWest,
-            },
-             title: "Destination Location: " + middle_element_destination_count.toString()
-          });
-
-           google.maps.event.addListener(rectangle1,'mouseover',function(){
-                this.getMap().getDiv().setAttribute('title',this.get('title'));});
-
-           google.maps.event.addListener(rectangle1,'mouseout',function(){
-                this.getMap().getDiv().removeAttribute('title');});
-
-           google.maps.event.addListener(rectangle2,'mouseover',function(){
-                this.getMap().getDiv().setAttribute('title',this.get('title'));});
-
-           google.maps.event.addListener(rectangle2,'mouseout',function(){
-                this.getMap().getDiv().removeAttribute('title');});
-
-           google.maps.event.addListener(rectangle3,'mouseover',function(){
-                this.getMap().getDiv().setAttribute('title',this.get('title'));});
-
-           google.maps.event.addListener(rectangle3,'mouseout',function(){
-                this.getMap().getDiv().removeAttribute('title');});
-
-           google.maps.event.addListener(rectangle4,'mouseover',function(){
-                this.getMap().getDiv().setAttribute('title',this.get('title'));});
-
-           google.maps.event.addListener(rectangle4,'mouseout',function(){
-                this.getMap().getDiv().removeAttribute('title');});
-
-
-          document.getElementById("location").addEventListener("change", function() {
-                var selectedValue = this.value;
-                console.log("selectedValue", selectedValue);
-
-                if (selectedValue === "current") {
-                    var latLng = {
-                        lat: latcurrentcoordinate,
-                        lng: loncurrentcoordinate
-                    };
-
-                    // Zoom into the selected coordinates
-                    map.setCenter(latLng);
-                    map.setZoom(14.5); // Adjust the zoom level as necessary
-                }
-
-                else if (selectedValue === "safe") {
-                    var latLng = {
-                        lat: latsafecoordinate,
-                        lng: lonsafecoordinate
-                    };
-
-                    // Zoom into the selected coordinates
-                    map.setCenter(latLng);
-                    map.setZoom(14.5); // Adjust the zoom level as necessary
-                }
-
-                else if (selectedValue === "work") {
-                    var latLng = {
-                        lat: latworkcoordinate,
-                        lng: lonworkcoordinate
-                    };
-
-                    // Zoom into the selected coordinates
-                    map.setCenter(latLng);
-                    map.setZoom(14.5); // Adjust the zoom level as necessary
-                }
-
-                else if (selectedValue === "destination") {
-                    var latLng = {
-                        lat: latdestinationcoordinate,
-                        lng: londestinationcoordinate
-                    };
-
-                    // Zoom into the selected coordinates
-                    map.setCenter(latLng);
-                    map.setZoom(14.5); // Adjust the zoom level as necessary
-                }
-
-          });
-    }
-
-
-
-
-</script>
-
 <script src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=updatedMap" async defer></script>
