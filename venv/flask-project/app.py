@@ -2507,7 +2507,8 @@ def success(safe, work, current, destination, interval, gridsize):
         logger.info("=== Total time taken: %s seconds === ", time.time() - total_start_time)
 
         return render_template('success.html', key=key, maxgridelement=max(user.grid),
-                               radius=user.radius, interval=user.interval,
+                               radius=user.radius, units=user.units,
+                               interval=user.interval,
                                dial_list=dial_list,
                                years=13,
                                currentaddress=current,

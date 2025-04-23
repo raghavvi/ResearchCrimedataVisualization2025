@@ -50,11 +50,12 @@
                         <div class="tab-content">
                             <div id="menu1" class="tab-pane fade in active">
                                 <div style="height: 270px;">
-                                    <p id="textelement2"></p>
-                                    <p id="textelement"></p>
+                                    <p id="textelement2" style="color: #3784CB"></p>
+                                    <p id="textelement" style="color: #3784CB"></p>
+                                    <p id="histogram-title" style="text-align: center; font-size: 12px;
+                                word-wrap: break-word; margin-bottom: 2px;">
                                     <div id="histogram"></div>
                                 </div>
-                                <!--                                <p id="histogram-descriptor" style="font-size: 10px;" ></p>-->
                             </div>
                             <div id="menu2" class="tab-pane fade">
                                 <div id="container2" style="height: 250px; width: 250px;">
@@ -486,7 +487,6 @@ function addHeatmap(dropDownReturnValue) {
 	});
 }
 
-
 function addHistogram() {
 	let currentValue = parseFloat("{{ middle_element_current_count }}");
 	var interval = "{{interval}}";
@@ -499,7 +499,9 @@ function addHistogram() {
 	const tickCount = Math.ceil(maxElement / binSize);
 	console.log("tickCount", tickCount);
 
-	const margin = { top: 40, right: 20, bottom: 40, left: 52 },
+	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} over 13 years</strong>`;
+
+	const margin = { top: 28, right: 20, bottom: 48, left: 52 },
 		width = 350 - margin.left - margin.right,
 		height = 235 - margin.top - margin.bottom;
 
@@ -526,10 +528,9 @@ function addHistogram() {
 		.thresholds(x.ticks(tickCount));
 	const bins = histogram(grid);
 
-	const y = d3.scaleLog().range([height, 0]).domain([1, d3.max(bins, d => d.length)]);
+	const y = d3.scaleLinear().range([height, 0]).domain([1, d3.max(bins, d => d.length)]);
 	svg.append("g").call(d3.axisLeft(y).ticks(5, d3.format(",.0f")));
 
-	// Tooltip setup
 	const tooltip = d3.select("#histogram")
 		.append("div")
 		.style("opacity", 0)
@@ -560,7 +561,6 @@ function addHistogram() {
 		tooltip.transition().duration(100).style("opacity", 0);
 	};
 
-	// Draw histogram bars
 	svg.selectAll("rect")
 		.data(bins)
 		.join("rect")
@@ -578,20 +578,6 @@ function addHistogram() {
 		.on("mousemove", moveTooltip)
 		.on("mouseleave", hideTooltip);
 
-	// Add labels above bars
-<!--	svg.selectAll(".bar-label")-->
-<!--		.data(bins)-->
-<!--		.enter()-->
-<!--		.append("text")-->
-<!--		.attr("class", "bar-label")-->
-<!--		.attr("x", d => x(d.x0) + ((x(d.x1) - x(d.x0)) / 2))-->
-<!--		.attr("y", d => y(d.length) - 4)-->
-<!--		.attr("text-anchor", "middle")-->
-<!--		.attr("font-size", "8px")-->
-<!--		.attr("fill", "black")-->
-<!--		.text(d => d.length > 0 ? d.length : "");-->
-
-	// Draw dots for bins with frequency 1 (after bars so they're visible)
 	const binsWithOne = bins.filter(d => d.length === 1);
 	svg.selectAll("circle")
 		.data(binsWithOne)
@@ -610,7 +596,6 @@ function addHistogram() {
 		.on("mousemove", moveTooltip)
 		.on("mouseleave", hideTooltip);
 
-	// Axes labels and title
 	svg.append("text")
 		.attr("text-anchor", "end")
 		.attr("x", width)
@@ -626,14 +611,6 @@ function addHistogram() {
 		.attr("font-size", "10px")
 		.text("Frequency");
 
-	svg.append("text")
-		.attr("x", width / 2)
-		.attr("y", -margin.top / 2 + 5)
-		.attr("text-anchor", "middle")
-		.style("font-size", "10px")
-		.text(`Distribution of hazardous crimes from ${interval} over 13 years`);
-
-	// Legend
 	const legend = svg.append("g")
 		.attr("class", "legend")
 		.attr("transform", `translate(${width - 100}, -10)`);
@@ -647,14 +624,192 @@ function addHistogram() {
 	legend.append("rect").attr("x", 0).attr("y", 40).attr("width", 15).attr("height", 15).style("fill", "orange");
 	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text("heavy");
 
-	// Highlight bin with current value
 	svg.selectAll("rect")
 		.data(bins)
 		.filter(d => currentValue >= d.x0 && currentValue < d.x1)
 		.style("fill", "blue")
 		.style("fill-opacity", 0.5);
+
+	const legend2 = svg.append("g")
+		.attr("class", "legend")
+		.attr("transform", `translate(0, ${height + 35})`);
+
+	legend2.append("rect")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("width", 15)
+		.attr("height", 15)
+		.style("fill", "blue")
+		.style("fill-opacity", 0.5);
+
+	legend2.append("text")
+		.attr("x", 20)
+		.attr("y", 12)
+		.attr("font-size", "12px")
+		.text("Current location");
 }
 
+function addHistogram2() {
+	let currentValue = parseFloat("{{ middle_element_current_count }}");
+	var interval = "{{interval}}";
+	var address = "{{currentaddress}}";
+	var grid = JSON.parse("{{ dial_list | tojson }}");
+	var maxElement = Math.max(...grid);
+	console.log("dial_list grid", grid);
+	console.log("maxElement", maxElement);
+	const binSize = 10;
+	const tickCount = Math.ceil(maxElement / binSize);
+	console.log("tickCount", tickCount);
+
+	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} over 13 years</strong>`;
+
+	const margin = { top: 28, right: 20, bottom: 48, left: 52 },
+		width = 350 - margin.left - margin.right,
+		height = 235 - margin.top - margin.bottom;
+
+	const svg = d3.select("#histogram")
+		.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", `translate(${margin.left},${margin.top})`);
+
+	const x = d3.scaleLinear().domain([0, maxElement]).range([0, width]);
+	svg.append("g")
+		.attr("transform", `translate(0, ${height})`)
+		.call(d3.axisBottom(x))
+		.selectAll("text")
+		.style("text-anchor", "end")
+		.attr("dx", "-0.8em")
+		.attr("dy", "0.15em")
+		.attr("transform", "rotate(-40)");
+
+	const histogram = d3.histogram()
+		.value(d => d)
+		.domain(x.domain())
+		.thresholds(x.ticks(tickCount));
+	const bins = histogram(grid);
+
+	const y = d3.scaleLog().range([height, 0]).domain([1, d3.max(bins, d => d.length)]);
+	svg.append("g").call(d3.axisLeft(y).ticks(5, d3.format(",.0f")));
+
+	const tooltip = d3.select("#histogram")
+		.append("div")
+		.style("opacity", 0)
+		.attr("class", "tooltip")
+		.style("background-color", "#466c9e")
+		.style("color", "white")
+		.style("border-radius", "5px")
+		.style("width", "55px")
+		.style("height", "15px")
+		.style("font-size", ".575rem")
+		.style("text-align", "center")
+		.style("line-height", "15px")
+		.style("position", "absolute");
+
+	const showTooltip = function(event, d) {
+		tooltip.transition().duration(100).style("opacity", 1);
+		tooltip.html(d.length)
+			.style("left", (event.pageX - 100) + "px")
+			.style("top", (event.pageY - 30) + "px");
+	};
+	const moveTooltip = function(event, d) {
+		const tooltipWidth = parseFloat(tooltip.style("width"));
+		const tooltipHeight = parseFloat(tooltip.style("height"));
+		tooltip.style("left", (event.pageX - tooltipWidth / 2) + "px")
+			.style("top", (event.pageY - tooltipHeight - 10) + "px");
+	};
+	const hideTooltip = function() {
+		tooltip.transition().duration(100).style("opacity", 0);
+	};
+
+	svg.selectAll("rect")
+		.data(bins)
+		.join("rect")
+		.attr("class", "bar")
+		.attr("x", 1)
+		.attr("transform", d => `translate(${x(d.x0)}, ${y(d.length)})`)
+		.attr("width", d => x(d.x1) - x(d.x0) - 0.1)
+		.attr("height", d => height - y(d.length))
+		.attr("fill", d => {
+			if (d.x0 < 50) return "green";
+			else if (d.x0 <= 100) return "yellow";
+			else return "orange";
+		})
+		.on("mouseover", showTooltip)
+		.on("mousemove", moveTooltip)
+		.on("mouseleave", hideTooltip);
+
+	const binsWithOne = bins.filter(d => d.length === 1);
+	svg.selectAll("circle")
+		.data(binsWithOne)
+		.enter()
+		.append("circle")
+		.attr("cx", d => x((d.x0 + d.x1) / 2))
+		.attr("cy", height)
+		.attr("r", 2)
+		.style("fill", d => {
+			if (d.x0 < 50) return "green";
+			else if (d.x0 <= 100) return "yellow";
+			else return "orange";
+		})
+		.style("stroke", "black")
+		.on("mouseover", showTooltip)
+		.on("mousemove", moveTooltip)
+		.on("mouseleave", hideTooltip);
+
+	svg.append("text")
+		.attr("text-anchor", "end")
+		.attr("x", width)
+		.attr("y", height + margin.top)
+		.attr("font-size", "10px")
+		.text("Crime Counts");
+
+	svg.append("text")
+		.attr("text-anchor", "middle")
+		.attr("transform", "rotate(-90)")
+		.attr("x", -height / 2)
+		.attr("y", -margin.left + 10)
+		.attr("font-size", "10px")
+		.text("Frequency");
+
+	const legend = svg.append("g")
+		.attr("class", "legend")
+		.attr("transform", `translate(${width - 100}, -10)`);
+
+	legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 15).attr("height", 15).style("fill", "green");
+	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("safe");
+
+	legend.append("rect").attr("x", 0).attr("y", 20).attr("width", 15).attr("height", 15).style("fill", "yellow");
+	legend.append("text").attr("x", 20).attr("y", 32).attr("font-size", "12px").text("moderate");
+
+	legend.append("rect").attr("x", 0).attr("y", 40).attr("width", 15).attr("height", 15).style("fill", "orange");
+	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text("heavy");
+
+	svg.selectAll("rect")
+		.data(bins)
+		.filter(d => currentValue >= d.x0 && currentValue < d.x1)
+		.style("fill", "blue")
+		.style("fill-opacity", 0.5);
+
+	const legend2 = svg.append("g")
+		.attr("class", "legend")
+		.attr("transform", `translate(0, ${height + 35})`);
+
+	legend2.append("rect")
+		.attr("x", 0)
+		.attr("y", 0)
+		.attr("width", 15)
+		.attr("height", 15)
+		.style("fill", "blue")
+		.style("fill-opacity", 0.5);
+
+	legend2.append("text")
+		.attr("x", 20)
+		.attr("y", 12)
+		.attr("font-size", "12px")
+		.text("Current location");
+}
 
 function createAreaChart() {
 	var counts = JSON.parse("{{ time_counts | tojson }}");
@@ -695,12 +850,13 @@ function textForInfo() {
 	var currentCount = parseFloat("{{middle_element_current_count}}");
 	var years = parseFloat("{{years}}");
 	var radius = parseFloat("{{radius}}");
+	var units = "{{units}}";
 	var interval = "{{interval}}";
 	console.log("currentCount", currentCount);
 	console.log("years", years);
 	console.log("radius", radius);
 	console.log("interval", interval);
-	let message = `<strong>${currentCount}</strong> hazardous crimes within <strong>${radius} m</strong>, between <strong>${interval}</strong> in the last ${years} years`;
+	let message = `<strong>${currentCount}</strong> hazardous crimes within <strong>${radius} ${units}</strong>, between <strong>${interval}</strong> in the last ${years} years`;
 	return message;
 }
 document.getElementById("textelement2").innerHTML = textForInfo();
@@ -794,7 +950,7 @@ function createGauge() {
 	});
 }
 
-addHistogram()
+addHistogram2()
 createAreaChart()
 callHeatmap()
 createGauge()
