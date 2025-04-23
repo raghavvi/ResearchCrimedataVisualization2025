@@ -424,49 +424,63 @@ def read_dial_grid(grid, interval):
     PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
     base_path = os.path.join(PROJECT_DIR, 'static', 'data', 'dial')
 
-    # Define a mapping of grid and interval combinations to file names
-
     file_mapping = {
-
         ("700 meters", "12AM-11PM"): "700metersAll.json",
-
         ("700 meters", "12AM-3AM"): "700meters12AM-3AM.json",
-
         ("700 meters", "4AM-7AM"): "700meters4AM-7AM.json",
-
         ("700 meters", "8AM-11AM"): "700meters8AM-11AM.json",
-
         ("700 meters", "12PM-3PM"): "700meters12PM-3PM.json",
-
         ("700 meters", "4PM-7PM"): "700meters4PM-7PM.json",
-
         ("700 meters", "8PM-11PM"): "700meters8PM-11PM.json",
-
         ("750 meters", "12AM-11PM"): "750metersAll.json",
-
         ("750 meters", "12AM-3AM"): "750meters12AM-3AM.json",
-
         ("750 meters", "4AM-7AM"): "750meters4AM-7AM.json",
-
         ("750 meters", "8AM-11AM"): "750meters8AM-11AM.json",
-
         ("750 meters", "12PM-3PM"): "750meters12PM-3PM.json",
-
         ("750 meters", "4PM-7PM"): "750meters4PM-7PM.json",
-
         ("750 meters", "8PM-11PM"): "750meters8PM-11PM.json",
-
+        ("800 meters", "12AM-11PM"): "800metersAll.json",
+        ("800 meters", "12AM-3AM"): "800meters12AM-3AM.json",
+        ("800 meters", "4AM-7AM"): "800meters4AM-7AM.json",
+        ("800 meters", "8AM-11AM"): "800meters8AM-11AM.json",
+        ("800 meters", "12PM-3PM"): "800meters12PM-3PM.json",
+        ("800 meters", "4PM-7PM"): "800meters4PM-7PM.json",
+        ("800 meters", "8PM-11PM"): "800meters8PM-11PM.json",
+        ("850 meters", "12AM-11PM"): "850metersAll.json",
+        ("850 meters", "12AM-3AM"): "850meters12AM-3AM.json",
+        ("850 meters", "4AM-7AM"): "850meters4AM-7AM.json",
+        ("850 meters", "8AM-11AM"): "850meters8AM-11AM.json",
+        ("850 meters", "12PM-3PM"): "850meters12PM-3PM.json",
+        ("850 meters", "4PM-7PM"): "850meters4PM-7PM.json",
+        ("850 meters", "8PM-11PM"): "850meters8PM-11PM.json",
+        ("900 meters", "12AM-11PM"): "900metersAll.json",
+        ("900 meters", "12AM-3AM"): "900meters12AM-3AM.json",
+        ("900 meters", "4AM-7AM"): "900meters4AM-7AM.json",
+        ("900 meters", "8AM-11AM"): "900meters8AM-11AM.json",
+        ("900 meters", "12PM-3PM"): "900meters12PM-3PM.json",
+        ("900 meters", "4PM-7PM"): "900meters4PM-7PM.json",
+        ("900 meters", "8PM-11PM"): "900meters8PM-11PM.json",
+        ("950 meters", "12AM-11PM"): "950metersAll.json",
+        ("950 meters", "12AM-3AM"): "950meters12AM-3AM.json",
+        ("950 meters", "4AM-7AM"): "950meters4AM-7AM.json",
+        ("950 meters", "8AM-11AM"): "950meters8AM-11AM.json",
+        ("950 meters", "12PM-3PM"): "950meters12PM-3PM.json",
+        ("950 meters", "4PM-7PM"): "950meters4PM-7PM.json",
+        ("950 meters", "8PM-11PM"): "950meters8PM-11PM.json",
+        ("1 kilometer", "12AM-11PM"): "1kilometerAll.json",
+        ("1 kilometer", "12AM-3AM"): "950meters12AM-3AM.json",
+        ("1 kilometer", "4AM-7AM"): "950meters4AM-7AM.json",
+        ("1 kilometer", "8AM-11AM"): "950meters8AM-11AM.json",
+        ("1 kilometer", "12PM-3PM"): "950meters12PM-3PM.json",
+        ("1 kilometer", "4PM-7PM"): "950meters4PM-7PM.json",
+        ("1 kilometer", "8PM-11PM"): "950meters8PM-11PM.json",
         ("1 mile", "12AM-11PM"): "1mileAll.json",
-
         ("1 mile", "12AM-3AM"): "1mile12AM-3AM.json",
-
         ("1 mile", "4AM-7AM"): "1mile4AM-7AM.json",
-
         ("1 mile", "8AM-11AM"): "1mile8AM-11AM.json",
         ("1 mile", "12PM-3PM"): "1mile12PM-3PM.json",
         ("1 mile", "4PM-7PM"): "1mile4PM-7PM.json",
         ("1 mile", "8PM-11PM"): "1mile8PM-11PM.json",
-        # Add other grid and interval combinations as needed
     }
     # Get the file name based on the grid and interval
     file_name = file_mapping.get((grid, interval))
@@ -2383,6 +2397,7 @@ def success(safe, work, current, destination, interval, gridsize):
         workpolygon = create_heatmap_polygon(meters, work_latitude, work_longitude)
         currentpolygon = create_heatmap_polygon(meters, current_latitude, current_longitude)
         destinationpolygon = create_heatmap_polygon(meters, destination_latitude, destination_longitude)
+
 
         # current_box = create_current_polygon(meters, currentlocation[2])
         current_box = create_current_polygon(meters, current_latitude, current_longitude)
