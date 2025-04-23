@@ -639,13 +639,13 @@ function addHistogram() {
 		.attr("transform", `translate(${width - 100}, -10)`);
 
 	legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 15).attr("height", 15).style("fill", "green");
-	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("0 to 50");
+	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("safe");
 
 	legend.append("rect").attr("x", 0).attr("y", 20).attr("width", 15).attr("height", 15).style("fill", "yellow");
-	legend.append("text").attr("x", 20).attr("y", 32).attr("font-size", "12px").text("50 to 100");
+	legend.append("text").attr("x", 20).attr("y", 32).attr("font-size", "12px").text("moderate");
 
 	legend.append("rect").attr("x", 0).attr("y", 40).attr("width", 15).attr("height", 15).style("fill", "orange");
-	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text(`100 to ${maxElement}`);
+	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text("heavy");
 
 	// Highlight bin with current value
 	svg.selectAll("rect")
@@ -700,10 +700,10 @@ function textForInfo() {
 	console.log("years", years);
 	console.log("radius", radius);
 	console.log("interval", interval);
-	let message = currentCount + " crimes within " + radius + " m, between " + interval + " in the last " + years + " years";
+	let message = `<strong>${currentCount}</strong> hazardous crimes within <strong>${radius} m</strong>, between <strong>${interval}</strong> in the last ${years} years`;
 	return message;
 }
-document.getElementById("textelement2").textContent = textForInfo();
+document.getElementById("textelement2").innerHTML = textForInfo();
 
 function textForPercentage() {
 	let text = "{{current_text}}";
@@ -711,11 +711,11 @@ function textForPercentage() {
 	let percentage = parseFloat("{{current_percentage}}");
 	console.log("text", text);
 	console.log("percentage", percentage);
-	let message = location + " falls within the " + text + " " + percentage + "% of locations";
+	let message = `<strong>${location}</strong> falls within the <strong>${text}</strong> ${percentage}% of locations`;
 	console.log("message", message);
 	return message;
 }
-document.getElementById("textelement").textContent = textForPercentage();
+document.getElementById("textelement").innerHTML = textForPercentage();
 
 function createGauge() {
 	var firstIntervalOne = parseFloat("{{intervalOne[0]}}");
