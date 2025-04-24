@@ -49,12 +49,18 @@
                         </ul>
                         <div class="tab-content">
                             <div id="menu1" class="tab-pane fade in active">
-                                <div style="height: 270px;">
+                                <div style="height: 380px;">
                                     <p id="textelement2" style="color: #3784CB"></p>
                                     <p id="textelement" style="color: #3784CB"></p>
                                     <p id="histogram-title" style="text-align: center; font-size: 12px;
                                 word-wrap: break-word; margin-bottom: 2px;">
                                     <div id="histogram"></div>
+                                </div>
+                                <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                                    <span style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
+                                    <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">
+                                        View Details
+                                    </button>
                                 </div>
                             </div>
                             <div id="menu2" class="tab-pane fade">
@@ -103,38 +109,7 @@ var lonworkcoordinate = parseFloat("{{lonworkcoordinate}}");
 var latdestinationcoordinate = parseFloat("{{latdestinationcoordinate}}");
 var londestinationcoordinate = parseFloat("{{londestinationcoordinate}}");
 var radius = parseFloat("{{radius}}");
-var currentBoxNorth = parseFloat("{{bounding_box_current["
-	north "]}}");
-var currentBoxEast = parseFloat("{{bounding_box_current["
-	east "]}}");
-var currentBoxWest = parseFloat("{{bounding_box_current["
-	west "]}}");
-var currentBoxSouth = parseFloat("{{bounding_box_current["
-	south "]}}");
-var safeBoxNorth = parseFloat("{{bounding_box_safe["
-	north "]}}");
-var safeBoxEast = parseFloat("{{bounding_box_safe["
-	east "]}}");
-var safeBoxWest = parseFloat("{{bounding_box_safe["
-	west "]}}");
-var safeBoxSouth = parseFloat("{{bounding_box_safe["
-	south "]}}");
-var workBoxNorth = parseFloat("{{bounding_box_work["
-	north "]}}");
-var workBoxEast = parseFloat("{{bounding_box_work["
-	east "]}}");
-var workBoxWest = parseFloat("{{bounding_box_work["
-	west "]}}");
-var workBoxSouth = parseFloat("{{bounding_box_work["
-	south "]}}");
-var destinationBoxNorth = parseFloat("{{bounding_box_destination["
-	north "]}}");
-var destinationBoxEast = parseFloat("{{bounding_box_destination["
-	east "]}}");
-var destinationBoxWest = parseFloat("{{bounding_box_destination["
-	west "]}}");
-var destinationBoxSouth = parseFloat("{{bounding_box_destination["
-	south "]}}");
+
 var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
 var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
 var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
@@ -157,91 +132,8 @@ function updatedMap() {
 		zoom: 17,
 	};
 	map = new google.maps.Map(document.getElementById("map"), mapProp);
-	const rectangle1 = new google.maps.Rectangle({
-		strokeColor: "#FFC0CB",
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: "#FFC0CB",
-		fillOpacity: 0.35,
-		map,
-		bounds: {
-			north: currentBoxNorth,
-			south: currentBoxSouth,
-			east: currentBoxEast,
-			west: currentBoxWest,
-		},
-		title: "Current Location: " + middle_element_current_count.toString()
-	});
-	const rectangle2 = new google.maps.Rectangle({
-		strokeColor: "#13D27E",
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: "#13D27E",
-		fillOpacity: 0.35,
-		map,
-		bounds: {
-			north: safeBoxNorth,
-			south: safeBoxSouth,
-			east: safeBoxEast,
-			west: safeBoxWest,
-		},
-		title: "Safe Location: " + middle_element_safe_count.toString()
-	});
-	const rectangle3 = new google.maps.Rectangle({
-		strokeColor: "#3549EB",
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: "#3549EB",
-		fillOpacity: 0.35,
-		map,
-		bounds: {
-			north: workBoxNorth,
-			south: workBoxSouth,
-			east: workBoxEast,
-			west: workBoxWest,
-		},
-		title: "Work Location: " + middle_element_work_count.toString()
-	});
-	const rectangle4 = new google.maps.Rectangle({
-		strokeColor: "#8D70E0",
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: "#8D70E0",
-		fillOpacity: 0.35,
-		map,
-		bounds: {
-			north: destinationBoxNorth,
-			south: destinationBoxSouth,
-			east: destinationBoxEast,
-			west: destinationBoxWest,
-		},
-		title: "Destination Location: " + middle_element_destination_count.toString()
-	});
-	google.maps.event.addListener(rectangle1, 'mouseover', function() {
-		this.getMap().getDiv().setAttribute('title', this.get('title'));
-	});
-	google.maps.event.addListener(rectangle1, 'mouseout', function() {
-		this.getMap().getDiv().removeAttribute('title');
-	});
-	google.maps.event.addListener(rectangle2, 'mouseover', function() {
-		this.getMap().getDiv().setAttribute('title', this.get('title'));
-	});
-	google.maps.event.addListener(rectangle2, 'mouseout', function() {
-		this.getMap().getDiv().removeAttribute('title');
-	});
-	google.maps.event.addListener(rectangle3, 'mouseover', function() {
-		this.getMap().getDiv().setAttribute('title', this.get('title'));
-	});
-	google.maps.event.addListener(rectangle3, 'mouseout', function() {
-		this.getMap().getDiv().removeAttribute('title');
-	});
-	google.maps.event.addListener(rectangle4, 'mouseover', function() {
-		this.getMap().getDiv().setAttribute('title', this.get('title'));
-	});
-	google.maps.event.addListener(rectangle4, 'mouseout', function() {
-		this.getMap().getDiv().removeAttribute('title');
-	});
 }
+
 document.getElementById("location").addEventListener("change", function() {
 	var selectedValue = this.value;
 	console.log("selectedValue", selectedValue);
@@ -306,6 +198,7 @@ document.getElementById("location").addEventListener("change", function() {
 		return destinationArray;
 	}
 });
+
 
 function val() {
 	let safePath = "/static/data/heatmap/heatmap_data_safe.csv";
@@ -486,6 +379,30 @@ function addHeatmap(dropDownReturnValue) {
 		console.error('Error loading the CSV file:', error);
 	});
 }
+
+let isHistogram1 = true; // Toggle flag
+
+// Initial chart render
+addHistogram();
+
+document.getElementById("toggle-chart").addEventListener("click", () => {
+	// Fade out and remove the existing SVG
+	d3.select("#histogram svg")
+		.transition()
+		.duration(300)
+		.style("opacity", 0)
+		.remove();
+
+	// After transition, render the other chart
+	setTimeout(() => {
+		if (isHistogram1) {
+			addHistogram2(); // Your second histogram function
+		} else {
+			addHistogram(); // Original histogram function
+		}
+		isHistogram1 = !isHistogram1;
+	}, 300);
+});
 
 function addHistogram() {
 	let currentValue = parseFloat("{{ middle_element_current_count }}");
@@ -950,7 +867,7 @@ function createGauge() {
 	});
 }
 
-addHistogram2()
+<!--addHistogram()-->
 createAreaChart()
 callHeatmap()
 createGauge()

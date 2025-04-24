@@ -1661,6 +1661,16 @@ def create_bounding_box(latitude, longitude, distance):
     }
 
 
+def add_bounds_to_gdf(grid_gdf):
+    # Extract bounds: minx (west), miny (south), maxx (east), maxy (north)
+    bounds = grid_gdf.geometry.bounds
+    grid_gdf["west"] = bounds["minx"]
+    grid_gdf["south"] = bounds["miny"]
+    grid_gdf["east"] = bounds["maxx"]
+    grid_gdf["north"] = bounds["maxy"]
+    return grid_gdf
+
+
 def create_polygon(distance, latitude, longitude):
     transformer_to_3857 = Transformer.from_crs("EPSG:4326", "EPSG:3857")
     transformer_to_4326 = Transformer.from_crs("EPSG:3857", "EPSG:4326")
@@ -2390,14 +2400,30 @@ def success(safe, work, current, destination, interval, gridsize):
         meters = get_meters(user.radius, user.units)
         logger.info("--- assigning class and meter conversions %s seconds ---", time.time() - start_time)
 
-    #     currentpolygon = create_heatmap_polygon(meters, currentlocation[2])
-    # destinationpolygon = create_heatmap_polygon(meters, destinationlocation[2])
-
         safepolygon = create_heatmap_polygon(meters, safe_latitude, safe_longitude)
         workpolygon = create_heatmap_polygon(meters, work_latitude, work_longitude)
         currentpolygon = create_heatmap_polygon(meters, current_latitude, current_longitude)
         destinationpolygon = create_heatmap_polygon(meters, destination_latitude, destination_longitude)
 
+        # safe_gdf = create_grid_heatmap_new(meters, safe_latitude, safe_longitude)
+        # add_bounds_to_gdf(safe_gdf)
+
+        current_gdf = create_grid_heatmap_new(meters, current_latitude, current_longitude)
+        current_bounds = add_bounds_to_gdf(current_gdf)
+        current_west_list = current_bounds['west'].tolist()
+        current_east_list = current_bounds['east'].tolist()
+        current_north_list = current_bounds['north'].tolist()
+        current_south_list = current_bounds['south'].tolist()
+
+        # print("current_bounds west", current_west_list)
+        # print("current_bounds east", current_east_list)
+        # print("current_bounds north", current_north_list)
+        # print("current_bounds south", current_south_list)
+        # work_gdf = create_grid_heatmap_new(meters, work_latitude, work_longitude)
+        # add_bounds_to_gdf(work_gdf)
+        #
+        # destination_gdf = create_grid_heatmap_new(meters, destination_latitude, destination_longitude)
+        # add_bounds_to_gdf(destination_gdf)
 
         # current_box = create_current_polygon(meters, currentlocation[2])
         current_box = create_current_polygon(meters, current_latitude, current_longitude)
@@ -2437,7 +2463,7 @@ def success(safe, work, current, destination, interval, gridsize):
 
         start_time = time.time()
         bounding_box_safe = create_bounding_box(user.safecoordinates[1], user.safecoordinates[0], meters)
-        bounding_box_current = create_bounding_box(user.currentcoordinates[1], user.currentcoordinates[0], meters)
+        bounding_box_current = create_bounding_box(user.currentcoordinates[1], 0, meters)
         bounding_box_work = create_bounding_box(user.workcoordinates[1], user.workcoordinates[0], meters)
         bounding_box_destination = create_bounding_box(user.destinationcoordinates[1], user.destinationcoordinates[0],
                                                        meters)
@@ -2543,7 +2569,11 @@ def success(safe, work, current, destination, interval, gridsize):
                                # work_text=work_text,
                                # destination_text=destination_text,
                                time_years=years,
-                               time_counts=counts
+                               time_counts=counts,
+                               current_west_list=current_west_list,
+                               current_east_list=current_east_list,
+                               current_south_list=current_south_list,
+                               current_north_list=current_north_list
                                )
     except GeocoderTimedOut as e:
         flash('Geocoding timed out. Please try again.')
