@@ -124,7 +124,7 @@ let workArray = [];
 let destinationArray = [];
 let locationType = "current";
 var rectangles = [];
-
+var maxValue = parseFloat("{{maxgridelement}}");
 
 function updatedMap() {
 	var latitude = 39.134556;
@@ -159,16 +159,28 @@ document.getElementById("location").addEventListener("change", function() {
 		map.setCenter(latLng);
 		map.setZoom(16); // Adjust the zoom level as necessary
 
+        //return current path and address
+		const currentPath = heatmapPaths["current"]
+		currentArray = [currentLocation, currentPath];
+
         rectangles.forEach(rect => rect.setMap(null));
         rectangles = [];
 
+        d3.csv(currentPath).then(function(data) {
+           	data.forEach(function(d) {
+			    d.countlist = +d.countlist; // Convert a column to a number
+		    });
+		    const countlist = data.map(d => d.countlist);
+		    const centerList = data.map(d => d.centerlist);
            for (let i = 0; i < current_north_list.length; i++) {
+              const value = countlist[i];
+              const center = centerList[i];
+              const normalizedValue = Math.min(value / maxValue, 1);
+              const fillColor = d3.interpolatePurples(normalizedValue);
               const rectangle = new google.maps.Rectangle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
+                strokeColor: '#000',
                 strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35,
+                fillColor: fillColor,
                 map: map,
                 bounds: {
                   north: current_north_list[i],
@@ -177,13 +189,15 @@ document.getElementById("location").addEventListener("change", function() {
                   west:  current_west_list[i],
                 },
               });
-              rectangles.push(rectangle);
-          }
 
-		//return current path and address
-		const currentPath = heatmapPaths["current"]
-		currentArray = [currentLocation, currentPath];
-		console.log("currentArray", currentArray);
+            rectangles.push(rectangle);
+          }
+        }).catch(function(error) {
+            // Handle any errors that occur during the loading process
+            console.error('Error loading the CSV file:', error);
+	    });
+
+
 		locationType = "current";
 		return currentArray;
 	} else if(selectedValue === "safe") {
