@@ -27,7 +27,7 @@
                 <div class="app-screen">
                     <div class="select-container">
                         <select name="location" id="location">
-                            <option value="current">current</option>
+                            <option value="current" selected>current</option>
                             <option value="safe">safe</option>
                             <option value="work">work</option>
                             <option value="destination">destination</option>
@@ -123,6 +123,8 @@ let safeArray = [];
 let workArray = [];
 let destinationArray = [];
 let locationType = "current";
+var rectangles = [];
+
 
 function updatedMap() {
 	var latitude = 39.134556;
@@ -132,10 +134,15 @@ function updatedMap() {
 		zoom: 17,
 	};
 	map = new google.maps.Map(document.getElementById("map"), mapProp);
-}
+  }
 
 document.getElementById("location").addEventListener("change", function() {
 	var selectedValue = this.value;
+	var current_north_list = JSON.parse("{{ current_north_list | tojson }}");
+	var current_south_list = JSON.parse("{{ current_south_list | tojson }}");
+	var current_west_list = JSON.parse("{{ current_west_list | tojson }}");
+	var current_east_list = JSON.parse("{{ current_east_list | tojson }}");
+
 	console.log("selectedValue", selectedValue);
 	const heatmapPaths = {
 		current: "/static/data/heatmap/heatmap_data_current.csv",
@@ -150,7 +157,29 @@ document.getElementById("location").addEventListener("change", function() {
 		};
 		// Zoom into the selected coordinates
 		map.setCenter(latLng);
-		map.setZoom(14.5); // Adjust the zoom level as necessary
+		map.setZoom(16); // Adjust the zoom level as necessary
+
+        rectangles.forEach(rect => rect.setMap(null));
+        rectangles = [];
+
+           for (let i = 0; i < current_north_list.length; i++) {
+              const rectangle = new google.maps.Rectangle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#FF0000',
+                fillOpacity: 0.35,
+                map: map,
+                bounds: {
+                  north: current_north_list[i],
+                  south: current_south_list[i],
+                  east:  current_east_list[i],
+                  west:  current_west_list[i],
+                },
+              });
+              rectangles.push(rectangle);
+          }
+
 		//return current path and address
 		const currentPath = heatmapPaths["current"]
 		currentArray = [currentLocation, currentPath];
@@ -164,7 +193,7 @@ document.getElementById("location").addEventListener("change", function() {
 		};
 		// Zoom into the selected coordinates
 		map.setCenter(latLng);
-		map.setZoom(14.5); // Adjust the zoom level as necessary
+		map.setZoom(16); // Adjust the zoom level as necessary
 		const safePath = heatmapPaths["safe"]
 		safeArray = [safeLocation, safePath];
 		console.log("safeArray", safeArray);
@@ -177,7 +206,7 @@ document.getElementById("location").addEventListener("change", function() {
 		};
 		// Zoom into the selected coordinates
 		map.setCenter(latLng);
-		map.setZoom(14.5);
+		map.setZoom(16);
 		const workPath = heatmapPaths["work"]
 		workArray = [workLocation, workPath];
 		console.log("workArray", workArray);
@@ -190,15 +219,19 @@ document.getElementById("location").addEventListener("change", function() {
 		};
 		// Zoom into the selected coordinates
 		map.setCenter(latLng);
-		map.setZoom(14.5);
+		map.setZoom(16);
 		const destinationPath = heatmapPaths["destination"]
 		destinationArray = [destinationLocation, destinationPath];
 		console.log("destinationArray", destinationArray);
 		locationType = "destination";
 		return destinationArray;
-	}
+	  }
 });
 
+window.addEventListener("load", function () {
+  const locationSelect = document.getElementById("location");
+  locationSelect.dispatchEvent(new Event("change")); // Trigger the event
+});
 
 function val() {
 	let safePath = "/static/data/heatmap/heatmap_data_safe.csv";
