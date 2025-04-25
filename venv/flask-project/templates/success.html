@@ -169,13 +169,24 @@ document.getElementById("location").addEventListener("change", function() {
         d3.csv(currentPath).then(function(data) {
         data.forEach(function(d) {
 		    d.countlist = +d.countlist; // Convert a column to a number
+            d.col = d.rows;  // A, B, C, D, E
+            d.row = d.cols;  // v1, v2, ...
 	    });
 
+        const colOrder = ['A', 'B', 'C', 'D', 'E'];       // left to right
+        const rowOrder = ['v5', 'v4', 'v3', 'v2', 'v1'];
 
+        data.sort((a, b) => {
+            const rowDiff = rowOrder.indexOf(a.row) - rowOrder.indexOf(b.row);
+            return rowDiff !== 0
+                ? rowDiff
+                : colOrder.indexOf(a.col) - colOrder.indexOf(b.col);
+        });
 
         const countlist = data.map(d => d.countlist);
         const centerList = data.map(d => d.centerlist);
         const maxValue = d3.max(countlist); // Make sure maxValue is defined
+        console.log("Sorted countlist:", countlist.slice(0, 5)); // should log: [43, 43, 128, 56, 0]
 
 	for (let i = 0; i < current_north_list.length; i++) {
 		const value = countlist[i];
@@ -197,6 +208,11 @@ document.getElementById("location").addEventListener("change", function() {
 			map: map,
 			bounds: bounds,
 		});
+
+		 if (center === "True") {
+            rectangle.setOptions({ strokeWeight: 2, strokeColor: '#6ac5fe' });
+        }
+
 		rectangles.push(rectangle);
 
 		new google.maps.Marker({
