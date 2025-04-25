@@ -35,6 +35,7 @@
                     </div>
                     <div class="map-container">
                         <div id="map"></div>
+                        <div id="legend" style="position:absolute; bottom:30px; left:30px; background:white; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>
                     </div>
                     <div class="visual-button-container">
                         <i onclick="openVisualization()" class="arrow up"></i>
@@ -234,10 +235,70 @@ document.getElementById("location").addEventListener("change", function() {
 		});
 	}
 
+        const legendWidth = 120;
+        const legendHeight = 10;
+
+        // Clear any previous legend
+        d3.select("#legend").selectAll("*").remove();
+
+        const svg = d3.select("#legend")
+          .append("svg")
+          .attr("width", legendWidth + 30)
+          .attr("height", 30);
+
+        // Create defs for linear gradient
+        const defs = svg.append("defs");
+        const linearGradient = defs.append("linearGradient")
+          .attr("id", "linear-gradient");
+
+        linearGradient
+          .attr("x1", "0%")
+          .attr("y1", "0%")
+          .attr("x2", "100%")
+          .attr("y2", "0%");
+
+        // Add color stops (you can add more for smoother transitions)
+        linearGradient.selectAll("stop")
+          .data([
+            { offset: "0%", color: d3.interpolatePurples(0) },
+            { offset: "100%", color: d3.interpolatePurples(1) }
+          ])
+          .enter().append("stop")
+          .attr("offset", d => d.offset)
+          .attr("stop-color", d => d.color);
+
+        // Draw the gradient rect
+        svg.append("rect")
+          .attr("x", 10)
+          .attr("y", 0)
+          .attr("width", legendWidth)
+          .attr("height", legendHeight)
+          .style("fill", "url(#linear-gradient)")
+          .style("stroke", "black");
+
+        // Add min label
+        svg.append("text")
+          .attr("x", 10)
+          .attr("y", legendHeight + 12)
+          .attr("font-size", "10px")
+          .attr("text-anchor", "start")
+          .text("1");
+
+        // Add max label
+        svg.append("text")
+          .attr("x", legendWidth + 10)
+          .attr("y", legendHeight + 12)
+          .attr("font-size", "10px")
+          .attr("text-anchor", "end")
+          .text(maxValue);
+
+
         }).catch(function(error) {
             // Handle any errors that occur during the loading process
             console.error('Error loading the CSV file:', error);
 	    });
+
+
 
 		locationType = "current";
 		return currentArray;
