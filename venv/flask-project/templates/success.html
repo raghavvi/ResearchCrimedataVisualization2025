@@ -167,36 +167,61 @@ document.getElementById("location").addEventListener("change", function() {
         rectangles = [];
 
         d3.csv(currentPath).then(function(data) {
-           	data.forEach(function(d) {
-			    d.countlist = +d.countlist; // Convert a column to a number
-		    });
-		    const countlist = data.map(d => d.countlist);
-		    const centerList = data.map(d => d.centerlist);
-           for (let i = 0; i < current_north_list.length; i++) {
-              const value = countlist[i];
-              const center = centerList[i];
-              const normalizedValue = Math.min(value / maxValue, 1);
-              const fillColor = d3.interpolatePurples(normalizedValue);
-              const rectangle = new google.maps.Rectangle({
-                strokeColor: '#000',
-                strokeWeight: 2,
-                fillColor: fillColor,
-                map: map,
-                bounds: {
-                  north: current_north_list[i],
-                  south: current_south_list[i],
-                  east:  current_east_list[i],
-                  west:  current_west_list[i],
-                },
-              });
+        data.forEach(function(d) {
+		    d.countlist = +d.countlist; // Convert a column to a number
+	    });
 
-            rectangles.push(rectangle);
-          }
+
+
+        const countlist = data.map(d => d.countlist);
+        const centerList = data.map(d => d.centerlist);
+        const maxValue = d3.max(countlist); // Make sure maxValue is defined
+
+	for (let i = 0; i < current_north_list.length; i++) {
+		const value = countlist[i];
+		const center = centerList[i];
+		const normalizedValue = Math.min(value / maxValue, 1);
+		const fillColor = d3.interpolatePurples(normalizedValue);
+
+		const bounds = {
+			north: current_north_list[i],
+			south: current_south_list[i],
+			east: current_east_list[i],
+			west: current_west_list[i],
+		};
+
+		const rectangle = new google.maps.Rectangle({
+			strokeColor: '#000',
+			strokeWeight: 2,
+			fillColor: fillColor,
+			map: map,
+			bounds: bounds,
+		});
+		rectangles.push(rectangle);
+
+		new google.maps.Marker({
+			position: {
+				lat: (bounds.north + bounds.south) / 2,
+				lng: (bounds.east + bounds.west) / 2,
+			},
+			map: map,
+			label: {
+				text: value.toString(),
+				color: "black",
+				fontWeight: "bold",
+				fontSize: "14px",
+			},
+			icon: {
+				path: google.maps.SymbolPath.CIRCLE,
+				scale: 0, // Hide marker icon
+			},
+		});
+	}
+
         }).catch(function(error) {
             // Handle any errors that occur during the loading process
             console.error('Error loading the CSV file:', error);
 	    });
-
 
 		locationType = "current";
 		return currentArray;
