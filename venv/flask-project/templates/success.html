@@ -143,6 +143,22 @@ document.getElementById("location").addEventListener("change", function() {
 	var current_south_list = JSON.parse("{{ current_south_list | tojson }}");
 	var current_west_list = JSON.parse("{{ current_west_list | tojson }}");
 	var current_east_list = JSON.parse("{{ current_east_list | tojson }}");
+
+	var safe_north_list = JSON.parse("{{ safe_north_list | tojson }}");
+	var safe_south_list = JSON.parse("{{ safe_south_list | tojson }}");
+	var safe_west_list = JSON.parse("{{ safe_west_list | tojson }}");
+	var safe_east_list = JSON.parse("{{ safe_east_list | tojson }}");
+
+	var work_north_list = JSON.parse("{{ work_north_list | tojson }}");
+	var work_south_list = JSON.parse("{{ work_south_list | tojson }}");
+	var work_west_list = JSON.parse("{{ work_west_list | tojson }}");
+	var work_east_list = JSON.parse("{{ work_east_list | tojson }}");
+
+	var destination_north_list = JSON.parse("{{ destination_north_list | tojson }}");
+	var destination_south_list = JSON.parse("{{ destination_south_list | tojson }}");
+	var destination_west_list = JSON.parse("{{ destination_west_list | tojson }}");
+	var destination_east_list = JSON.parse("{{ destination_east_list | tojson }}");
+
     const colOrder = ['A', 'B', 'C', 'D', 'E'];
     const rowOrder = ['v5', 'v4', 'v3', 'v2', 'v1'];
 
