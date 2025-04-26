@@ -2415,6 +2415,27 @@ def success(safe, work, current, destination, interval, gridsize):
         current_north_list = current_bounds['north'].tolist()
         current_south_list = current_bounds['south'].tolist()
 
+        work_gdf = create_grid_heatmap_new(meters, work_latitude, work_longitude)
+        work_bounds = add_bounds_to_gdf(work_gdf)
+        work_west_list = work_bounds['west'].tolist()
+        work_east_list = work_bounds['east'].tolist()
+        work_north_list = work_bounds['north'].tolist()
+        work_south_list = work_bounds['south'].tolist()
+
+        safe_gdf = create_grid_heatmap_new(meters, safe_latitude, safe_longitude)
+        safe_bounds = add_bounds_to_gdf(safe_gdf)
+        safe_west_list = safe_bounds['west'].tolist()
+        safe_east_list = safe_bounds['east'].tolist()
+        safe_north_list = safe_bounds['north'].tolist()
+        safe_south_list = safe_bounds['south'].tolist()
+
+        destination_gdf = create_grid_heatmap_new(meters, destination_latitude, destination_longitude)
+        destination_bounds = add_bounds_to_gdf(destination_gdf)
+        destination_west_list = destination_bounds['west'].tolist()
+        destination_east_list = destination_bounds['east'].tolist()
+        destination_north_list = destination_bounds['north'].tolist()
+        destination_south_list = destination_bounds['south'].tolist()
+
         # print("current_bounds west", current_west_list)
         # print("current_bounds east", current_east_list)
         # print("current_bounds north", current_north_list)
@@ -2573,7 +2594,19 @@ def success(safe, work, current, destination, interval, gridsize):
                                current_west_list=current_west_list,
                                current_east_list=current_east_list,
                                current_south_list=current_south_list,
-                               current_north_list=current_north_list
+                               current_north_list=current_north_list,
+                               work_west_list=work_west_list,
+                               work_east_list=work_east_list,
+                               work_south_list=work_south_list,
+                               work_north_list=work_north_list,
+                               safe_west_list=safe_west_list,
+                               safe_east_list=safe_east_list,
+                               safe_south_list=safe_south_list,
+                               safe_north_list=safe_north_list,
+                               destination_west_list=destination_west_list,
+                               destination_east_list=destination_east_list,
+                               destination_south_list=destination_south_list,
+                               destination_north_list=destination_north_list
                                )
     except GeocoderTimedOut as e:
         flash('Geocoding timed out. Please try again.')
