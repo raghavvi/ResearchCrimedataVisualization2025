@@ -103,7 +103,13 @@ class FilteredModel(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'filtered_police_data',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {
@@ -203,7 +209,13 @@ class IntervalTwo(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'police_data_two',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {
@@ -250,7 +262,13 @@ class IntervalThree(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'police_data_three',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {
@@ -297,7 +315,13 @@ class IntervalFour(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'police_data_four',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {
@@ -344,7 +368,13 @@ class IntervalFive(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'police_data_five',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {
@@ -391,7 +421,13 @@ class IntervalSix(db.DynamicDocument):
     time = db.StringField()
     hour = db.StringField()
     meta = {'collection': 'police_data_six',
-            'strict': False}
+            'strict': False,
+            'indexes': [
+                [("point", "2dsphere")],
+                "MID_DATE",
+                "OFFENSE",
+                [("MID_DATE", 1), ("OFFENSE", 1)]
+            ]}
 
     def to_json(self):
         return {

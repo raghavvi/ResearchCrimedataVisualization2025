@@ -45,7 +45,7 @@
                         <ul class="nav nav-tabs">
                             <li><a data-toggle="tab" href="#menu1">Histogram</a></li>
                             <li><a data-toggle="tab" href="#menu2">Area</a></li>
-                            <li><a data-toggle="tab" href="#menu3">Heatmap</a></li>
+<!--                            <li><a data-toggle="tab" href="#menu3">Heatmap</a></li>-->
                             <li><a data-toggle="tab" href="#menu4">Dial</a></li>
                         </ul>
                         <div class="tab-content">
@@ -58,9 +58,9 @@
                                     <div id="histogram"></div>
                                 </div>
                                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-                                    <span style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
+                                    <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
                                     <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">
-                                        View Details
+                                        Click Here
                                     </button>
                                 </div>
                             </div>
@@ -68,12 +68,12 @@
                                 <div id="container2" style="height: 250px; width: 250px;">
                                 </div>
                             </div>
-                            <div id="menu3" class="tab-pane fade">
-                                <p id="heatmap-title" style="text-align: center; font-size: 10px;
-                                word-wrap: break-word; margin-bottom: 5px;">
-                                </p>
-                                <div id="heatmap"></div>
-                            </div>
+<!--                            <div id="menu3" class="tab-pane fade">-->
+<!--                                <p id="heatmap-title" style="text-align: center; font-size: 10px;-->
+<!--                                word-wrap: break-word; margin-bottom: 5px;">-->
+<!--                                </p>-->
+<!--                                <div id="heatmap"></div>-->
+<!--                            </div>-->
                             <div id="menu4" class="tab-pane fade">
                                 <br>
                                 <div id="container" style="height: 300px;">
@@ -137,60 +137,72 @@ function updatedMap() {
 	map = new google.maps.Map(document.getElementById("map"), mapProp);
   }
 
-document.getElementById("location").addEventListener("change", function() {
-	var selectedValue = this.value;
-	var current_north_list = JSON.parse("{{ current_north_list | tojson }}");
-	var current_south_list = JSON.parse("{{ current_south_list | tojson }}");
-	var current_west_list = JSON.parse("{{ current_west_list | tojson }}");
-	var current_east_list = JSON.parse("{{ current_east_list | tojson }}");
 
-	var safe_north_list = JSON.parse("{{ safe_north_list | tojson }}");
-	var safe_south_list = JSON.parse("{{ safe_south_list | tojson }}");
-	var safe_west_list = JSON.parse("{{ safe_west_list | tojson }}");
-	var safe_east_list = JSON.parse("{{ safe_east_list | tojson }}");
+document.getElementById("location").addEventListener("change", function () {
+    var selectedValue = this.value;
 
-	var work_north_list = JSON.parse("{{ work_north_list | tojson }}");
-	var work_south_list = JSON.parse("{{ work_south_list | tojson }}");
-	var work_west_list = JSON.parse("{{ work_west_list | tojson }}");
-	var work_east_list = JSON.parse("{{ work_east_list | tojson }}");
+    const latLngCoordinates = {
+        current: { lat: latcurrentcoordinate, lng: loncurrentcoordinate },
+        safe: { lat: latsafecoordinate, lng: lonsafecoordinate },
+        work: { lat: latworkcoordinate, lng: lonworkcoordinate },
+        destination: { lat: latdestinationcoordinate, lng: londestinationcoordinate }
+    };
 
-	var destination_north_list = JSON.parse("{{ destination_north_list | tojson }}");
-	var destination_south_list = JSON.parse("{{ destination_south_list | tojson }}");
-	var destination_west_list = JSON.parse("{{ destination_west_list | tojson }}");
-	var destination_east_list = JSON.parse("{{ destination_east_list | tojson }}");
+    const heatmapPaths = {
+        current: "/static/data/heatmap/heatmap_data_current.csv",
+        safe: "/static/data/heatmap/heatmap_data_safe.csv",
+        work: "/static/data/heatmap/heatmap_data_work.csv",
+        destination: "/static/data/heatmap/heatmap_data_destination.csv"
+    };
+
+    const geoBounds = {
+        current: {
+            north: JSON.parse("{{ current_north_list | tojson }}"),
+            south: JSON.parse("{{ current_south_list | tojson }}"),
+            west: JSON.parse("{{ current_west_list | tojson }}"),
+            east: JSON.parse("{{ current_east_list | tojson }}")
+        },
+        safe: {
+            north: JSON.parse("{{ safe_north_list | tojson }}"),
+            south: JSON.parse("{{ safe_south_list | tojson }}"),
+            west: JSON.parse("{{ safe_west_list | tojson }}"),
+            east: JSON.parse("{{ safe_east_list | tojson }}")
+        },
+        work: {
+            north: JSON.parse("{{ work_north_list | tojson }}"),
+            south: JSON.parse("{{ work_south_list | tojson }}"),
+            west: JSON.parse("{{ work_west_list | tojson }}"),
+            east: JSON.parse("{{ work_east_list | tojson }}")
+        },
+        destination: {
+            north: JSON.parse("{{ destination_north_list | tojson }}"),
+            south: JSON.parse("{{ destination_south_list | tojson }}"),
+            west: JSON.parse("{{ destination_west_list | tojson }}"),
+            east: JSON.parse("{{ destination_east_list | tojson }}")
+        }
+    };
 
     const colOrder = ['A', 'B', 'C', 'D', 'E'];
     const rowOrder = ['v5', 'v4', 'v3', 'v2', 'v1'];
 
-	console.log("selectedValue", selectedValue);
-	const heatmapPaths = {
-		current: "/static/data/heatmap/heatmap_data_current.csv",
-		safe: "/static/data/heatmap/heatmap_data_safe.csv",
-		work: "/static/data/heatmap/heatmap_data_work.csv",
-		destination: "/static/data/heatmap/heatmap_data_destination.csv",
-	};
-	if(selectedValue === "current") {
+    if (selectedValue in heatmapPaths) {
+        const latLng = latLngCoordinates[selectedValue];
+        const heatmapPath = heatmapPaths[selectedValue];
+        const boundsLists = geoBounds[selectedValue];
 
-		var latLng = {
-			lat: latcurrentcoordinate,
-			lng: loncurrentcoordinate
-		};
-		// Zoom into the selected coordinates
-		map.setCenter(latLng);
-		map.setZoom(16); // Adjust the zoom level as necessary
+        // Zoom in
+        map.setCenter(latLng);
+        map.setZoom(16);
 
-        //return current path and address
-		var currentPath = heatmapPaths["current"]
-		currentArray = [currentLocation, currentPath];
-
+        // Clear previous rectangles
         rectangles.forEach(rect => rect.setMap(null));
         rectangles = [];
 
-        d3.csv(currentPath).then(function(data) {
-            data.forEach(function(d) {
-                d.countlist = +d.countlist; // Convert a column to a number
-                d.col = d.rows;  // A, B, C, D, E
-                d.row = d.cols;  // v1, v2, ...
+        d3.csv(heatmapPath).then(function (data) {
+            data.forEach(function (d) {
+                d.countlist = +d.countlist;
+                d.col = d.rows;
+                d.row = d.cols;
             });
 
             data.sort((a, b) => {
@@ -200,165 +212,114 @@ document.getElementById("location").addEventListener("change", function() {
                     : colOrder.indexOf(a.col) - colOrder.indexOf(b.col);
             });
 
-        var countlist = data.map(d => d.countlist);
-        var centerList = data.map(d => d.centerlist);
-        var maxValue = d3.max(countlist); // Make sure maxValue is defined
-        console.log("Sorted countlist:", countlist.slice(0, 5)); // should log: [43, 43, 128, 56, 0]
+            var countlist = data.map(d => d.countlist);
+            var centerList = data.map(d => d.centerlist);
+            var maxValue = d3.max(countlist);
 
-	for (let i = 0; i < current_north_list.length; i++) {
-		var value = countlist[i];
-		var center = centerList[i];
-		var normalizedValue = Math.min(value / maxValue, 1);
-		var fillColor = d3.interpolatePurples(normalizedValue);
+            for (let i = 0; i < boundsLists.north.length; i++) {
+                var value = countlist[i];
+                var center = centerList[i];
+                var normalizedValue = Math.min(value / maxValue, 1);
+                var fillColor = d3.interpolatePurples(normalizedValue);
 
-		var bounds = {
-			north: current_north_list[i],
-			south: current_south_list[i],
-			east: current_east_list[i],
-			west: current_west_list[i],
-		};
+                var bounds = {
+                    north: boundsLists.north[i],
+                    south: boundsLists.south[i],
+                    east: boundsLists.east[i],
+                    west: boundsLists.west[i]
+                };
 
-		var rectangle = new google.maps.Rectangle({
-			strokeColor: '#000',
-			strokeWeight: 2,
-			fillColor: fillColor,
-			map: map,
-			bounds: bounds,
-		});
+                var rectangle = new google.maps.Rectangle({
+                    strokeColor: '#000',
+                    strokeWeight: 2,
+                    fillColor: fillColor,
+                    map: map,
+                    bounds: bounds
+                });
 
-		 if (center === "True") {
-            rectangle.setOptions({ strokeWeight: 4, strokeColor: '#0077B6', zIndex: 999 });
-        }
+                if (center === "True") {
+                    rectangle.setOptions({ strokeWeight: 4, strokeColor: '#0077B6', zIndex: 999 });
+                }
 
-		rectangles.push(rectangle);
+                rectangles.push(rectangle);
 
-		new google.maps.Marker({
-			position: {
-				lat: (bounds.north + bounds.south) / 2,
-				lng: (bounds.east + bounds.west) / 2,
-			},
-			map: map,
-			label: {
-				text: value.toString(),
-				color: "black",
-				fontWeight: "bold",
-				fontSize: "14px",
-			},
-			icon: {
-				path: google.maps.SymbolPath.CIRCLE,
-				scale: 0, // Hide marker icon
-			},
-		});
-	}
-        var legendWidth = 120;
-        var legendHeight = 10;
+                new google.maps.Marker({
+                    position: {
+                        lat: (bounds.north + bounds.south) / 2,
+                        lng: (bounds.east + bounds.west) / 2
+                    },
+                    map: map,
+                    label: {
+                        text: value.toString(),
+                        color: "black",
+                        fontWeight: "bold",
+                        fontSize: "14px"
+                    },
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 0
+                    }
+                });
+            }
 
-        // Clear any previous legend
-        d3.select("#legend").selectAll("*").remove();
+            // Draw Legend
+            var legendWidth = 120;
+            var legendHeight = 10;
 
-        var svg = d3.select("#legend")
-          .append("svg")
-          .attr("width", legendWidth + 30)
-          .attr("height", 30);
+            d3.select("#legend").selectAll("*").remove();
 
-        // Create defs for linear gradient
-        var defs = svg.append("defs");
-        var linearGradient = defs.append("linearGradient")
-          .attr("id", "linear-gradient");
+            var svg = d3.select("#legend")
+                .append("svg")
+                .attr("width", legendWidth + 30)
+                .attr("height", 30);
 
-        linearGradient
-          .attr("x1", "0%")
-          .attr("y1", "0%")
-          .attr("x2", "100%")
-          .attr("y2", "0%");
+            var defs = svg.append("defs");
+            var linearGradient = defs.append("linearGradient")
+                .attr("id", "linear-gradient");
 
-        // Add color stops (you can add more for smoother transitions)
-        linearGradient.selectAll("stop")
-          .data([
-            { offset: "0%", color: d3.interpolatePurples(0) },
-            { offset: "100%", color: d3.interpolatePurples(1) }
-          ])
-          .enter().append("stop")
-          .attr("offset", d => d.offset)
-          .attr("stop-color", d => d.color);
+            linearGradient
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "0%");
 
-        // Draw the gradient rect
-        svg.append("rect")
-          .attr("x", 10)
-          .attr("y", 0)
-          .attr("width", legendWidth)
-          .attr("height", legendHeight)
-          .style("fill", "url(#linear-gradient)")
-          .style("stroke", "black");
+            linearGradient.selectAll("stop")
+                .data([
+                    { offset: "0%", color: d3.interpolatePurples(0) },
+                    { offset: "100%", color: d3.interpolatePurples(1) }
+                ])
+                .enter().append("stop")
+                .attr("offset", d => d.offset)
+                .attr("stop-color", d => d.color);
 
-        // Add min label
-        svg.append("text")
-          .attr("x", 10)
-          .attr("y", legendHeight + 12)
-          .attr("font-size", "10px")
-          .attr("text-anchor", "start")
-          .text("1");
+            svg.append("rect")
+                .attr("x", 10)
+                .attr("y", 0)
+                .attr("width", legendWidth)
+                .attr("height", legendHeight)
+                .style("fill", "url(#linear-gradient)")
+                .style("stroke", "black");
 
-        // Add max label
-        svg.append("text")
-          .attr("x", legendWidth + 10)
-          .attr("y", legendHeight + 12)
-          .attr("font-size", "10px")
-          .attr("text-anchor", "end")
-          .text(maxValue);
+            svg.append("text")
+                .attr("x", 10)
+                .attr("y", legendHeight + 12)
+                .attr("font-size", "10px")
+                .attr("text-anchor", "start")
+                .text("1");
 
-        }).catch(function(error) {
-            // Handle any errors that occur during the loading process
-            console.error('Error loading the CSV file:', error);
-	    });
+            svg.append("text")
+                .attr("x", legendWidth + 10)
+                .attr("y", legendHeight + 12)
+                .attr("font-size", "10px")
+                .attr("text-anchor", "end")
+                .text(maxValue);
 
-		locationType = "current";
-		return currentArray;
-	} else if(selectedValue === "safe") {
-		var latLng = {
-			lat: latsafecoordinate,
-			lng: lonsafecoordinate
-		};
-		// Zoom into the selected coordinates
-		map.setCenter(latLng);
-		map.setZoom(16); // Adjust the zoom level as necessary
-		const safePath = heatmapPaths["safe"]
-		safeArray = [safeLocation, safePath];
-		console.log("safeArray", safeArray);
+        }).catch(function (error) {
+            console.error("Error loading the CSV file:", error);
+        });
 
-
-
-		locationType = "safe";
-		return safeArray;
-	} else if(selectedValue === "work") {
-		var latLng = {
-			lat: latworkcoordinate,
-			lng: lonworkcoordinate
-		};
-		// Zoom into the selected coordinates
-		map.setCenter(latLng);
-		map.setZoom(16);
-		const workPath = heatmapPaths["work"]
-		workArray = [workLocation, workPath];
-		console.log("workArray", workArray);
-
-		locationType = "work";
-		return workArray;
-	} else if(selectedValue === "destination") {
-		var latLng = {
-			lat: latdestinationcoordinate,
-			lng: londestinationcoordinate
-		};
-		// Zoom into the selected coordinates
-		map.setCenter(latLng);
-		map.setZoom(16);
-		const destinationPath = heatmapPaths["destination"]
-		destinationArray = [destinationLocation, destinationPath];
-		console.log("destinationArray", destinationArray);
-
-		locationType = "destination";
-		return destinationArray;
-	  }
+        locationType = selectedValue;
+    }
 });
 
 
@@ -367,278 +328,24 @@ window.addEventListener("load", function () {
   locationSelect.dispatchEvent(new Event("change")); // Trigger the event
 });
 
-
-
-function val() {
-	let safePath = "/static/data/heatmap/heatmap_data_safe.csv";
-	let workPath = "/static/data/heatmap/heatmap_data_work.csv";
-	let currentPath = "/static/data/heatmap/heatmap_data_current.csv";
-	let destinationPath = "/static/data/heatmap/heatmap_data_destination.csv";
-	dropdownValue = document.getElementById("location").value;
-	if(locationType == "safe") {
-		return safeArray[1];
-	} else if(locationType == "work") {
-		return workArray[1];
-	} else if(locationType == "current") {
-		return currentArray[1];
-	} else if(locationType == "destination") {
-		return destinationArray[1];
-	}
-}
-
-function callHeatmap() {
-	const dropdown = document.getElementById("location");
-	dropdown.removeEventListener("change", handleLocationChange);
-	dropdown.addEventListener("change", handleLocationChange);
-	document.addEventListener("DOMContentLoaded", function() {
-		d3.select("#heatmap").selectAll("*").remove();
-		let defaultValue = "/static/data/heatmap/heatmap_data_current.csv";
-		addHeatmap(defaultValue);
-	});
-}
-
-function handleLocationChange() {
-	d3.select("#heatmap").selectAll("*").remove();
-	let dropDownReturnValue = val();
-	console.log("dropDownReturnValue", dropDownReturnValue);
-	addHeatmap(dropDownReturnValue);
-}
-
-function setHeatMapLabels(dropDownReturnValue) {
-	// pass dropDownReturnValue to tooltip to return string and color in array
-	let currentLocationArray = [];
-	let safeLocationArray = [];
-	let workLocationArray = [];
-	let destinationLocationArray = [];
-	let locationStr = "";
-	let locationColor = "";
-	var currentLocation = "{{currentaddress}}";
-	var safeLocation = "{{safeaddress}}";
-	var workLocation = "{{workaddress}}";
-	var destinationLocation = "{{destinationaddress}}";
-	if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_current.csv") {
-		locationStr = currentLocation;
-		locationColor = "#89CFF0";
-		currentLocationArray.push(locationStr);
-		currentLocationArray.push(locationColor);
-		return currentLocationArray;
-	} else if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_safe.csv") {
-		locationStr = safeLocation;
-		locationColor = "#89CFF0";
-		safeLocationArray.push(locationStr);
-		safeLocationArray.push(locationColor);
-		return safeLocationArray;
-	} else if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_work.csv") {
-		locationStr = workLocation;
-		locationColor = "#89CFF0";
-		workLocationArray.push(locationStr);
-		workLocationArray.push(locationColor);
-		return workLocationArray;
-	} else if(dropDownReturnValue.toString() === "/static/data/heatmap/heatmap_data_destination.csv") {
-		locationStr = destinationLocation;
-		locationColor = "#89CFF0";
-		destinationLocationArray.push(locationStr);
-		destinationLocationArray.push(locationColor);
-		return destinationLocationArray;
-	}
-}
-
-function addHeatmap2(dropDownReturnValue) {
-	document.getElementById("heatmap-title").innerHTML = `Hazardous crimes relative to <strong>${locationStr}</strong> from ${interval} over 13 years`;
-	// set the dimensions and margins of the graph
-
-    const width = 400;
-    const height = 50;
-    const margin = { top: 10, right: 10, bottom: 30, left: 10 };
-    var maxGridElement = parseFloat("{{maxgridelement}}");
-
-    const svg = d3.select("body")
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height + margin.bottom);
-
-    // Create defs for gradient
-    const defs = svg.append("defs");
-    const linearGradient = defs.append("linearGradient")
-      .attr("id", "linear-gradient")
-      .attr("x1", "0%")
-      .attr("y1", "0%")
-      .attr("x2", "100%")
-      .attr("y2", "0%");
-
-    const gradientStops = [
-      { offset: "0%", color: d3.interpolatePurples(0) },
-      { offset: "25%", color: d3.interpolatePurples(0.25) },
-      { offset: "50%", color: d3.interpolatePurples(0.5) },
-      { offset: "75%", color: d3.interpolatePurples(0.75) },
-      { offset: "100%", color: d3.interpolatePurples(1) }
-    ];
-
-    gradientStops.forEach(stop => {
-      linearGradient.append("stop")
-        .attr("offset", stop.offset)
-        .attr("stop-color", stop.color);
-    });
-
-    // Draw legend
-    const legendWidth = 100;
-    const legendHeight = 10;
-
-    const legendSvg = svg.append("g")
-      .attr("class", "legend")
-      .attr("transform", `translate(${(width - legendWidth) / 2}, ${height - legendHeight})`);
-
-    legendSvg.append("rect")
-      .attr("width", legendWidth)
-      .attr("height", legendHeight)
-      .style("fill", "url(#linear-gradient)")
-      .style("stroke", "black");
-
-    legendSvg.append("text")
-      .attr("x", 0)
-      .attr("y", legendHeight + 10)
-      .attr("font-size", "8px")
-      .attr("text-anchor", "start")
-      .text("1");
-
-    legendSvg.append("text")
-      .attr("x", legendWidth)
-      .attr("y", legendHeight + 10)
-      .attr("font-size", "8px")
-      .attr("text-anchor", "end")
-      .text(maxGridElement);
-
-}
-
-
-function addHeatmap(dropDownReturnValue) {
-	var maxGridElement = parseFloat("{{maxgridelement}}");
-	var interval = "{{interval}}";
-	console.log("maxGridElement", maxGridElement);
-	locationArray = setHeatMapLabels(dropDownReturnValue)
-	let locationStr = locationArray[0].toString();
-	document.getElementById("heatmap-title").innerHTML = `Hazardous crimes relative to <strong>${locationStr}</strong> from ${interval} over 13 years`;
-	// set the dimensions and margins of the graph
-	const margin = {
-			top: 20,
-			right: 35,
-			bottom: 35,
-			left: 30
-		},
-		width = 300 - margin.left - margin.right,
-		height = 150 - margin.top - margin.bottom;
-	// append the svg object to the body of the page
-	const svg = d3.select("#heatmap").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom + 30).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-	// Labels of row and columns
-	const myGroups = ["A", "B", "C", "D", "E"]
-	const myVars = ["v1", "v2", "v3", "v4", "v5"]
-	// Build X scales and axis:
-	const x = d3.scaleBand().range([0, width]).domain(myGroups).padding(0.01);
-	svg.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(x))
-	// Build X scales and axis:
-	const y = d3.scaleBand().range([height, 0]).domain(myVars).padding(0.01);
-	svg.append("g").call(d3.axisLeft(y));
-	// Build color scale
-	const myColor = d3.scaleSequential().interpolator(d3.interpolatePurples).domain([1, maxGridElement]);
-
-	const legendWidth = 100;
-	const legendHeight = 10;
-	const legendSvg = svg.append("g").attr("class", "legend").attr("transform", `translate(${(width - legendWidth) / 2}, ${height + margin.bottom - 5})`);
-	// Append gradient defs
-	const defs = svg.append("defs");
-	const linearGradient = defs.append("linearGradient").attr("id", "linear-gradient");
-	linearGradient.attr("x1", "0%").attr("y1", "0%").attr("x2", "100%").attr("y2", "0%");
-	const gradientStops = [{
-		offset: "0%",
-		color: d3.interpolatePurples(0)
-	}, {
-		offset: "25%",
-		color: d3.interpolatePurples(0.25)
-	}, {
-		offset: "50%",
-		color: d3.interpolatePurples(0.5)
-	}, {
-		offset: "75%",
-		color: d3.interpolatePurples(0.75)
-	}, {
-		offset: "100%",
-		color: d3.interpolatePurples(1)
-	}, ];
-	gradientStops.forEach(stop => {
-		linearGradient.append("stop").attr("offset", stop.offset).attr("stop-color", stop.color);
-	});
-	legendSvg.append("rect").attr("width", legendWidth).attr("height", legendHeight).style("fill", "url(#linear-gradient)").style("stroke", "black");
-	legendSvg.append("text").attr("x", 0).attr("y", legendHeight + 10).attr("font-size", "8px").attr("text-anchor", "start").text("1");
-	legendSvg.append("text").attr("x", legendWidth).attr("y", legendHeight + 10).attr("font-size", "8px").attr("text-anchor", "end").text(maxGridElement);
-
-	// Load the CSV file
-	d3.csv(dropDownReturnValue).then(function(data) {
-		// This code runs after the CSV file has been loaded
-		console.log("file", dropDownReturnValue);
-		console.log("data", data);
-		// Example: Process the CSV data
-		data.forEach(function(d) {
-			d.countlist = +d.countlist; // Convert a column to a number
-		});
-		// create a tooltip
-		const tooltip = d3.select("#heatmap").append("div").style("opacity", 0).attr("class", "tooltip").style("background-color", "#466c9e").style("border-radius", "5px").style("width", "55px").style("height", "15px").style("font-size", ".575rem").style("text-align", "center").style("line-height", "15px").style("color", "#fff");
-		// Three function that change the tooltip when user hover / move / leave a cell
-		const mouseover = function(event, d) {
-			tooltip.style("opacity", 1)
-		}
-		console.log("locationStr", locationStr);
-		const mousemove = function(event, d) {
-			let tooltipContent = '';
-			if(d.centerlist === "True") {
-				tooltipContent = `Count: ${d.countlist}`;
-			} else {
-				tooltipContent = `Count: ${d.countlist}`;
-			}
-			tooltip.html(tooltipContent).style("left", (event.x) / 2 + "px").style("top", (event.y) / 2 + "px")
-		}
-		const mouseleave = function(d) {
-			tooltip.style("opacity", 0)
-		}
-		// add the squares
-		svg.selectAll().data(data, function(d) {
-			return d.rows + ':' + d.cols;
-		}).enter().append("rect").attr("x", function(d) {
-			return x(d.rows)
-		}).attr("y", function(d) {
-			return y(d.cols)
-		}).attr("width", x.bandwidth()).attr("height", y.bandwidth()).style("fill", function(d) {
-			if(d.centerlist === "True") {
-				return locationArray[1];
-			} else {
-				return myColor(d.countlist);
-			}
-		}).style("stroke", "black").style("stroke-width", "1px").on("mouseover", mouseover).on("mousemove", mousemove).on("mouseleave", mouseleave)
-	}).catch(function(error) {
-		// Handle any errors that occur during the loading process
-		console.error('Error loading the CSV file:', error);
-	});
-}
-
-
 let isHistogram1 = true; // Toggle flag
 
 // Initial chart render
 addHistogram();
-
 document.getElementById("toggle-chart").addEventListener("click", () => {
-	// Fade out and remove the existing SVG
 	d3.select("#histogram svg")
 		.transition()
 		.duration(300)
 		.style("opacity", 0)
 		.remove();
 
-	// After transition, render the other chart
 	setTimeout(() => {
 		if (isHistogram1) {
-			addHistogram2(); // Your second histogram function
+			document.getElementById("toggle-text").innerText = "View details in linear distribution";
+			addHistogram2();
 		} else {
-			addHistogram(); // Original histogram function
+			document.getElementById("toggle-text").innerText = "View details in logarithmic distribution";
+			addHistogram();
 		}
 		isHistogram1 = !isHistogram1;
 	}, 300);
@@ -1107,9 +814,7 @@ function createGauge() {
 	});
 }
 
-<!--addHistogram()-->
 createAreaChart()
-callHeatmap()
 createGauge()
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=updatedMap" async defer></script>

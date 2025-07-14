@@ -202,7 +202,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: grey;
+            background-color: #3bd6c6;
             width: 100%;
             height: 46px;
         }
@@ -224,7 +224,7 @@
             position: absolute;
             width: 100%; /* Take up half of the container */
             box-sizing: border-box; /* Include padding and border in the width */
-            display: block;
+            display: none;
             background-color: white;
             height: 85%;
             bottom: 0;
