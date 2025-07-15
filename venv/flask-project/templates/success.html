@@ -348,7 +348,6 @@ document.getElementById("toggle-chart").addEventListener("click", () => {
 function addHistogram() {
 	let currentValue = parseFloat("{{ middle_element_current_count }}");
 	var interval = "{{interval}}";
-	var address = "{{currentaddress}}";
 	var grid = JSON.parse("{{ dial_list | tojson }}");
 	var maxElement = Math.max(...grid);
 	console.log("dial_list grid", grid);
@@ -510,7 +509,7 @@ function addHistogram() {
 function addHistogram2() {
 	let currentValue = parseFloat("{{ middle_element_current_count }}");
 	var interval = "{{interval}}";
-	var address = "{{currentaddress}}";
+	// var address = "{{currentaddress}}";
 	var grid = JSON.parse("{{ dial_list | tojson }}");
 	var maxElement = Math.max(...grid);
 	console.log("dial_list grid", grid);
