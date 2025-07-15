@@ -366,36 +366,36 @@ def filter_time_interval(interval, data):
 
 
 # add ampm
-def filter_time_interval_old(interval, data):
-    if interval == "12AM-3AM":
-        newlist = [result for result in data if result.get('hour') == '00' or result.get('hour') == '01'
-                   or result.get('hour') == '02' or result.get('hour') == '03']
-    elif interval == '4AM-7AM':
-        newlist = [result for result in data if result.get('hour') == '04' or result.get('hour') == '05'
-                   or result.get('hour') == '06' or result.get('hour') == '07']
-    elif interval == "8AM-11AM":
-        newlist = [result for result in data if result.get('hour') == '08' or result.get('hour') == '09'
-                   or result.get('hour') == '10' or result.get('hour') == '11']
-    elif interval == "12PM-3PM":
-        newlist = [result for result in data if result.get('hour') == '12' or result.get('hour') == '13'
-                   or result.get('hour') == '14' or result.get('hour') == '15']
-    elif interval == "4PM-7PM":
-        newlist = [result for result in data if result.get('hour') == '16' or result.get('hour') == '17'
-                   or result.get('hour') == '18' or result.get('hour') == '19']
-    elif interval == "8PM-11PM":
-        newlist = [result for result in data if result.get('hour') == '20' or result.get('hour') == '21'
-                   or result.get('hour') == '22' or result.get('hour') == '23']
-    else:
-        newlist = [result for result in data if result.get('hour') == '00' or result.get('hour') == '01'
-                   or result.get('hour') == '02' or result.get('hour') == '03' or result.get('hour') == '04'
-                   or result.get('hour') == '05' or result.get('hour') == '06' or result.get('hour') == '07'
-                   or result.get('hour') == '08' or result.get('hour') == '09' or result.get('hour') == '10'
-                   or result.get('hour') == '11' or result.get('hour') == '12' or result.get('hour') == '13'
-                   or result.get('hour') == '14' or result.get('hour') == '15' or result.get('hour') == '16'
-                   or result.get('hour') == '17' or result.get('hour') == '18' or result.get('hour') == '19'
-                   or result.get('hour') == '20' or result.get('hour') == '21' or result.get('hour') == '22'
-                   or result.get('hour') == '23']
-    return newlist
+# def filter_time_interval_old(interval, data):
+#     if interval == "12AM-3AM":
+#         newlist = [result for result in data if result.get('hour') == '00' or result.get('hour') == '01'
+#                    or result.get('hour') == '02' or result.get('hour') == '03']
+#     elif interval == '4AM-7AM':
+#         newlist = [result for result in data if result.get('hour') == '04' or result.get('hour') == '05'
+#                    or result.get('hour') == '06' or result.get('hour') == '07']
+#     elif interval == "8AM-11AM":
+#         newlist = [result for result in data if result.get('hour') == '08' or result.get('hour') == '09'
+#                    or result.get('hour') == '10' or result.get('hour') == '11']
+#     elif interval == "12PM-3PM":
+#         newlist = [result for result in data if result.get('hour') == '12' or result.get('hour') == '13'
+#                    or result.get('hour') == '14' or result.get('hour') == '15']
+#     elif interval == "4PM-7PM":
+#         newlist = [result for result in data if result.get('hour') == '16' or result.get('hour') == '17'
+#                    or result.get('hour') == '18' or result.get('hour') == '19']
+#     elif interval == "8PM-11PM":
+#         newlist = [result for result in data if result.get('hour') == '20' or result.get('hour') == '21'
+#                    or result.get('hour') == '22' or result.get('hour') == '23']
+#     else:
+#         newlist = [result for result in data if result.get('hour') == '00' or result.get('hour') == '01'
+#                    or result.get('hour') == '02' or result.get('hour') == '03' or result.get('hour') == '04'
+#                    or result.get('hour') == '05' or result.get('hour') == '06' or result.get('hour') == '07'
+#                    or result.get('hour') == '08' or result.get('hour') == '09' or result.get('hour') == '10'
+#                    or result.get('hour') == '11' or result.get('hour') == '12' or result.get('hour') == '13'
+#                    or result.get('hour') == '14' or result.get('hour') == '15' or result.get('hour') == '16'
+#                    or result.get('hour') == '17' or result.get('hour') == '18' or result.get('hour') == '19'
+#                    or result.get('hour') == '20' or result.get('hour') == '21' or result.get('hour') == '22'
+#                    or result.get('hour') == '23']
+#     return newlist
 
 
 def filter_dataset(interval, data):
@@ -496,533 +496,533 @@ def read_dial_grid(grid, interval):
 
 
 
-def read_dial_grid2(grid, interval):
-    file_all_700meters = os.path.join('static', 'data', 'dial', '700metersAll.json')
-    file_12am_3am_700meters = os.path.join('static', 'data', 'dial', '700meters12AM-3AM.json')
-    file_4am_7am_700meters = os.path.join('static', 'data', 'dial', '700meters4AM-7AM.json')
-    file_8am_11am_700meters = os.path.join('static', 'data', 'dial', '700meters8AM-11AM.json')
-    file_12pm_3pm_700meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '700meters12PM-3PM.json')
-    file_4pm_7pm_700meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '700meters4PM-7PM.json')
-    file_8pm_11pm_700meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '700meters8PM-11PM.json')
-    file_all_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750metersAll.json')
-    file_12am_3am_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters12AM-3AM.json')
-    file_4am_7am_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters4AM-7AM.json')
-    file_8am_11am_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters8AM-11AM.json')
-    file_12pm_3pm_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters12PM-3PM.json')
-    file_4pm_7pm_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters4PM-7PM.json')
-    file_8pm_11pm_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters8PM-11PM.json')
-    file_all_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800metersAll.json')
-    file_12am_3am_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters12AM-3AM.json')
-    file_4am_7am_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters4AM-7AM.json')
-    file_8am_11am_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters8AM-11AM.json')
-    file_12pm_3pm_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters12PM-3PM.json')
-    file_4pm_7pm_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters4PM-7PM.json')
-    file_8pm_11pm_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters8PM-11PM.json')
-    file_all_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850metersAll.json')
-    file_12am_3am_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters12AM-3AM.json')
-    file_4am_7am_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters4AM-7AM.json')
-    file_8am_11am_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters8AM-11AM.json')
-    file_12pm_3pm_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters12PM-3PM.json')
-    file_4pm_7pm_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters4PM-7PM.json')
-    file_8pm_11pm_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters8PM-11PM.json')
-    file_all_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900metersAll.json')
-    file_12am_3am_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters12AM-3AM.json')
-    file_4am_7am_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters4AM-7AM.json')
-    file_8am_11am_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters8AM-11AM.json')
-    file_12pm_3pm_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters12PM-3PM.json')
-    file_4pm_7pm_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters4PM-7PM.json')
-    file_8pm_11pm_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters8PM-11PM.json')
-    file_all_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950metersAll.json')
-    file_12am_3am_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters12AM-3AM.json')
-    file_4am_7am_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters4AM-7AM.json')
-    file_8am_11am_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters8AM-11AM.json')
-    file_12pm_3pm_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters12PM-3PM.json')
-    file_4pm_7pm_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters4PM-7PM.json')
-    file_8pm_11pm_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters8PM-11PM.json')
-    file_all_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometerAll.json')
-    file_12am_3am_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer12AM-3AM.json')
-    file_4am_7am_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer4AM-7AM.json')
-    file_8am_11am_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer8AM-11AM.json')
-    file_12pm_3pm_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer12PM-3PM.json')
-    file_4pm_7pm_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer4PM-7PM.json')
-    file_8pm_11pm_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer8PM-11PM.json')
-    file_all_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mileAll.json')
-    file_12am_3am_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile12AM-3AM.json')
-    file_4am_7am_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile4AM-7AM.json')
-    file_8am_11am_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile8AM-11AM.json')
-    file_12pm_3pm_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile12PM-3PM.json')
-    file_4pm_7pm_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile4PM-7PM.json')
-    file_8pm_11pm_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile8PM-11PM.json')
-    if grid == "700 meters" and interval == "12AM-11PM":
-        try:
-            with open(file_all_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "700 meters" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "700 meters" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "700 meters" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "700 meters" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "700 meters" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "700 meters" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_700meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "12AM-11PM":
-        try:
-            with open(file_all_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "12AM-3AM":
-        return file_12am_3am_750meters
-        try:
-            with open(file_12am_3am_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "750 meters" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_750meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "12AM-11PM":
-        try:
-            with open(file_all_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "800 meters" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_800meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "12AM-11PM":
-        try:
-            with open(file_all_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "850 meters" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_850meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "12AM-11PM":
-        try:
-            with open(file_all_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("appended_list", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "900 meters" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_900meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "12AM-11PM":
-        try:
-            with open(file_all_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "950 meters" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_950meters, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "12AM-11PM":
-        try:
-            with open(file_all_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 kilometer" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_1kilometer, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "12AM-11PM":
-        try:
-            with open(file_all_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "12AM-3AM":
-        try:
-            with open(file_12am_3am_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "4AM-7AM":
-        try:
-            with open(file_4am_7am_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "8AM-11AM":
-        try:
-            with open(file_8am_11am_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "12PM-3PM":
-        try:
-            with open(file_12pm_3pm_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "4PM-7PM":
-        try:
-            with open(file_4pm_7pm_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
-    elif grid == "1 mile" and interval == "8PM-11PM":
-        try:
-            with open(file_8pm_11pm_1mile, 'r', encoding='utf-8') as file:
-                datajson = json.load(file)
-                appended_list = datajson.get("diallist", [])
-                return appended_list
-        except FileNotFoundError as e:
-            print("Error", e)
+# def read_dial_grid2(grid, interval):
+#     file_all_700meters = os.path.join('static', 'data', 'dial', '700metersAll.json')
+#     file_12am_3am_700meters = os.path.join('static', 'data', 'dial', '700meters12AM-3AM.json')
+#     file_4am_7am_700meters = os.path.join('static', 'data', 'dial', '700meters4AM-7AM.json')
+#     file_8am_11am_700meters = os.path.join('static', 'data', 'dial', '700meters8AM-11AM.json')
+#     file_12pm_3pm_700meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '700meters12PM-3PM.json')
+#     file_4pm_7pm_700meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '700meters4PM-7PM.json')
+#     file_8pm_11pm_700meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '700meters8PM-11PM.json')
+#     file_all_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750metersAll.json')
+#     file_12am_3am_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters12AM-3AM.json')
+#     file_4am_7am_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters4AM-7AM.json')
+#     file_8am_11am_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters8AM-11AM.json')
+#     file_12pm_3pm_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters12PM-3PM.json')
+#     file_4pm_7pm_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters4PM-7PM.json')
+#     file_8pm_11pm_750meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '750meters8PM-11PM.json')
+#     file_all_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800metersAll.json')
+#     file_12am_3am_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters12AM-3AM.json')
+#     file_4am_7am_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters4AM-7AM.json')
+#     file_8am_11am_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters8AM-11AM.json')
+#     file_12pm_3pm_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters12PM-3PM.json')
+#     file_4pm_7pm_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters4PM-7PM.json')
+#     file_8pm_11pm_800meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '800meters8PM-11PM.json')
+#     file_all_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850metersAll.json')
+#     file_12am_3am_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters12AM-3AM.json')
+#     file_4am_7am_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters4AM-7AM.json')
+#     file_8am_11am_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters8AM-11AM.json')
+#     file_12pm_3pm_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters12PM-3PM.json')
+#     file_4pm_7pm_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters4PM-7PM.json')
+#     file_8pm_11pm_850meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '850meters8PM-11PM.json')
+#     file_all_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900metersAll.json')
+#     file_12am_3am_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters12AM-3AM.json')
+#     file_4am_7am_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters4AM-7AM.json')
+#     file_8am_11am_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters8AM-11AM.json')
+#     file_12pm_3pm_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters12PM-3PM.json')
+#     file_4pm_7pm_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters4PM-7PM.json')
+#     file_8pm_11pm_900meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '900meters8PM-11PM.json')
+#     file_all_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950metersAll.json')
+#     file_12am_3am_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters12AM-3AM.json')
+#     file_4am_7am_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters4AM-7AM.json')
+#     file_8am_11am_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters8AM-11AM.json')
+#     file_12pm_3pm_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters12PM-3PM.json')
+#     file_4pm_7pm_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters4PM-7PM.json')
+#     file_8pm_11pm_950meters = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '950meters8PM-11PM.json')
+#     file_all_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometerAll.json')
+#     file_12am_3am_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer12AM-3AM.json')
+#     file_4am_7am_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer4AM-7AM.json')
+#     file_8am_11am_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer8AM-11AM.json')
+#     file_12pm_3pm_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer12PM-3PM.json')
+#     file_4pm_7pm_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer4PM-7PM.json')
+#     file_8pm_11pm_1kilometer = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1kilometer8PM-11PM.json')
+#     file_all_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mileAll.json')
+#     file_12am_3am_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile12AM-3AM.json')
+#     file_4am_7am_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile4AM-7AM.json')
+#     file_8am_11am_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile8AM-11AM.json')
+#     file_12pm_3pm_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile12PM-3PM.json')
+#     file_4pm_7pm_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile4PM-7PM.json')
+#     file_8pm_11pm_1mile = os.path.join(PROJECT_DIR, 'static', 'data', 'dial', '1mile8PM-11PM.json')
+#     if grid == "700 meters" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "700 meters" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "700 meters" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "700 meters" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "700 meters" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "700 meters" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "700 meters" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_700meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "12AM-3AM":
+#         return file_12am_3am_750meters
+#         try:
+#             with open(file_12am_3am_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "750 meters" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_750meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "800 meters" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_800meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "850 meters" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_850meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("appended_list", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "900 meters" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_900meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "950 meters" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_950meters, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 kilometer" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_1kilometer, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "12AM-11PM":
+#         try:
+#             with open(file_all_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "12AM-3AM":
+#         try:
+#             with open(file_12am_3am_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "4AM-7AM":
+#         try:
+#             with open(file_4am_7am_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "8AM-11AM":
+#         try:
+#             with open(file_8am_11am_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "12PM-3PM":
+#         try:
+#             with open(file_12pm_3pm_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "4PM-7PM":
+#         try:
+#             with open(file_4pm_7pm_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
+#     elif grid == "1 mile" and interval == "8PM-11PM":
+#         try:
+#             with open(file_8pm_11pm_1mile, 'r', encoding='utf-8') as file:
+#                 datajson = json.load(file)
+#                 appended_list = datajson.get("diallist", [])
+#                 return appended_list
+#         except FileNotFoundError as e:
+#             print("Error", e)
 
-def coord_lister(geom):
-    coords = list(geom.exterior.coords)
-    return (coords)
+# def coord_lister(geom):
+#     coords = list(geom.exterior.coords)
+#     return (coords)
 
-def get_radius(radius, unit):
-    radius = float(radius)
-    try:
-        if unit == "meters":
-            earthradius = 6378.1
-            radius = radius / 1000
-        elif unit == "miles":
-            earthradius = 3963.2
-        else:
-            earthradius = 6378.1
-    except Exception as e:
-        print("Error: ", e)
-    finally:
-        radians = radius / earthradius
-        print("radians: ", radians)
-    return radians
+# def get_radius(radius, unit):
+#     radius = float(radius)
+#     try:
+#         if unit == "meters":
+#             earthradius = 6378.1
+#             radius = radius / 1000
+#         elif unit == "miles":
+#             earthradius = 3963.2
+#         else:
+#             earthradius = 6378.1
+#     except Exception as e:
+#         print("Error: ", e)
+#     finally:
+#         radians = radius / earthradius
+#         print("radians: ", radians)
+#     return radians
 
 
 def get_meters(radius, unit):
