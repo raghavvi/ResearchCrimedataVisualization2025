@@ -315,39 +315,69 @@ document.getElementById("location").addEventListener("change", function () {
     }
 });
 
-
 window.addEventListener("load", function () {
   const locationSelect = document.getElementById("location");
   locationSelect.dispatchEvent(new Event("change")); // Trigger the event
 });
 
+// histogram
+let isHistogram1 = true;
+let selectedLocation = document.getElementById("location").value;
 
-let isHistogram1 = true; // Toggle flag
+const locationValue = {
+  current: parseFloat("{{ middle_element_current_count }}"),
+  safe: parseFloat("{{ middle_element_safe_count }}"),
+  work: parseFloat("{{ middle_element_work_count }}"),
+  destination: parseFloat("{{ middle_element_destination_count }}")
+};
 
-// Initial chart render
-addHistogram();
-document.getElementById("toggle-chart").addEventListener("click", () => {
-	d3.select("#histogram svg")
-		.transition()
-		.duration(300)
-		.style("opacity", 0)
-		.remove();
+const interval = "{{ interval }}";
 
-	setTimeout(() => {
-		if (isHistogram1) {
-			document.getElementById("toggle-text").innerText = "View details in linear distribution";
-			addHistogram2();
-		} else {
-			document.getElementById("toggle-text").innerText = "View details in logarithmic distribution";
-			addHistogram();
-		}
+const histogramLocation = {
+  current: "Current Location",
+  safe: "Safe Location",
+  work: "Workplace",
+  destination: "Destination",
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+	const interval = "{{ interval }}"; // declare interval here at the top
+	renderChart();
+
+	document.getElementById("location").addEventListener("change", function () {
+		const newValue = this.value;
+		if (!(newValue in locationValue)) return;
+
+		selectedLocation = newValue;
+		renderChart();
+	});
+
+	document.getElementById("toggle-chart").addEventListener("click", () => {
 		isHistogram1 = !isHistogram1;
-	}, 300);
+		renderChart();
+	});
 });
 
-function addHistogram() {
-	let currentValue = parseFloat("{{ middle_element_current_count }}");
-	var interval = "{{interval}}";
+function renderChart() {
+	// Clear previous chart completely
+	d3.select("#histogram").selectAll("*").remove();
+
+	const label = histogramLocation[selectedLocation];
+	const currentValue = locationValue[selectedLocation];
+
+	document.getElementById("histogram-title").innerHTML =
+		`<strong>Distribution of hazardous crimes from ${interval} over 13 years (${label})</strong>`;
+
+	if (isHistogram1) {
+		addHistogram(currentValue);
+		document.getElementById("toggle-text").innerText = "View details in linear distribution";
+	} else {
+		addHistogram2(currentValue);
+		document.getElementById("toggle-text").innerText = "View details in logarithmic distribution";
+	}
+}
+
+function addHistogram(currentValue) {
 	var grid = JSON.parse("{{ dial_list | tojson }}");
 	var maxElement = Math.max(...grid);
 	console.log("dial_list grid", grid);
@@ -499,17 +529,20 @@ function addHistogram() {
 		.style("fill", "blue")
 		.style("fill-opacity", 0.5);
 
-	legend2.append("text")
-		.attr("x", 20)
-		.attr("y", 12)
-		.attr("font-size", "12px")
-		.text("Current location");
+        legend2.append("text")
+            .attr("x", 20)
+            .attr("y", 12)
+            .attr("font-size", "12px")
+            .text(() => {
+                const selectedKey = Object.keys(locationValue).find(
+                    key => locationValue[key] === currentValue
+                );
+                return histogramLocation[selectedKey] || "Selected location";
+            });
+
 }
 
-function addHistogram2() {
-	let currentValue = parseFloat("{{ middle_element_current_count }}");
-	var interval = "{{interval}}";
-	// var address = "{{currentaddress}}";
+function addHistogram2(currentValue) {
 	var grid = JSON.parse("{{ dial_list | tojson }}");
 	var maxElement = Math.max(...grid);
 	console.log("dial_list grid", grid);
@@ -661,11 +694,16 @@ function addHistogram2() {
 		.style("fill", "blue")
 		.style("fill-opacity", 0.5);
 
-	legend2.append("text")
-		.attr("x", 20)
-		.attr("y", 12)
-		.attr("font-size", "12px")
-		.text("Current location");
+        legend2.append("text")
+            .attr("x", 20)
+            .attr("y", 12)
+            .attr("font-size", "12px")
+            .text(() => {
+                const selectedKey = Object.keys(locationValue).find(
+                    key => locationValue[key] === currentValue
+                );
+                return histogramLocation[selectedKey] || "Selected location";
+            });
 }
 
 function createAreaChart() {
