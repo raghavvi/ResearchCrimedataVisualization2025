@@ -32,10 +32,12 @@
                             <option value="work">work</option>
                             <option value="destination">destination</option>
                         </select>
+                        <span id="interval-text" style="margin-left: 12px; font-size: 14px;"></span>
                     </div>
+
                     <div class="map-container">
                         <div id="map"></div>
-                        <div id="legend" style="position:absolute; bottom:30px; left:30px; background:white; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>
+                        <div id="legend" style="position:absolute; bottom:30px; left:30px; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>
                     </div>
                     <div class="visual-button-container">
                         <i onclick="openVisualization()" class="arrow up"></i>
@@ -50,18 +52,22 @@
                         <div class="tab-content">
                             <div id="menu1" class="tab-pane fade in active">
                                 <div style="height: 380px;">
-                                    <p id="textelement2" style="color: #3784CB"></p>
-                                    <p id="textelement" style="color: #3784CB"></p>
-                                    <p id="histogram-title" style="text-align: center; font-size: 12px;
-                                word-wrap: break-word; margin-bottom: 2px;">
-                                    <div id="histogram"></div>
+                                    <p id="textelement2" style="color: #0F52BA"></p>
+                                    <p id="textelement" style="color: #0F52BA"></p>
+                                            <p id="histogram-title" style="text-align: center; font-size: 12px;
+                                        word-wrap: break-word; margin-bottom: 2px;">
+                                            <div id="histogram"></div>
                                 </div>
+                                <br>
                                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
                                     <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
                                     <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">
                                         Click Here
                                     </button>
                                 </div>
+                                <br>
+                                <br>
+                                <p>Note: hazardous crimes are violent crimes in categories such as assault, burglary, robbery, rape, and murder</p>
                             </div>
                             <div id="menu2" class="tab-pane fade">
                                 <div id="container2" style="height: 250px; width: 250px;">
@@ -118,7 +124,7 @@ let workArray = [];
 let destinationArray = [];
 let locationType = "current";
 var rectangles = [];
-var maxValue = parseFloat("{{maxgridelement}}");
+
 
 function updatedMap() {
 	var latitude = 39.134556;
@@ -207,7 +213,9 @@ document.getElementById("location").addEventListener("change", function () {
 
             var countlist = data.map(d => d.countlist);
             var centerList = data.map(d => d.centerlist);
-            var maxValue = d3.max(countlist);
+            var maxValue = parseFloat("{{maxgridelement}}");
+
+            console.log("heatmap map value", maxValue);
 
             for (let i = 0; i < boundsLists.north.length; i++) {
                 var value = countlist[i];
@@ -226,6 +234,7 @@ document.getElementById("location").addEventListener("change", function () {
                     strokeColor: '#000',
                     strokeWeight: 2,
                     fillColor: fillColor,
+                    fillOpacity: 1.0,
                     map: map,
                     bounds: bounds
                 });
@@ -315,39 +324,73 @@ document.getElementById("location").addEventListener("change", function () {
     }
 });
 
-
 window.addEventListener("load", function () {
   const locationSelect = document.getElementById("location");
   locationSelect.dispatchEvent(new Event("change")); // Trigger the event
 });
 
+// histogram
+let isHistogram1 = true;
+let selectedLocation = document.getElementById("location").value;
 
-let isHistogram1 = true; // Toggle flag
+const locationValue = {
+  current: parseFloat("{{ middle_element_current_count }}"),
+  safe: parseFloat("{{ middle_element_safe_count }}"),
+  work: parseFloat("{{ middle_element_work_count }}"),
+  destination: parseFloat("{{ middle_element_destination_count }}")
+};
 
-// Initial chart render
-addHistogram();
-document.getElementById("toggle-chart").addEventListener("click", () => {
-	d3.select("#histogram svg")
-		.transition()
-		.duration(300)
-		.style("opacity", 0)
-		.remove();
+const interval = "{{ interval }}";
 
-	setTimeout(() => {
-		if (isHistogram1) {
-			document.getElementById("toggle-text").innerText = "View details in linear distribution";
-			addHistogram2();
-		} else {
-			document.getElementById("toggle-text").innerText = "View details in logarithmic distribution";
-			addHistogram();
-		}
+document.getElementById("interval-text").innerHTML = `${interval}`;
+
+const histogramLocation = {
+  current: "Current Location",
+  safe: "Safe Location",
+  work: "Work Location",
+  destination: "Destination",
+};
+
+document.addEventListener("DOMContentLoaded", function () {
+	const interval = "{{ interval }}"; // declare interval here at the top
+	renderChart();
+
+	document.getElementById("location").addEventListener("change", function () {
+		const newValue = this.value;
+		if (!(newValue in locationValue)) return;
+
+		selectedLocation = newValue;
+		renderChart();
+	});
+
+	document.getElementById("toggle-chart").addEventListener("click", () => {
 		isHistogram1 = !isHistogram1;
-	}, 300);
+		renderChart();
+	});
 });
 
-function addHistogram() {
-	let currentValue = parseFloat("{{ middle_element_current_count }}");
-	var interval = "{{interval}}";
+function renderChart() {
+	// Clear previous chart completely
+	d3.select("#histogram").selectAll("*").remove();
+
+	const label = histogramLocation[selectedLocation];
+	const currentValue = locationValue[selectedLocation];
+
+	document.getElementById("histogram-title").innerHTML =
+		`<strong>Distribution of hazardous crimes from ${interval} over 13 years (${label})</strong>`;
+
+	if (isHistogram1) {
+		addHistogram(currentValue);
+		document.getElementById("toggle-text").innerText = "View details in linear distribution";
+	} else {
+		addHistogram2(currentValue);
+		document.getElementById("toggle-text").innerText = "View details in logarithmic distribution";
+	}
+}
+
+
+
+function addHistogram(currentValue) {
 	var grid = JSON.parse("{{ dial_list | tojson }}");
 	var maxElement = Math.max(...grid);
 	console.log("dial_list grid", grid);
@@ -358,14 +401,15 @@ function addHistogram() {
 
 	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} over 13 years</strong>`;
 
-	const margin = { top: 28, right: 20, bottom: 48, left: 52 },
+	const margin = { top: 28, right: 20, bottom: 58, left: 52 },
 		width = 350 - margin.left - margin.right,
-		height = 235 - margin.top - margin.bottom;
+		height = 277 - margin.top - margin.bottom;
 
 	const svg = d3.select("#histogram")
 		.append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
+		.style("background-color", "rgb(210 253 248)")
 		.append("g")
 		.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -412,8 +456,19 @@ function addHistogram() {
 		const tooltipWidth = parseFloat(tooltip.style("width"));
 		const tooltipHeight = parseFloat(tooltip.style("height"));
 		tooltip.style("left", (event.pageX - tooltipWidth / 2) + "px")
-			.style("top", (event.pageY - tooltipHeight - 10) + "px");
+			.style("top", (event.pageY - tooltipHeight / 2) + "px");
 	};
+
+<!--	const moveTooltip = function(event, d) {-->
+<!--          const tooltipWidth = parseFloat(tooltip.style("width"));-->
+<!--          const tooltipHeight = parseFloat(tooltip.style("height"));-->
+
+<!--          const bar = d3.select(this).node().getBBox();-->
+
+<!--          tooltip.style("left", (bar.x + bar.width / 2 - tooltipWidth / 2) + "px")-->
+<!--                 .style("top", (bar.y + event.currentTarget.ownerSVGElement.getBoundingClientRect().top - tooltipHeight - 5) + "px");-->
+<!--    };-->
+
 	const hideTooltip = function() {
 		tooltip.transition().duration(100).style("opacity", 0);
 	};
@@ -453,12 +508,20 @@ function addHistogram() {
 		.on("mousemove", moveTooltip)
 		.on("mouseleave", hideTooltip);
 
-	svg.append("text")
-		.attr("text-anchor", "end")
-		.attr("x", width)
-		.attr("y", height + margin.top)
-		.attr("font-size", "10px")
-		.text("Crime Counts");
+<!--        svg.append("text")-->
+<!--          .attr("x", (width + margin.left + margin.right) / 2)-->
+<!--          .attr("y", margin.top / 2)   // place slightly above the chart area-->
+<!--          .attr("text-anchor", "middle")-->
+<!--          .style("font-size", "12px")-->
+<!--          .style("font-weight", "bold")-->
+<!--          .text(`Distribution of hazardous crimes from ${interval} over 13 years (${label})`);-->
+
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", width / 2)
+            .attr("y", height + margin.bottom - 20)
+            .attr("font-size", "10px")
+            .text("Crime Counts");
 
 	svg.append("text")
 		.attr("text-anchor", "middle")
@@ -481,35 +544,46 @@ function addHistogram() {
 	legend.append("rect").attr("x", 0).attr("y", 40).attr("width", 15).attr("height", 15).style("fill", "orange");
 	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text("heavy");
 
-	svg.selectAll("rect")
-		.data(bins)
-		.filter(d => currentValue >= d.x0 && currentValue < d.x1)
-		.style("fill", "blue")
-		.style("fill-opacity", 0.5);
+        // Instead of coloring the bar:
+        svg.append("line")
+            .attr("x1", x(currentValue))
+            .attr("x2", x(currentValue))
+            .attr("y1", 0)
+            .attr("y2", height)
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "4,2"); // dashed line for visibility
 
-	const legend2 = svg.append("g")
-		.attr("class", "legend")
-		.attr("transform", `translate(0, ${height + 35})`);
+        // Add legend entry for the dashed line
+        const legend2 = svg.append("g")
+            .attr("class", "legend")
+            .attr("transform", `translate(0, ${height + 45})`);
 
-	legend2.append("rect")
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("width", 15)
-		.attr("height", 15)
-		.style("fill", "blue")
-		.style("fill-opacity", 0.5);
+        legend2.append("line")
+            .attr("x1", 0)
+            .attr("x2", 20)
+            .attr("y1", 8)
+            .attr("y2", 8)
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "4,2");
 
-	legend2.append("text")
-		.attr("x", 20)
-		.attr("y", 12)
-		.attr("font-size", "12px")
-		.text("Current location");
+        // Legend text based on location type
+        legend2.append("text")
+            .attr("x", 30)
+            .attr("y", 12)
+            .attr("font-size", "12px")
+            .text(() => {
+                const selectedKey = Object.keys(locationValue).find(
+                    key => locationValue[key] === currentValue
+                );
+                return histogramLocation[selectedKey] || "Selected location";
+            });
+
+
 }
 
-function addHistogram2() {
-	let currentValue = parseFloat("{{ middle_element_current_count }}");
-	var interval = "{{interval}}";
-	// var address = "{{currentaddress}}";
+function addHistogram2(currentValue) {
 	var grid = JSON.parse("{{ dial_list | tojson }}");
 	var maxElement = Math.max(...grid);
 	console.log("dial_list grid", grid);
@@ -520,14 +594,15 @@ function addHistogram2() {
 
 	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} over 13 years</strong>`;
 
-	const margin = { top: 28, right: 20, bottom: 48, left: 52 },
+	const margin = { top: 28, right: 20, bottom: 58, left: 52 },
 		width = 350 - margin.left - margin.right,
-		height = 235 - margin.top - margin.bottom;
+		height = 277 - margin.top - margin.bottom;
 
 	const svg = d3.select("#histogram")
 		.append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
+		.style("background-color", "rgb(210 253 248)")
 		.append("g")
 		.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -574,8 +649,19 @@ function addHistogram2() {
 		const tooltipWidth = parseFloat(tooltip.style("width"));
 		const tooltipHeight = parseFloat(tooltip.style("height"));
 		tooltip.style("left", (event.pageX - tooltipWidth / 2) + "px")
-			.style("top", (event.pageY - tooltipHeight - 10) + "px");
+			.style("top", (event.pageY - tooltipHeight  / 2) + "px");
 	};
+
+<!--	const moveTooltip = function(event, d) {-->
+<!--          const tooltipWidth = parseFloat(tooltip.style("width"));-->
+<!--          const tooltipHeight = parseFloat(tooltip.style("height"));-->
+
+<!--          const bar = d3.select(this).node().getBBox();-->
+
+<!--          tooltip.style("left", (bar.x + bar.width / 2 - tooltipWidth / 2) + "px")-->
+<!--                 .style("top", (bar.y + event.currentTarget.ownerSVGElement.getBoundingClientRect().top - tooltipHeight - 5) + "px");-->
+<!--    };-->
+
 	const hideTooltip = function() {
 		tooltip.transition().duration(100).style("opacity", 0);
 	};
@@ -615,12 +701,20 @@ function addHistogram2() {
 		.on("mousemove", moveTooltip)
 		.on("mouseleave", hideTooltip);
 
-	svg.append("text")
-		.attr("text-anchor", "end")
-		.attr("x", width)
-		.attr("y", height + margin.top)
-		.attr("font-size", "10px")
-		.text("Crime Counts");
+<!--        svg.append("text")-->
+<!--          .attr("x", (width + margin.left + margin.right) / 2)-->
+<!--          .attr("y", margin.top / 2)   // place slightly above the chart area-->
+<!--          .attr("text-anchor", "middle")-->
+<!--          .style("font-size", "12px")-->
+<!--          .style("font-weight", "bold")-->
+<!--          .text(`Distribution of hazardous crimes from ${interval} over 13 years (${label})`);-->
+
+    svg.append("text")
+        .attr("text-anchor", "middle")
+        .attr("x", width / 2)
+        .attr("y", height + margin.bottom - 20)
+        .attr("font-size", "10px")
+        .text("Crime Counts");
 
 	svg.append("text")
 		.attr("text-anchor", "middle")
@@ -643,110 +737,195 @@ function addHistogram2() {
 	legend.append("rect").attr("x", 0).attr("y", 40).attr("width", 15).attr("height", 15).style("fill", "orange");
 	legend.append("text").attr("x", 20).attr("y", 52).attr("font-size", "12px").text("heavy");
 
-	svg.selectAll("rect")
-		.data(bins)
-		.filter(d => currentValue >= d.x0 && currentValue < d.x1)
-		.style("fill", "blue")
-		.style("fill-opacity", 0.5);
+    // Instead of coloring the bar:
+    svg.append("line")
+        .attr("x1", x(currentValue))
+        .attr("x2", x(currentValue))
+        .attr("y1", 0)
+        .attr("y2", height)
+        .attr("stroke", "blue")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "4,2"); // dashed line for visibility
 
-	const legend2 = svg.append("g")
-		.attr("class", "legend")
-		.attr("transform", `translate(0, ${height + 35})`);
+        // Add legend entry for the dashed line
+        const legend2 = svg.append("g")
+            .attr("class", "legend")
+            .attr("transform", `translate(0, ${height + 45})`);
 
-	legend2.append("rect")
-		.attr("x", 0)
-		.attr("y", 0)
-		.attr("width", 15)
-		.attr("height", 15)
-		.style("fill", "blue")
-		.style("fill-opacity", 0.5);
+        legend2.append("line")
+            .attr("x1", 0)
+            .attr("x2", 20)
+            .attr("y1", 8)
+            .attr("y2", 8)
+            .attr("stroke", "blue")
+            .attr("stroke-width", 2)
+            .attr("stroke-dasharray", "4,2");
 
-	legend2.append("text")
-		.attr("x", 20)
-		.attr("y", 12)
-		.attr("font-size", "12px")
-		.text("Current location");
+        // Legend text based on location type
+        legend2.append("text")
+            .attr("x", 30)
+            .attr("y", 12)
+            .attr("font-size", "12px")
+            .text(() => {
+                const selectedKey = Object.keys(locationValue).find(
+                    key => locationValue[key] === currentValue
+                );
+                return histogramLocation[selectedKey] || "Selected location";
+            });
+
 }
+
 
 function createAreaChart() {
-	var counts = JSON.parse("{{ time_counts | tojson }}");
-	var years = JSON.parse("{{ time_years | tojson }}");
-	var interval = "{{interval}}"
-	var location = "{{currentaddress}}";
-	Highcharts.chart('container2', {
-		chart: {
-			type: 'area'
-		},
-		title: {
-			text: location + ' crimes for Interval ' + interval + ' over years',
-			useHTML: true,
-			style: {
-				fontSize: '12px',
-			}
-		},
-		xAxis: {
-			categories: years,
-			title: {
-				text: 'Year'
-			}
-		},
-		yAxis: {
-			title: {
-				text: 'Crime Count'
-			}
-		},
-		series: [{
-			name: 'Crimes',
-			data: counts
-		}]
-	});
+    var current_counts = JSON.parse("{{ current_time_counts | tojson }}");
+    var current_years = JSON.parse("{{ current_time_years | tojson }}");
+
+    var work_counts = JSON.parse("{{ work_time_counts | tojson }}");
+    var work_years = JSON.parse("{{ work_time_years | tojson }}");
+
+    var safe_counts = JSON.parse("{{ safe_time_counts | tojson }}");
+    var safe_years = JSON.parse("{{ safe_time_years | tojson }}");
+
+    var destination_counts = JSON.parse("{{ destination_time_counts | tojson }}");
+    var destination_years = JSON.parse("{{ destination_time_years | tojson }}");
+
+    const areaChartSelections = {
+        current: { counts: current_counts, years: current_years, label: "{{ currentaddress }}" },
+        work: { counts: work_counts, years: work_years, label: "{{ workaddress }}" },
+        safe: { counts: safe_counts, years: safe_years, label: "{{ safeaddress }}" },
+        destination: { counts: destination_counts, years: destination_years, label: "{{ destinationaddress }}" }
+    };
+
+    var interval = "{{ interval }}";
+    var radius = parseFloat("{{ radius }}");
+    var units = "{{ units }}";
+
+    // Initial chart render
+    renderChart("current");
+
+    // Update chart on dropdown change
+    document.getElementById("location").addEventListener("change", function () {
+        renderChart(this.value);
+    });
+
+    function renderChart(selectedValue) {
+        var data = areaChartSelections[selectedValue];
+
+        Highcharts.chart('container2', {
+            chart: {
+                type: 'area'
+            },
+            title: {
+                text: data.label + ' crime counts within ' + radius + units +
+                      ' for interval ' + interval + ' over years',
+                useHTML: true,
+                style: {
+                    fontSize: '12px'
+                }
+            },
+            xAxis: {
+                categories: data.years,
+                title: { text: 'Year' }
+            },
+            yAxis: {
+                title: { text: 'Crime Count' }
+            },
+            series: [{
+                name: 'Crimes',
+                data: data.counts
+            }]
+        });
+    }
 }
 
-function textForInfo() {
+
+const currentCount = parseFloat("{{middle_element_current_count}}");
+const workCount = parseFloat("{{middle_element_work_count}}");
+const safeCount = parseFloat("{{middle_element_safe_count}}");
+const destinationCount = parseFloat("{{middle_element_destination_count}}");
+const years = parseFloat("{{years}}");
+const units = "{{units}}";
+
+const locationCount = {
+    current: currentCount,
+    safe: safeCount,
+    work: workCount,
+    destination: destinationCount
+};
+
+function textForInfo(selectedKey) {
 	//  3 crimes within 500 m, between 1-3pm in the last 5 years
-	var currentCount = parseFloat("{{middle_element_current_count}}");
-	var years = parseFloat("{{years}}");
-	var radius = parseFloat("{{radius}}");
-	var units = "{{units}}";
-	var interval = "{{interval}}";
-	console.log("currentCount", currentCount);
-	console.log("years", years);
-	console.log("radius", radius);
-	console.log("interval", interval);
-	let message = `<strong>${currentCount}</strong> hazardous crimes within <strong>${radius} ${units}</strong>, between <strong>${interval}</strong> in the last ${years} years`;
-	return message;
+	const selectedCount = locationCount[selectedKey];
+	return `<strong>${selectedCount}</strong> hazardous crimes within <strong>${radius} ${units}</strong>, between <strong>${interval}</strong> in the last ${years} years`;
 }
-document.getElementById("textelement2").innerHTML = textForInfo();
+document.getElementById("textelement2").innerHTML = textForInfo("current");
 
-function textForPercentage() {
-	let text = "{{current_text}}";
-	var location = "{{currentaddress}}";
-	let percentage = parseFloat("{{current_percentage}}");
-	console.log("text", text);
-	console.log("percentage", percentage);
+document.getElementById("location").addEventListener("change", function () {
+    const selectedKey = this.value;
+    if (!(selectedKey in locationCount)) return;
+    document.getElementById("textelement2").innerHTML = textForInfo(selectedKey);
+});
+
+const currentText = "{{current_text}}";
+const workText = "{{work_text}}";
+const safeText = "{{safe_text}}";
+const destinationText = "{{destination_text}}";
+
+const currentPercentage = parseFloat("{{current_percentage}}");
+const workPercentage = parseFloat("{{work_percentage}}");
+const safePercentage = parseFloat("{{safe_percentage}}");
+const destinationPercentage = parseFloat("{{destination_percentage}}");
+
+const locationName = {
+    current: currentLocation,
+    safe: safeLocation,
+    work: workLocation,
+    destination: destinationLocation
+};
+
+const locationText = {
+    current: currentText,
+    safe: safeText,
+    work: workText,
+    destination: destinationText
+};
+
+const locationPercentage = {
+    current: currentPercentage,
+    safe: safePercentage,
+    work: workPercentage,
+    destination: destinationPercentage
+};
+
+function textForPercentage(selectedKey) {
+	let text = locationText[selectedKey];
+	var location = locationName[selectedKey];
+	let percentage = locationPercentage[selectedKey];
 	let message = `<strong>${location}</strong> falls within the <strong>${text}</strong> ${percentage}% of locations`;
-	console.log("message", message);
 	return message;
 }
-document.getElementById("textelement").innerHTML = textForPercentage();
+document.getElementById("textelement").innerHTML = textForPercentage("current");
 
-function createGauge() {
+
+document.getElementById("location").addEventListener("change", function () {
+    const selectedKey = this.value;
+    if (!(selectedKey in locationText)) return;
+    if (!(selectedKey in locationName)) return;
+    if (!(selectedKey in locationPercentage)) return;
+    document.getElementById("textelement").innerHTML = textForPercentage(selectedKey);
+});
+
+
+function createGauge(selectedKey) {
 	var firstIntervalOne = parseFloat("{{intervalOne[0]}}");
 	var lastIntervalOne = parseFloat("{{intervalOne[-1]}}");
 	var firstIntervalTwo = parseFloat("{{intervalTwo[0]}}");
 	var lastIntervalTwo = parseFloat("{{intervalTwo[-1]}}");
 	var firstIntervalThree = parseFloat("{{intervalThree[0]}}");
 	var lastIntervalThree = parseFloat("{{intervalThree[-1]}}");
-	var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
-	var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
-	var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
-	var middle_element_destination_count = parseFloat("{{middle_element_destination_count}}");
-	console.log("firstIntervalOne", firstIntervalOne);
-	console.log("lastIntervalOne", lastIntervalOne);
-	console.log("firstIntervalTwo", firstIntervalTwo);
-	console.log("lastIntervalTwo", lastIntervalTwo);
-	console.log("firstIntervalThree", firstIntervalThree);
-	console.log("lastIntervalThree", lastIntervalThree);
+
+	const selectedDialCount = locationCount[selectedKey];
+
 	Highcharts.chart('container', {
 		chart: {
 			type: 'gauge',
@@ -801,13 +980,22 @@ function createGauge() {
 			}]
 		},
 		series: [{
-			name: 'Current',
-			data: [middle_element_current_count]
+			name: selectedKey,
+			data: [selectedDialCount]
 		}]
 	});
 }
 
+createGauge("current")
+
+document.getElementById("location").addEventListener("change", function () {
+    const selectedKey = this.value;
+    if (!(selectedKey in locationCount)) return;
+    createGauge(selectedKey);
+});
+
+
 createAreaChart()
-createGauge()
+
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=updatedMap" async defer></script>
