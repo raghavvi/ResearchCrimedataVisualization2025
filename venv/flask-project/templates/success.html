@@ -33,10 +33,17 @@
                             <option value="destination">destination</option>
                         </select>
                         <span id="interval-text" style="margin-left: 12px; font-size: 14px;"></span>
+
                     </div>
 
                     <div class="map-container">
                         <div id="map"></div>
+                            <div style="position:absolute; z-index: 9999; bottom: 100px; left: 30px;">
+                                <select name="colorscale">
+                                    <option value="city" selected>city</option>
+                                    <option value="relative">relative</option>
+                                </select>
+                            </div>
                         <div id="legend" style="position:absolute; bottom:30px; left:30px; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>
                     </div>
                     <div class="visual-button-container">
@@ -58,6 +65,7 @@
                                         word-wrap: break-word; margin-bottom: 2px;">
                                             <div id="histogram"></div>
                                 </div>
+                                <br>
                                 <br>
                                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
                                     <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
@@ -108,7 +116,13 @@ var latworkcoordinate = parseFloat("{{latworkcoordinate}}");
 var lonworkcoordinate = parseFloat("{{lonworkcoordinate}}");
 var latdestinationcoordinate = parseFloat("{{latdestinationcoordinate}}");
 var londestinationcoordinate = parseFloat("{{londestinationcoordinate}}");
-var radius = parseFloat("{{radius}}");
+const radius = parseFloat("{{radius}}");
+const units = "{{ units }}";
+const currentCount = parseFloat("{{middle_element_current_count}}");
+const workCount = parseFloat("{{middle_element_work_count}}");
+const safeCount = parseFloat("{{middle_element_safe_count}}");
+const destinationCount = parseFloat("{{middle_element_destination_count}}");
+const years = parseFloat("{{years}}");
 
 var middle_element_current_count = parseFloat("{{middle_element_current_count}}");
 var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
@@ -213,6 +227,8 @@ document.getElementById("location").addEventListener("change", function () {
 
             var countlist = data.map(d => d.countlist);
             var centerList = data.map(d => d.centerlist);
+
+            //use for color scale
             var maxValue = parseFloat("{{maxgridelement}}");
 
             console.log("heatmap map value", maxValue);
@@ -309,6 +325,7 @@ document.getElementById("location").addEventListener("change", function () {
                 .attr("text-anchor", "start")
                 .text("1");
 
+            // use for colorScale
             svg.append("text")
                 .attr("x", legendWidth + 10)
                 .attr("y", legendHeight + 12)
@@ -352,7 +369,8 @@ const histogramLocation = {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-	const interval = "{{ interval }}"; // declare interval here at the top
+	const interval = "{{ interval }}";
+
 	renderChart();
 
 	document.getElementById("location").addEventListener("change", function () {
@@ -375,9 +393,11 @@ function renderChart() {
 
 	const label = histogramLocation[selectedLocation];
 	const currentValue = locationValue[selectedLocation];
+    console.log("radius", radius);
+    console.log("Units", units);
 
 	document.getElementById("histogram-title").innerHTML =
-		`<strong>Distribution of hazardous crimes from ${interval} over 13 years (${label})</strong>`;
+		`<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years ${label} </strong>`;
 
 	if (isHistogram1) {
 		addHistogram(currentValue);
@@ -399,9 +419,9 @@ function addHistogram(currentValue) {
 	const tickCount = Math.ceil(maxElement / binSize);
 	console.log("tickCount", tickCount);
 
-	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} over 13 years</strong>`;
+	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;
 
-	const margin = { top: 28, right: 20, bottom: 58, left: 52 },
+	const margin = { top: 28, right: 20, bottom: 60, left: 52 },
 		width = 350 - margin.left - margin.right,
 		height = 277 - margin.top - margin.bottom;
 
@@ -446,28 +466,29 @@ function addHistogram(currentValue) {
 		.style("line-height", "15px")
 		.style("position", "absolute");
 
-	const showTooltip = function(event, d) {
-		tooltip.transition().duration(100).style("opacity", 1);
-		tooltip.html(d.length)
-			.style("left", (event.pageX - 100) + "px")
-			.style("top", (event.pageY - 30) + "px");
-	};
-	const moveTooltip = function(event, d) {
-		const tooltipWidth = parseFloat(tooltip.style("width"));
-		const tooltipHeight = parseFloat(tooltip.style("height"));
-		tooltip.style("left", (event.pageX - tooltipWidth / 2) + "px")
-			.style("top", (event.pageY - tooltipHeight / 2) + "px");
-	};
+<!--	const showTooltip = function(event, d) {-->
+<!--		tooltip.transition().duration(100).style("opacity", 1);-->
+<!--		tooltip.html(d.length)-->
+<!--			.style("left", (event.pageX - 100) + "px")-->
+<!--			.style("top", (event.pageY - 30) + "px");-->
+<!--	};-->
 
-<!--	const moveTooltip = function(event, d) {-->
-<!--          const tooltipWidth = parseFloat(tooltip.style("width"));-->
-<!--          const tooltipHeight = parseFloat(tooltip.style("height"));-->
+     const showTooltip = function(event,d) {
+       tooltip
+         .transition()
+         .duration(100)
+         .style("opacity", 1)
+       tooltip
+         .html(d.length)
+         .style("left", (event.x)/2-100 + "px")
+         .style("top", (event.y)/2 + "px")
+     }
 
-<!--          const bar = d3.select(this).node().getBBox();-->
-
-<!--          tooltip.style("left", (bar.x + bar.width / 2 - tooltipWidth / 2) + "px")-->
-<!--                 .style("top", (bar.y + event.currentTarget.ownerSVGElement.getBoundingClientRect().top - tooltipHeight - 5) + "px");-->
-<!--    };-->
+     const moveTooltip = function(event,d) {
+       tooltip
+       .style("right", (event.x)/2 + 45 + "px")
+       .style("top", (event.y)/2 + "px")
+     }
 
 	const hideTooltip = function() {
 		tooltip.transition().duration(100).style("opacity", 0);
@@ -592,9 +613,9 @@ function addHistogram2(currentValue) {
 	const tickCount = Math.ceil(maxElement / binSize);
 	console.log("tickCount", tickCount);
 
-	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} over 13 years</strong>`;
+	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;
 
-	const margin = { top: 28, right: 20, bottom: 58, left: 52 },
+	const margin = { top: 28, right: 20, bottom: 60, left: 52 },
 		width = 350 - margin.left - margin.right,
 		height = 277 - margin.top - margin.bottom;
 
@@ -639,28 +660,22 @@ function addHistogram2(currentValue) {
 		.style("line-height", "15px")
 		.style("position", "absolute");
 
-	const showTooltip = function(event, d) {
-		tooltip.transition().duration(100).style("opacity", 1);
-		tooltip.html(d.length)
-			.style("left", (event.pageX - 100) + "px")
-			.style("top", (event.pageY - 30) + "px");
-	};
-	const moveTooltip = function(event, d) {
-		const tooltipWidth = parseFloat(tooltip.style("width"));
-		const tooltipHeight = parseFloat(tooltip.style("height"));
-		tooltip.style("left", (event.pageX - tooltipWidth / 2) + "px")
-			.style("top", (event.pageY - tooltipHeight  / 2) + "px");
-	};
+     const showTooltip = function(event,d) {
+       tooltip
+         .transition()
+         .duration(100)
+         .style("opacity", 1)
+       tooltip
+         .html(d.length)
+         .style("left", (event.x)/2-100 + "px")
+         .style("top", (event.y)/2 + "px")
+     }
 
-<!--	const moveTooltip = function(event, d) {-->
-<!--          const tooltipWidth = parseFloat(tooltip.style("width"));-->
-<!--          const tooltipHeight = parseFloat(tooltip.style("height"));-->
-
-<!--          const bar = d3.select(this).node().getBBox();-->
-
-<!--          tooltip.style("left", (bar.x + bar.width / 2 - tooltipWidth / 2) + "px")-->
-<!--                 .style("top", (bar.y + event.currentTarget.ownerSVGElement.getBoundingClientRect().top - tooltipHeight - 5) + "px");-->
-<!--    };-->
+     const moveTooltip = function(event,d) {
+       tooltip
+       .style("right", (event.x)/2 + 45 + "px")
+       .style("top", (event.y)/2 + "px")
+     }
 
 	const hideTooltip = function() {
 		tooltip.transition().duration(100).style("opacity", 0);
@@ -797,8 +812,6 @@ function createAreaChart() {
     };
 
     var interval = "{{ interval }}";
-    var radius = parseFloat("{{ radius }}");
-    var units = "{{ units }}";
 
     // Initial chart render
     renderChart("current");
@@ -838,13 +851,6 @@ function createAreaChart() {
     }
 }
 
-
-const currentCount = parseFloat("{{middle_element_current_count}}");
-const workCount = parseFloat("{{middle_element_work_count}}");
-const safeCount = parseFloat("{{middle_element_safe_count}}");
-const destinationCount = parseFloat("{{middle_element_destination_count}}");
-const years = parseFloat("{{years}}");
-const units = "{{units}}";
 
 const locationCount = {
     current: currentCount,
