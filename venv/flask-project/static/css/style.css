@@ -392,3 +392,16 @@
             height: 100%;
             z-index: 1;
         }
+
+.text-container {
+  display: flex;
+  justify-content: space-between;
+  width: 340px;
+}
+
+#textelement,
+#textelement2 {
+  width: 180px;
+  color: #0F52BA;
+  margin-left: 25px;
+}

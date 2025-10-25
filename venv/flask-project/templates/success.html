@@ -59,20 +59,25 @@
                         <div class="tab-content">
                             <div id="menu1" class="tab-pane fade in active">
                                 <div style="height: 380px;">
-                                    <p id="textelement2" style="color: #0F52BA"></p>
-                                    <p id="textelement" style="color: #0F52BA"></p>
-                                            <p id="histogram-title" style="text-align: center; font-size: 12px;
-                                        word-wrap: break-word; margin-bottom: 2px;">
-                                            <div id="histogram"></div>
+                                    <div class="text-container">
+                                        <span id="textelement2"></span>
+                                        <span id="textelement"></span>
+                                    </div>
+
+                                    <br>
+<!--                                            <p id="histogram-title" style="text-align: center; font-size: 12px;-->
+<!--                                        word-wrap: break-word; margin-bottom: 2px;">-->
+                                        <div id="histogram"></div>
                                 </div>
                                 <br>
-                                <br>
+
                                 <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
                                     <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
                                     <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">
                                         Click Here
                                     </button>
                                 </div>
+
                                 <br>
                                 <br>
                                 <p>Note: hazardous crimes are violent crimes in categories such as assault, burglary, robbery, rape, and murder</p>
@@ -128,10 +133,17 @@ var middle_element_current_count = parseFloat("{{middle_element_current_count}}"
 var middle_element_safe_count = parseFloat("{{middle_element_safe_count}}");
 var middle_element_work_count = parseFloat("{{middle_element_work_count}}");
 var middle_element_destination_count = parseFloat("{{middle_element_destination_count}}");
-const currentLocation = "{{currentaddress}}";
-const safeLocation = "{{safeaddress}}";
-const workLocation = "{{workaddress}}";
-const destinationLocation = "{{destinationaddress}}"
+<!--const currentLocation = "{{currentaddress}}";-->
+<!--const safeLocation = "{{safeaddress}}";-->
+<!--const workLocation = "{{workaddress}}";-->
+<!--const destinationLocation = "{{destinationaddress}}"-->
+
+const currentLocation = "The current location";
+const safeLocation = "The marked location";
+const workLocation = "The work location";
+const destinationLocation = "The destination location";
+
+
 let currentArray = [];
 let safeArray = [];
 let workArray = [];
@@ -422,8 +434,8 @@ function renderChart() {
     console.log("radius", radius);
     console.log("Units", units);
 
-	document.getElementById("histogram-title").innerHTML =
-		`<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years ${label} </strong>`;
+<!--	document.getElementById("histogram-title").innerHTML =-->
+<!--		`<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years ${label} </strong>`;-->
 
 	if (isHistogram1) {
 		addHistogram(currentValue);
@@ -445,17 +457,17 @@ function addHistogram(currentValue) {
 	const tickCount = Math.ceil(maxElement / binSize);
 	console.log("tickCount", tickCount);
 
-	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;
+<!--	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;-->
 
-	const margin = { top: 28, right: 20, bottom: 60, left: 52 },
+	const margin = { top: 40, right: 20, bottom: 60, left: 52 },
 		width = 350 - margin.left - margin.right,
-		height = 277 - margin.top - margin.bottom;
+		height = 285 - margin.top - margin.bottom;
 
 	const svg = d3.select("#histogram")
 		.append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
-		.style("background-color", "rgb(210 253 248)")
+<!--		.style("background-color", "rgb(210 253 248)")-->
 		.append("g")
 		.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -561,7 +573,20 @@ function addHistogram(currentValue) {
 <!--          .attr("text-anchor", "middle")-->
 <!--          .style("font-size", "12px")-->
 <!--          .style("font-weight", "bold")-->
-<!--          .text(`Distribution of hazardous crimes from ${interval} over 13 years (${label})`);-->
+<!--          .text(`Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years`);-->
+
+        svg.append("foreignObject")
+          .attr("x", 0)
+          .attr("y", -40)
+          .attr("width", width)
+          .attr("height", 50)
+          .append("xhtml:div")
+          .style("font-size", "12px")
+          .style("font-weight", "bold")
+          .style("text-align", "center")
+          .style("word-wrap", "break-word")
+          .style("margin-bottom", "2px")
+          .text(`Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years`);
 
         svg.append("text")
             .attr("text-anchor", "middle")
@@ -580,10 +605,10 @@ function addHistogram(currentValue) {
 
 	const legend = svg.append("g")
 		.attr("class", "legend")
-		.attr("transform", `translate(${width - 100}, -10)`);
+		.attr("transform", `translate(${width - 100}, 50)`);
 
 	legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 15).attr("height", 15).style("fill", "green");
-	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("safe");
+	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("marked");
 
 	legend.append("rect").attr("x", 0).attr("y", 20).attr("width", 15).attr("height", 15).style("fill", "yellow");
 	legend.append("text").attr("x", 20).attr("y", 32).attr("font-size", "12px").text("moderate");
@@ -639,17 +664,17 @@ function addHistogram2(currentValue) {
 	const tickCount = Math.ceil(maxElement / binSize);
 	console.log("tickCount", tickCount);
 
-	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;
+<!--	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;-->
 
-	const margin = { top: 28, right: 20, bottom: 60, left: 52 },
+	const margin = { top: 40, right: 20, bottom: 60, left: 52 },
 		width = 350 - margin.left - margin.right,
-		height = 277 - margin.top - margin.bottom;
+		height = 285 - margin.top - margin.bottom;
 
 	const svg = d3.select("#histogram")
 		.append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
-		.style("background-color", "rgb(210 253 248)")
+<!--		.style("background-color", "rgb(210 253 248)")-->
 		.append("g")
 		.attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -748,7 +773,20 @@ function addHistogram2(currentValue) {
 <!--          .attr("text-anchor", "middle")-->
 <!--          .style("font-size", "12px")-->
 <!--          .style("font-weight", "bold")-->
-<!--          .text(`Distribution of hazardous crimes from ${interval} over 13 years (${label})`);-->
+<!--          .text(`Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years`);-->
+
+        svg.append("foreignObject")
+          .attr("x", 0)
+          .attr("y", -40)
+          .attr("width", width)
+          .attr("height", 50)
+          .append("xhtml:div")
+          .style("font-size", "12px")
+          .style("font-weight", "bold")
+          .style("text-align", "center")
+          .style("word-wrap", "break-word")
+          .style("margin-bottom", "2px")
+          .text(`Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years`);
 
     svg.append("text")
         .attr("text-anchor", "middle")
@@ -767,7 +805,7 @@ function addHistogram2(currentValue) {
 
 	const legend = svg.append("g")
 		.attr("class", "legend")
-		.attr("transform", `translate(${width - 100}, -10)`);
+		.attr("transform", `translate(${width - 100}, 50)`);
 
 	legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 15).attr("height", 15).style("fill", "green");
 	legend.append("text").attr("x", 20).attr("y", 12).attr("font-size", "12px").text("safe");
@@ -933,7 +971,7 @@ function textForPercentage(selectedKey) {
 	let text = locationText[selectedKey];
 	var location = locationName[selectedKey];
 	let percentage = locationPercentage[selectedKey];
-	let message = `<strong>${location}</strong> falls within the <strong>${text}</strong> ${percentage}% of locations`;
+	let message = `${location} falls within the <strong>${text}</strong> ${percentage}% of locations`;
 	return message;
 }
 document.getElementById("textelement").innerHTML = textForPercentage("current");
