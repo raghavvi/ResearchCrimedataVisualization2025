@@ -78,7 +78,7 @@
                                 <p>Note: hazardous crimes are violent crimes in categories such as assault, burglary, robbery, rape, and murder</p>
                             </div>
                             <div id="menu2" class="tab-pane fade">
-                                <div id="container2" style="height: 250px; width: 250px;">
+                                <div id="container2" style="height: 285px; width: 285px;">
                                 </div>
                             </div>
                             <div id="menu3" class="tab-pane fade">
@@ -138,213 +138,239 @@ let workArray = [];
 let destinationArray = [];
 let locationType = "current";
 var rectangles = [];
-
+let markers = [];
 
 function updatedMap() {
-	var latitude = 39.134556;
-	var longitude = -84.515413;
-	var mapProp = {
-		center: new google.maps.LatLng(latitude, longitude),
-		zoom: 17,
-	};
-	map = new google.maps.Map(document.getElementById("map"), mapProp);
-  }
-
-
-document.getElementById("location").addEventListener("change", function () {
-    var selectedValue = this.value;
-
-    const latLngCoordinates = {
-        current: { lat: latcurrentcoordinate, lng: loncurrentcoordinate },
-        safe: { lat: latsafecoordinate, lng: lonsafecoordinate },
-        work: { lat: latworkcoordinate, lng: lonworkcoordinate },
-        destination: { lat: latdestinationcoordinate, lng: londestinationcoordinate }
+    var latitude = 39.134556;
+    var longitude = -84.515413;
+    var mapProp = {
+        center: new google.maps.LatLng(latitude, longitude),
+        zoom: 17,
     };
+    map = new google.maps.Map(document.getElementById("map"), mapProp);
+}
 
-    const heatmapPaths = {
-        current: "/static/data/heatmap/heatmap_data_current.csv",
-        safe: "/static/data/heatmap/heatmap_data_safe.csv",
-        work: "/static/data/heatmap/heatmap_data_work.csv",
-        destination: "/static/data/heatmap/heatmap_data_destination.csv"
-    };
+// Shared config
+const latLngCoordinates = {
+    current: { lat: latcurrentcoordinate, lng: loncurrentcoordinate },
+    safe: { lat: latsafecoordinate, lng: lonsafecoordinate },
+    work: { lat: latworkcoordinate, lng: lonworkcoordinate },
+    destination: { lat: latdestinationcoordinate, lng: londestinationcoordinate }
+};
 
-    const geoBounds = {
-        current: {
-            north: JSON.parse("{{ current_north_list | tojson }}"),
-            south: JSON.parse("{{ current_south_list | tojson }}"),
-            west: JSON.parse("{{ current_west_list | tojson }}"),
-            east: JSON.parse("{{ current_east_list | tojson }}")
-        },
-        safe: {
-            north: JSON.parse("{{ safe_north_list | tojson }}"),
-            south: JSON.parse("{{ safe_south_list | tojson }}"),
-            west: JSON.parse("{{ safe_west_list | tojson }}"),
-            east: JSON.parse("{{ safe_east_list | tojson }}")
-        },
-        work: {
-            north: JSON.parse("{{ work_north_list | tojson }}"),
-            south: JSON.parse("{{ work_south_list | tojson }}"),
-            west: JSON.parse("{{ work_west_list | tojson }}"),
-            east: JSON.parse("{{ work_east_list | tojson }}")
-        },
-        destination: {
-            north: JSON.parse("{{ destination_north_list | tojson }}"),
-            south: JSON.parse("{{ destination_south_list | tojson }}"),
-            west: JSON.parse("{{ destination_west_list | tojson }}"),
-            east: JSON.parse("{{ destination_east_list | tojson }}")
-        }
-    };
+const heatmapPaths = {
+    current: "/static/data/heatmap/heatmap_data_current.csv",
+    safe: "/static/data/heatmap/heatmap_data_safe.csv",
+    work: "/static/data/heatmap/heatmap_data_work.csv",
+    destination: "/static/data/heatmap/heatmap_data_destination.csv"
+};
 
-    const colOrder = ['A', 'B', 'C', 'D', 'E'];
-    const rowOrder = ['v5', 'v4', 'v3', 'v2', 'v1'];
+const geoBounds = {
+    current: {
+        north: JSON.parse("{{ current_north_list | tojson }}"),
+        south: JSON.parse("{{ current_south_list | tojson }}"),
+        west: JSON.parse("{{ current_west_list | tojson }}"),
+        east: JSON.parse("{{ current_east_list | tojson }}")
+    },
+    safe: {
+        north: JSON.parse("{{ safe_north_list | tojson }}"),
+        south: JSON.parse("{{ safe_south_list | tojson }}"),
+        west: JSON.parse("{{ safe_west_list | tojson }}"),
+        east: JSON.parse("{{ safe_east_list | tojson }}")
+    },
+    work: {
+        north: JSON.parse("{{ work_north_list | tojson }}"),
+        south: JSON.parse("{{ work_south_list | tojson }}"),
+        west: JSON.parse("{{ work_west_list | tojson }}"),
+        east: JSON.parse("{{ work_east_list | tojson }}")
+    },
+    destination: {
+        north: JSON.parse("{{ destination_north_list | tojson }}"),
+        south: JSON.parse("{{ destination_south_list | tojson }}"),
+        west: JSON.parse("{{ destination_west_list | tojson }}"),
+        east: JSON.parse("{{ destination_east_list | tojson }}")
+    }
+};
 
-    if (selectedValue in heatmapPaths) {
-        const latLng = latLngCoordinates[selectedValue];
-        const heatmapPath = heatmapPaths[selectedValue];
-        const boundsLists = geoBounds[selectedValue];
+const colOrder = ['A', 'B', 'C', 'D', 'E'];
+const rowOrder = ['v5', 'v4', 'v3', 'v2', 'v1'];
 
-        // Zoom in
-        map.setCenter(latLng);
-        map.setZoom(16);
+function drawHeatmap(selectedValue, colorscaleValue) {
+    if (!(selectedValue in heatmapPaths)) return;
 
-        // Clear previous rectangles
-        rectangles.forEach(rect => rect.setMap(null));
-        rectangles = [];
+    const latLng = latLngCoordinates[selectedValue];
+    const heatmapPath = heatmapPaths[selectedValue];
+    const boundsLists = geoBounds[selectedValue];
 
-        d3.csv(heatmapPath).then(function (data) {
-            data.forEach(function (d) {
-                d.countlist = +d.countlist;
-                d.col = d.rows;
-                d.row = d.cols;
-            });
+    // Zoom in
+    map.setCenter(latLng);
+    map.setZoom(16);
 
-            data.sort((a, b) => {
-                var rowDiff = rowOrder.indexOf(a.row) - rowOrder.indexOf(b.row);
-                return rowDiff !== 0
-                    ? rowDiff
-                    : colOrder.indexOf(a.col) - colOrder.indexOf(b.col);
-            });
+    // Clear previous rectangles
+    rectangles.forEach(rect => rect.setMap(null));
+    rectangles = [];
 
-            var countlist = data.map(d => d.countlist);
-            var centerList = data.map(d => d.centerlist);
+    // Clear previous markers
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
 
-            //use for color scale
-            var maxValue = parseFloat("{{maxgridelement}}");
-
-            console.log("heatmap map value", maxValue);
-
-            for (let i = 0; i < boundsLists.north.length; i++) {
-                var value = countlist[i];
-                var center = centerList[i];
-                var normalizedValue = Math.min(value / maxValue, 1);
-                var fillColor = d3.interpolatePurples(normalizedValue);
-
-                var bounds = {
-                    north: boundsLists.north[i],
-                    south: boundsLists.south[i],
-                    east: boundsLists.east[i],
-                    west: boundsLists.west[i]
-                };
-
-                var rectangle = new google.maps.Rectangle({
-                    strokeColor: '#000',
-                    strokeWeight: 2,
-                    fillColor: fillColor,
-                    fillOpacity: 1.0,
-                    map: map,
-                    bounds: bounds
-                });
-
-                if (center === "True") {
-                    rectangle.setOptions({ strokeWeight: 4, strokeColor: '#0077B6', zIndex: 999 });
-                }
-
-                rectangles.push(rectangle);
-
-                new google.maps.Marker({
-                    position: {
-                        lat: (bounds.north + bounds.south) / 2,
-                        lng: (bounds.east + bounds.west) / 2
-                    },
-                    map: map,
-                    label: {
-                        text: value.toString(),
-                        color: "black",
-                        fontWeight: "bold",
-                        fontSize: "14px"
-                    },
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 0
-                    }
-                });
-            }
-
-            // Draw Legend
-            var legendWidth = 120;
-            var legendHeight = 10;
-
-            d3.select("#legend").selectAll("*").remove();
-
-            var svg = d3.select("#legend")
-                .append("svg")
-                .attr("width", legendWidth + 30)
-                .attr("height", 30);
-
-            var defs = svg.append("defs");
-            var linearGradient = defs.append("linearGradient")
-                .attr("id", "linear-gradient");
-
-            linearGradient
-                .attr("x1", "0%")
-                .attr("y1", "0%")
-                .attr("x2", "100%")
-                .attr("y2", "0%");
-
-            linearGradient.selectAll("stop")
-                .data([
-                    { offset: "0%", color: d3.interpolatePurples(0) },
-                    { offset: "100%", color: d3.interpolatePurples(1) }
-                ])
-                .enter().append("stop")
-                .attr("offset", d => d.offset)
-                .attr("stop-color", d => d.color);
-
-            svg.append("rect")
-                .attr("x", 10)
-                .attr("y", 0)
-                .attr("width", legendWidth)
-                .attr("height", legendHeight)
-                .style("fill", "url(#linear-gradient)")
-                .style("stroke", "black");
-
-            svg.append("text")
-                .attr("x", 10)
-                .attr("y", legendHeight + 12)
-                .attr("font-size", "10px")
-                .attr("text-anchor", "start")
-                .text("1");
-
-            // use for colorScale
-            svg.append("text")
-                .attr("x", legendWidth + 10)
-                .attr("y", legendHeight + 12)
-                .attr("font-size", "10px")
-                .attr("text-anchor", "end")
-                .text(maxValue);
-
-        }).catch(function (error) {
-            console.error("Error loading the CSV file:", error);
+    d3.csv(heatmapPath).then(function (data) {
+        data.forEach(function (d) {
+            d.countlist = +d.countlist;
+            d.col = d.rows;
+            d.row = d.cols;
         });
 
-        locationType = selectedValue;
-    }
+        data.sort((a, b) => {
+            var rowDiff = rowOrder.indexOf(a.row) - rowOrder.indexOf(b.row);
+            return rowDiff !== 0
+                ? rowDiff
+                : colOrder.indexOf(a.col) - colOrder.indexOf(b.col);
+        });
+
+        var countlist = data.map(d => d.countlist);
+        var centerList = data.map(d => d.centerlist);
+
+        // --- color scale selection ---
+        let maxValue, minValue;
+        if (colorscaleValue === "city") {
+            maxValue = parseFloat("{{maxgridelement}}");
+            minValue = 1;
+        } else {
+            maxValue = d3.max(countlist);
+            minValue = d3.min(countlist);
+        }
+
+        console.log("heatmap maxValue (" + colorscaleValue + "):", maxValue);
+
+        // Draw grid
+        for (let i = 0; i < boundsLists.north.length; i++) {
+            var value = countlist[i];
+            var center = centerList[i];
+            var normalizedValue = Math.min(value / maxValue, 1);
+            var fillColor = d3.interpolatePurples(normalizedValue);
+
+            var bounds = {
+                north: boundsLists.north[i],
+                south: boundsLists.south[i],
+                east: boundsLists.east[i],
+                west: boundsLists.west[i]
+            };
+
+            var rectangle = new google.maps.Rectangle({
+                strokeColor: '#000',
+                strokeWeight: 2,
+                fillColor: fillColor,
+                fillOpacity: 1.0,
+                map: map,
+                bounds: bounds
+            });
+
+            if (center === "True") {
+                rectangle.setOptions({ strokeWeight: 4, strokeColor: '#0077B6', zIndex: 999 });
+            }
+
+            rectangles.push(rectangle);
+
+            let marker = new google.maps.Marker({
+                position: {
+                    lat: (bounds.north + bounds.south) / 2,
+                    lng: (bounds.east + bounds.west) / 2
+                },
+                map: map,
+                label: {
+                    text: value.toString(),
+                    color: "black",
+                    fontWeight: "bold",
+                    fontSize: "14px"
+                },
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 0
+                }
+            });
+            markers.push(marker);
+
+        }
+
+        // --- Draw Legend ---
+        var legendWidth = 120;
+        var legendHeight = 10;
+
+        d3.select("#legend").selectAll("*").remove();
+
+        var svg = d3.select("#legend")
+            .append("svg")
+            .attr("width", legendWidth + 30)
+            .attr("height", 30);
+
+        var defs = svg.append("defs");
+        var linearGradient = defs.append("linearGradient")
+            .attr("id", "linear-gradient");
+
+        linearGradient
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%");
+
+        linearGradient.selectAll("stop")
+            .data([
+                { offset: "0%", color: d3.interpolatePurples(0) },
+                { offset: "100%", color: d3.interpolatePurples(1) }
+            ])
+            .enter().append("stop")
+            .attr("offset", d => d.offset)
+            .attr("stop-color", d => d.color);
+
+        svg.append("rect")
+            .attr("x", 10)
+            .attr("y", 0)
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#linear-gradient)")
+            .style("stroke", "black");
+
+        // left label
+        svg.append("text")
+            .attr("x", 10)
+            .attr("y", legendHeight + 12)
+            .attr("font-size", "10px")
+            .attr("text-anchor", "start")
+            .text(minValue);
+
+        // right label
+        svg.append("text")
+            .attr("x", legendWidth + 10)
+            .attr("y", legendHeight + 12)
+            .attr("font-size", "10px")
+            .attr("text-anchor", "end")
+            .text(maxValue);
+
+    }).catch(function (error) {
+        console.error("Error loading the CSV file:", error);
+    });
+}
+
+document.getElementById("location").addEventListener("change", function () {
+    locationType = this.value;
+    const colorscaleValue = document.querySelector("select[name='colorscale']").value;
+    drawHeatmap(locationType, colorscaleValue);
 });
 
-window.addEventListener("load", function () {
-  const locationSelect = document.getElementById("location");
-  locationSelect.dispatchEvent(new Event("change")); // Trigger the event
+document.querySelector("select[name='colorscale']").addEventListener("change", function () {
+    const colorscaleValue = this.value;
+    drawHeatmap(locationType, colorscaleValue);
 });
+
+// Auto-run on page load
+window.addEventListener("load", function () {
+    updatedMap();
+    const colorscaleValue = document.querySelector("select[name='colorscale']").value;
+    drawHeatmap(locationType, colorscaleValue);
+});
+
+
 
 // histogram
 let isHistogram1 = true;
@@ -829,7 +855,7 @@ function createAreaChart() {
                 type: 'area'
             },
             title: {
-                text: data.label + ' crime counts within ' + radius + units +
+                text: 'Crime counts for ' + data.label + ' within ' + radius + ' ' + units +
                       ' for interval ' + interval + ' over years',
                 useHTML: true,
                 style: {
@@ -985,9 +1011,31 @@ function createGauge(selectedKey) {
 				thickness: 20
 			}]
 		},
+        legend: {
+            enabled: true,
+            layout: 'vertical',
+            align: 'center',
+            verticalAlign: 'bottom',
+        },
 		series: [{
 			name: selectedKey,
 			data: [selectedDialCount]
+		},
+        {
+			name: 'Low (' + firstIntervalOne + '–' + lastIntervalOne + ')',
+			color: '#55BF3B',
+			data: [],
+			showInLegend: true
+		}, {
+			name: 'Moderate (' + lastIntervalOne + '–' + firstIntervalThree + ')',
+			color: '#DDDF0D',
+			data: [],
+			showInLegend: true
+		}, {
+			name: 'Heavy (' + firstIntervalThree + '–' + lastIntervalThree + ')',
+			color: '#DF5353',
+			data: [],
+			showInLegend: true
 		}]
 	});
 }
