@@ -28,7 +28,7 @@
                     <div class="select-container">
                         <select name="location" id="location">
                             <option value="current" selected>current</option>
-                            <option value="safe">safe</option>
+                            <option value="safe">home</option>
                             <option value="work">work</option>
                             <option value="destination">destination</option>
                         </select>
@@ -39,10 +39,11 @@
                     <div class="map-container">
                         <div id="map"></div>
                             <div style="position:absolute; z-index: 9999; bottom: 100px; left: 30px;">
-                                <select name="colorscale">
-                                    <option value="city" selected>city</option>
-                                    <option value="relative">relative</option>
-                                </select>
+<!--                                <select name="colorscale">-->
+<!--                                    <option value="relative" selected>relative to this location</option>-->
+<!--                                    <option value="city">relative to whole city</option>-->
+<!--                                </select>-->
+                                <div id="select-colorscale"></div>
                             </div>
                         <div id="legend" style="position:absolute; bottom:30px; left:30px; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>
                     </div>
@@ -52,7 +53,7 @@
                     <div class="bottom-element" id="visualizationForm">
                         <span class="closeVis" onclick="closeVisualization()" style="float: right; margin-right: 10px">&times;</span>
                         <ul class="nav nav-tabs">
-                            <li><a data-toggle="tab" href="#menu1">Histogram</a></li>
+                            <li class="active"><a data-toggle="tab" href="#menu1">Histogram</a></li>
                             <li><a data-toggle="tab" href="#menu2">Area</a></li>
                             <li><a data-toggle="tab" href="#menu3">Dial</a></li>
                         </ul>
@@ -63,19 +64,24 @@
                                         <span id="textelement2"></span>
                                         <span id="textelement"></span>
                                     </div>
-
                                     <br>
-<!--                                            <p id="histogram-title" style="text-align: center; font-size: 12px;-->
-<!--                                        word-wrap: break-word; margin-bottom: 2px;">-->
                                         <div id="histogram"></div>
                                 </div>
                                 <br>
 
-                                <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-                                    <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>
-                                    <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">
-                                        Click Here
-                                    </button>
+<!--                                <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">-->
+<!--                                    <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>-->
+<!--                                    <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">-->
+<!--                                        Click Here-->
+<!--                                    </button>-->
+<!--                                </div>-->
+
+                                <div class="toggle-wrapper">
+                                    <span class="toggle-label">Linear</span>
+                                    <div class="toggle-container" id="myToggleButton">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                    <span class="toggle-label">Logarithm</span>
                                 </div>
 
                                 <br>
@@ -139,10 +145,14 @@ var middle_element_destination_count = parseFloat("{{middle_element_destination_
 <!--const destinationLocation = "{{destinationaddress}}"-->
 
 const currentLocation = "The current location";
-const safeLocation = "The marked location";
+const safeLocation = "The home location";
 const workLocation = "The work location";
 const destinationLocation = "The destination location";
 
+const areaCurrent = "the current location";
+const areaSafe = "the home location";
+const areaWork = "the work location";
+const areaDestination = "the destination location";
 
 let currentArray = [];
 let safeArray = [];
@@ -364,6 +374,13 @@ function drawHeatmap(selectedValue, colorscaleValue) {
     });
 }
 
+  document.getElementById("select-colorscale").innerHTML = `
+    <select name="colorscale">
+      <option value="relative" selected>${radius} ${units} relative to this location</option>
+      <option value="city">${radius} ${units} relative to whole city</option>
+    </select>
+  `;
+
 document.getElementById("location").addEventListener("change", function () {
     locationType = this.value;
     const colorscaleValue = document.querySelector("select[name='colorscale']").value;
@@ -401,7 +418,7 @@ document.getElementById("interval-text").innerHTML = `${interval}`;
 
 const histogramLocation = {
   current: "Current Location",
-  safe: "Safe Location",
+  safe: "Home Location",
   work: "Work Location",
   destination: "Destination",
 };
@@ -419,10 +436,14 @@ document.addEventListener("DOMContentLoaded", function () {
 		renderChart();
 	});
 
-	document.getElementById("toggle-chart").addEventListener("click", () => {
-		isHistogram1 = !isHistogram1;
-		renderChart();
-	});
+	const toggleButton = document.getElementById('myToggleButton');
+
+    toggleButton.addEventListener('click', () => {
+      toggleButton.classList.toggle('on'); // Add or remove the 'on' class
+      isHistogram1 = !isHistogram1;
+      renderChart();
+    });
+
 });
 
 function renderChart() {
@@ -434,16 +455,12 @@ function renderChart() {
     console.log("radius", radius);
     console.log("Units", units);
 
-<!--	document.getElementById("histogram-title").innerHTML =-->
-<!--		`<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years ${label} </strong>`;-->
-
 	if (isHistogram1) {
 		addHistogram(currentValue);
-		document.getElementById("toggle-text").innerText = "View details in linear distribution";
 	} else {
 		addHistogram2(currentValue);
-		document.getElementById("toggle-text").innerText = "View details in logarithmic distribution";
 	}
+
 }
 
 
@@ -869,10 +886,10 @@ function createAreaChart() {
     var destination_years = JSON.parse("{{ destination_time_years | tojson }}");
 
     const areaChartSelections = {
-        current: { counts: current_counts, years: current_years, label: "{{ currentaddress }}" },
-        work: { counts: work_counts, years: work_years, label: "{{ workaddress }}" },
-        safe: { counts: safe_counts, years: safe_years, label: "{{ safeaddress }}" },
-        destination: { counts: destination_counts, years: destination_years, label: "{{ destinationaddress }}" }
+        current: { counts: current_counts, years: current_years, label:  areaCurrent },
+        work: { counts: work_counts, years: work_years, label: areaWork },
+        safe: { counts: safe_counts, years: safe_years, label: areaSafe },
+        destination: { counts: destination_counts, years: destination_years, label: areaDestination }
     };
 
     var interval = "{{ interval }}";

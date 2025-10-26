@@ -316,7 +316,7 @@
         }
 
       select {
-        width: 150px;
+        width: 167px;
       }
 
       select option {
@@ -405,3 +405,45 @@
   color: #0F52BA;
   margin-left: 25px;
 }
+
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: Arial, sans-serif;
+}
+
+.toggle-container {
+  width: 60px;
+  height: 30px;
+  background-color: #ccc;
+  border-radius: 15px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth background color change */
+}
+
+.toggle-slider {
+  width: 26px;
+  height: 26px;
+  background-color: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease; /* Smooth slider movement */
+}
+
+.toggle-container.on {
+  background-color: #4caf50;
+}
+
+.toggle-container.on .toggle-slider {
+  transform: translateX(30px);
+}
+
+.toggle-label {
+  font-size: 14px;
+  color: #333;
+}
+
