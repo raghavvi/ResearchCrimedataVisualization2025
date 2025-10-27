@@ -940,6 +940,13 @@ const locationCount = {
     destination: destinationCount
 };
 
+const locationNameGauge = {
+    current: "Current Location",
+    safe: "Home Location",
+    work: "Work Location",
+    destination: "Destination Location"
+};
+
 function textForInfo(selectedKey) {
 	//  3 crimes within 500 m, between 1-3pm in the last 5 years
 	const selectedCount = locationCount[selectedKey];
@@ -1012,6 +1019,7 @@ function createGauge(selectedKey) {
 	var lastIntervalThree = parseFloat("{{intervalThree[-1]}}");
 
 	const selectedDialCount = locationCount[selectedKey];
+	const selectedDialName = locationNameGauge[selectedKey]
 
 	Highcharts.chart('container', {
 		chart: {
@@ -1023,8 +1031,13 @@ function createGauge(selectedKey) {
 			height: '80%'
 		},
 		title: {
-			text: 'Gauge for Crime Score'
+			text: selectedDialName + ' Crime Intensity (Relative to maximum city grid count)',
+			style: { fontSize: '13px' }
 		},
+		subtitle: {
+            text: radius + units + ' Grid | ' + interval + ' | 13-Years',
+            style: { fontSize: '12px', color: '#666' }
+        },
 		pane: {
 			startAngle: -90,
 			endAngle: 89.9,

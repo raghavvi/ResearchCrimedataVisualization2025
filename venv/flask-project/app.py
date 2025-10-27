@@ -341,22 +341,22 @@ def update_attributes():
 
 
 def filter_time_interval(interval, data):
-    if interval == "12AM-3AM":
+    if interval == "12AM-4AM":
         newlist = [result for result in data if
                    (result.get('hour') in ['12', '01', '02', '03']) and result.get('ampm') == 'AM']
-    elif interval == '4AM-7AM':
+    elif interval == '4AM-8AM':
         newlist = [result for result in data if
                    (result.get('hour') in ['04', '05', '06', '07']) and result.get('ampm') == 'AM']
-    elif interval == "8AM-11AM":
+    elif interval == "8AM-12PM":
         newlist = [result for result in data if
                    (result.get('hour') in ['08', '09', '10', '11']) and result.get('ampm') == 'AM']
-    elif interval == "12PM-3PM":
+    elif interval == "12PM-4PM":
         newlist = [result for result in data if
                    (result.get('hour') in ['12', '01', '02', '03']) and result.get('ampm') == 'PM']
-    elif interval == "4PM-7PM":
+    elif interval == "4PM-8PM":
         newlist = [result for result in data if
                    (result.get('hour') in ['04', '05', '06', '07']) and result.get('ampm') == 'PM']
-    elif interval == "8PM-11PM":
+    elif interval == "8PM-12AM":
         newlist = [result for result in data if
                    (result.get('hour') in ['08', '09', '10', '11']) and result.get('ampm') == 'PM']
     else:
@@ -393,61 +393,68 @@ def read_dial_grid(grid, interval):
 
     file_mapping = {
         ("700 meters", "12AM-11PM"): "700metersAll.json",
-        ("700 meters", "12AM-3AM"): "700meters12AM-3AM.json",
-        ("700 meters", "4AM-7AM"): "700meters4AM-7AM.json",
-        ("700 meters", "8AM-11AM"): "700meters8AM-11AM.json",
-        ("700 meters", "12PM-3PM"): "700meters12PM-3PM.json",
-        ("700 meters", "4PM-7PM"): "700meters4PM-7PM.json",
-        ("700 meters", "8PM-11PM"): "700meters8PM-11PM.json",
+        ("700 meters", "12AM-4AM"): "700meters12AM-4AM.json",
+        ("700 meters", "4AM-8AM"): "700meters4AM-8AM.json",
+        ("700 meters", "8AM-12PM"): "700meters8AM-12PM.json",
+        ("700 meters", "12PM-4PM"): "700meters12PM-4PM.json",
+        ("700 meters", "4PM-8PM"): "700meters4PM-8PM.json",
+        ("700 meters", "8PM-12AM"): "700meters8PM-12AM.json",
+
         ("750 meters", "12AM-11PM"): "750metersAll.json",
-        ("750 meters", "12AM-3AM"): "750meters12AM-3AM.json",
-        ("750 meters", "4AM-7AM"): "750meters4AM-7AM.json",
-        ("750 meters", "8AM-11AM"): "750meters8AM-11AM.json",
-        ("750 meters", "12PM-3PM"): "750meters12PM-3PM.json",
-        ("750 meters", "4PM-7PM"): "750meters4PM-7PM.json",
-        ("750 meters", "8PM-11PM"): "750meters8PM-11PM.json",
+        ("750 meters", "12AM-4AM"): "750meters12AM-4AM.json",
+        ("750 meters", "4AM-8AM"): "750meters4AM-8AM.json",
+        ("750 meters", "8AM-12PM"): "750meters8AM-12PM.json",
+        ("750 meters", "12PM-4PM"): "750meters12PM-4PM.json",
+        ("750 meters", "4PM-8PM"): "750meters4PM-8PM.json",
+        ("750 meters", "8PM-12AM"): "750meters8PM-12AM.json",
+
         ("800 meters", "12AM-11PM"): "800metersAll.json",
-        ("800 meters", "12AM-3AM"): "800meters12AM-3AM.json",
-        ("800 meters", "4AM-7AM"): "800meters4AM-7AM.json",
-        ("800 meters", "8AM-11AM"): "800meters8AM-11AM.json",
-        ("800 meters", "12PM-3PM"): "800meters12PM-3PM.json",
-        ("800 meters", "4PM-7PM"): "800meters4PM-7PM.json",
-        ("800 meters", "8PM-11PM"): "800meters8PM-11PM.json",
+        ("800 meters", "12AM-4AM"): "800meters12AM-4AM.json",
+        ("800 meters", "4AM-8AM"): "800meters4AM-8AM.json",
+        ("800 meters", "8AM-12PM"): "800meters8AM-12PM.json",
+        ("800 meters", "12PM-4PM"): "800meters12PM-4PM.json",
+        ("800 meters", "4PM-8PM"): "800meters4PM-8PM.json",
+        ("800 meters", "8PM-12AM"): "800meters8PM-12AM.json",
+
         ("850 meters", "12AM-11PM"): "850metersAll.json",
-        ("850 meters", "12AM-3AM"): "850meters12AM-3AM.json",
-        ("850 meters", "4AM-7AM"): "850meters4AM-7AM.json",
-        ("850 meters", "8AM-11AM"): "850meters8AM-11AM.json",
-        ("850 meters", "12PM-3PM"): "850meters12PM-3PM.json",
-        ("850 meters", "4PM-7PM"): "850meters4PM-7PM.json",
-        ("850 meters", "8PM-11PM"): "850meters8PM-11PM.json",
+        ("850 meters", "12AM-4AM"): "850meters12AM-4AM.json",
+        ("850 meters", "4AM-8AM"): "850meters4AM-8AM.json",
+        ("850 meters", "8AM-12PM"): "850meters8AM-12PM.json",
+        ("850 meters", "12PM-4PM"): "850meters12PM-4PM.json",
+        ("850 meters", "4PM-8PM"): "850meters4PM-8PM.json",
+        ("850 meters", "8PM-12AM"): "850meters8PM-12AM.json",
+
         ("900 meters", "12AM-11PM"): "900metersAll.json",
-        ("900 meters", "12AM-3AM"): "900meters12AM-3AM.json",
-        ("900 meters", "4AM-7AM"): "900meters4AM-7AM.json",
-        ("900 meters", "8AM-11AM"): "900meters8AM-11AM.json",
-        ("900 meters", "12PM-3PM"): "900meters12PM-3PM.json",
-        ("900 meters", "4PM-7PM"): "900meters4PM-7PM.json",
-        ("900 meters", "8PM-11PM"): "900meters8PM-11PM.json",
+        ("900 meters", "12AM-4AM"): "900meters12AM-4AM.json",
+        ("900 meters", "4AM-8AM"): "900meters4AM-8AM.json",
+        ("900 meters", "8AM-12PM"): "900meters8AM-12PM.json",
+        ("900 meters", "12PM-4PM"): "900meters12PM-4PM.json",
+        ("900 meters", "4PM-8PM"): "900meters4PM-8PM.json",
+        ("900 meters", "8PM-12AM"): "900meters8PM-12AM.json",
+
         ("950 meters", "12AM-11PM"): "950metersAll.json",
-        ("950 meters", "12AM-3AM"): "950meters12AM-3AM.json",
-        ("950 meters", "4AM-7AM"): "950meters4AM-7AM.json",
-        ("950 meters", "8AM-11AM"): "950meters8AM-11AM.json",
-        ("950 meters", "12PM-3PM"): "950meters12PM-3PM.json",
-        ("950 meters", "4PM-7PM"): "950meters4PM-7PM.json",
-        ("950 meters", "8PM-11PM"): "950meters8PM-11PM.json",
+        ("950 meters", "12AM-4AM"): "950meters12AM-4AM.json",
+        ("950 meters", "4AM-8AM"): "950meters4AM-8AM.json",
+        ("950 meters", "8AM-12PM"): "950meters8AM-12PM.json",
+        ("950 meters", "12PM-4PM"): "950meters12PM-4PM.json",
+        ("950 meters", "4PM-8PM"): "950meters4PM-8PM.json",
+        ("950 meters", "8PM-12AM"): "950meters8PM-12AM.json",
+
         ("1 kilometer", "12AM-11PM"): "1kilometerAll.json",
-        ("1 kilometer", "12AM-3AM"): "950meters12AM-3AM.json",
-        ("1 kilometer", "4AM-7AM"): "950meters4AM-7AM.json",
-        ("1 kilometer", "8AM-11AM"): "950meters8AM-11AM.json",
-        ("1 kilometer", "12PM-3PM"): "950meters12PM-3PM.json",
-        ("1 kilometer", "4PM-7PM"): "950meters4PM-7PM.json",
-        ("1 kilometer", "8PM-11PM"): "950meters8PM-11PM.json",
+        ("1 kilometer", "12AM-4AM"): "1kilometer12AM-4AM.json",
+        ("1 kilometer", "4AM-8AM"): "1kilometer4AM-8AM.json",
+        ("1 kilometer", "8AM-12PM"): "1kilometer8AM-12PM.json",
+        ("1 kilometer", "12PM-4PM"): "1kilometer12PM-4PM.json",
+        ("1 kilometer", "4PM-8PM"): "1kilometer4PM-8PM.json",
+        ("1 kilometer", "8PM-12AM"): "1kilometer8PM-12AM.json",
+
         ("1 mile", "12AM-11PM"): "1mileAll.json",
-        ("1 mile", "12AM-3AM"): "1mile12AM-3AM.json",
-        ("1 mile", "4AM-7AM"): "1mile4AM-7AM.json",
-        ("1 mile", "8AM-11AM"): "1mile8AM-11AM.json",
-        ("1 mile", "12PM-3PM"): "1mile12PM-3PM.json",
-        ("1 mile", "4PM-7PM"): "1mile4PM-7PM.json",
-        ("1 mile", "8PM-11PM"): "1mile8PM-11PM.json",
+        ("1 mile", "12AM-4AM"): "1mile12AM-4AM.json",
+        ("1 mile", "4AM-8AM"): "1mile4AM-8AM.json",
+        ("1 mile", "8AM-12PM"): "1mile8AM-12PM.json",
+        ("1 mile", "12PM-4PM"): "1mile12PM-4PM.json",
+        ("1 mile", "4PM-8PM"): "1mile4PM-8PM.json",
+        ("1 mile", "8PM-12AM"): "1mile8PM-12AM.json",
     }
     # Get the file name based on the grid and interval
     file_name = file_mapping.get((grid, interval))
@@ -590,7 +597,7 @@ def search_within_polygon_dial(sublistelement, interval):
     })
 
 
-    if interval == "12AM-3AM":
+    if interval == "12AM-4AM":
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -598,7 +605,7 @@ def search_within_polygon_dial(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "4AM-7AM":
+    elif interval == "4AM-8AM":
         result = IntervalTwo.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         print("polygon_result_list", polygon_result_list)
@@ -607,7 +614,7 @@ def search_within_polygon_dial(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "8AM-11AM":
+    elif interval == "8AM-12PM":
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -615,7 +622,7 @@ def search_within_polygon_dial(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "12PM-3PM":
+    elif interval == "12PM-4PM":
         result = IntervalFour.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -623,7 +630,7 @@ def search_within_polygon_dial(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "4PM-7PM":
+    elif interval == "4PM-8PM":
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -631,7 +638,7 @@ def search_within_polygon_dial(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "8PM-11PM":
+    elif interval == "8PM-12AM":
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -676,7 +683,7 @@ def search_within_polygon_histogram(sublistelement, interval):
         }
     ]
 
-    if interval == "12AM-3AM":
+    if interval == "12AM-4AM":
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -686,7 +693,7 @@ def search_within_polygon_histogram(sublistelement, interval):
             # with open("not_found_sublist_elements.txt", "a") as file:
             #     file.write(f"notfoundsublistelement: {sublistelement}\n")
             return 0
-    elif interval == "4AM-7AM":
+    elif interval == "4AM-8AM":
         result = IntervalTwo.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         # print("polygon_result_list", polygon_result_list)
@@ -695,7 +702,7 @@ def search_within_polygon_histogram(sublistelement, interval):
             return polygon_result_list
         else:
             return 0
-    elif interval == "8AM-11AM":
+    elif interval == "8AM-12PM":
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -703,7 +710,7 @@ def search_within_polygon_histogram(sublistelement, interval):
             return polygon_result_list
         else:
             return 0
-    elif interval == "12PM-3PM":
+    elif interval == "12PM-4PM":
         result = IntervalFour.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -711,7 +718,7 @@ def search_within_polygon_histogram(sublistelement, interval):
             return polygon_result_list
         else:
             return 0
-    elif interval == "4PM-7PM":
+    elif interval == "4PM-8PM":
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -719,7 +726,7 @@ def search_within_polygon_histogram(sublistelement, interval):
             return polygon_result_list
         else:
             return 0
-    elif interval == "8PM-11PM":
+    elif interval == "8PM-12AM":
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -786,28 +793,28 @@ def search_within_polygon(sublistelement, interval):
         "$sort": {"MID_DATE": 1}
     }]
 
-    if interval == "12AM-3AM":
+    if interval == "12AM-4AM":
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         # if len(polygon_result_list) != 0:
         #     # print("new_data_list", polygon_result_list[0])
         #     print("polygon_result_list", len(polygon_result_list))
         return polygon_result_list
-    elif interval == "4AM-7AM":
+    elif interval == "4AM-8AM":
         result = IntervalTwo.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         # if len(polygon_result_list) != 0:
         #     # print("new_data_list", polygon_result_list[0])
         #     print("polygon_result_list", len(polygon_result_list))
         return polygon_result_list
-    elif interval == "8AM-11AM":
+    elif interval == "8AM-12PM":
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         # if len(polygon_result_list) != 0:
         #     # print("new_data_list", polygon_result_list[0])
         #     print("polygon_result_list", len(polygon_result_list))
         return polygon_result_list
-    elif interval == "12PM-3PM":
+    elif interval == "12PM-4PM":
         polygon_pipeline.append({
             "$sort": {"MID_DATE": 1}
         })
@@ -817,14 +824,14 @@ def search_within_polygon(sublistelement, interval):
         #     # print("new_data_list", polygon_result_list[0])
         #     print("polygon_result_list", len(polygon_result_list))
         return polygon_result_list
-    elif interval == "4PM-7PM":
+    elif interval == "4PM-8PM":
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         # if len(polygon_result_list) != 0:
         #     # print("new_data_list", polygon_result_list[0])
         #     print("polygon_result_list", len(polygon_result_list))
         return polygon_result_list
-    elif interval == "8PM-11PM":
+    elif interval == "8PM-12AM":
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         # if len(polygon_result_list) != 0:
@@ -885,7 +892,7 @@ def search_within_polygon_heatmap(sublistelement, interval):
         }
     }]
 
-    if interval == "12AM-3AM":
+    if interval == "12AM-4AM":
         result = IntervalOne.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -893,7 +900,7 @@ def search_within_polygon_heatmap(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "4AM-7AM":
+    elif interval == "4AM-8AM":
         result = IntervalTwo.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -901,7 +908,7 @@ def search_within_polygon_heatmap(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "8AM-11AM":
+    elif interval == "8AM-12PM":
         result = IntervalThree.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -909,7 +916,7 @@ def search_within_polygon_heatmap(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "12PM-3PM":
+    elif interval == "12PM-4PM":
         result = IntervalFour.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -917,7 +924,7 @@ def search_within_polygon_heatmap(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "4PM-7PM":
+    elif interval == "4PM-8PM":
         result = IntervalFive.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -925,7 +932,7 @@ def search_within_polygon_heatmap(sublistelement, interval):
             return len(polygon_result_list)
         else:
             return 0
-    elif interval == "8PM-11PM":
+    elif interval == "8PM-12AM":
         result = IntervalSix.objects.aggregate(*polygon_pipeline)
         polygon_result_list = [doc for doc in result]
         if len(polygon_result_list) != 0:
@@ -1246,12 +1253,12 @@ def delete_filtered_models():
 def create_new_filtered_models():
     try:
         interval_list = [
-            "12AM-3AM",
-            "4AM-7AM",
-            "8AM-11AM",
-            "12PM-3PM",
-            "4PM-7PM",
-            "8PM-11PM"
+            "12AM-4AM",
+            "4AM-8AM",
+            "8AM-12PM",
+            "12PM-4PM",
+            "4PM-8PM",
+            "8PM-12AM"
         ]
 
         # update_time_entries_for_model3()
@@ -1259,32 +1266,32 @@ def create_new_filtered_models():
 
         for interval in interval_list:
             data = filter_time_interval(interval, hour_aggregate_data)
-            if interval == "12AM-3AM":
+            if interval == "12AM-4AM":
                 for doc in data:
                     new_model_instance = IntervalOne(**doc)
                     new_model_instance.save()
                 print("IntervalOne count", IntervalOne.objects.count())
-            elif interval == "4AM-7AM":
+            elif interval == "4AM-8AM":
                 for doc in data:
                     new_model_instance = IntervalTwo(**doc)
                     new_model_instance.save()
                 print("IntervalTwo count", IntervalTwo.objects.count())
-            elif interval == "8AM-11AM":
+            elif interval == "8AM-12PM":
                 for doc in data:
                     new_model_instance = IntervalThree(**doc)
                     new_model_instance.save()
                 print("IntervalThree count", IntervalThree.objects.count())
-            elif interval == "12PM-3PM":
+            elif interval == "12PM-4PM":
                 for doc in data:
                     new_model_instance = IntervalFour(**doc)
                     new_model_instance.save()
                 print("IntervalFour count", IntervalFour.objects.count())
-            elif interval == "4PM-7PM":
+            elif interval == "4PM-8PM":
                 for doc in data:
                     new_model_instance = IntervalFive(**doc)
                     new_model_instance.save()
                 print("IntervalFive count", IntervalFive.objects.count())
-            elif interval == "8PM-11PM":
+            elif interval == "8PM-12AM":
                 for doc in data:
                     new_model_instance = IntervalSix(**doc)
                     new_model_instance.save()
@@ -1298,12 +1305,12 @@ def create_new_filtered_models():
 def create_filtered_models():
     try:
         interval_list = [
-            "12AM-3AM",
-            # "4AM-7AM",
-            #  "8AM-11AM",
-            #  "12PM-3PM",
-            #  "4PM-7PM",
-            #  "8PM-11PM",
+            "12AM-4AM",
+            # "4AM-8AM",
+            #  "8AM-12PM",
+            #  "12PM-4PM",
+            #  "4PM-8PM",
+            #  "8PM-12AM",
             "All"
         ]
 
@@ -1312,27 +1319,27 @@ def create_filtered_models():
             data = filter_dataset(interval, hour_aggregate_data)
             filtered_data_list = [doc for doc in data if
                                   doc.get("INCIDENT_NO") is not None and isinstance(doc["INCIDENT_NO"], str)]
-            if interval == "12AM-3AM":
+            if interval == "12AM-4AM":
                 for doc in filtered_data_list:
                     new_model_instance = IntervalOne(**doc)
                     new_model_instance.save()
-            elif interval == "4AM-7AM":
+            elif interval == "4AM-8AM":
                 for doc in filtered_data_list:
                     new_model_instance = IntervalTwo(**doc)
                     new_model_instance.save()
-            elif interval == "8AM-11AM":
+            elif interval == "8AM-12PM":
                 for doc in filtered_data_list:
                     new_model_instance = IntervalThree(**doc)
                     new_model_instance.save()
-            elif interval == "12PM-3PM":
+            elif interval == "12PM-4PM":
                 for doc in filtered_data_list:
                     new_model_instance = IntervalFour(**doc)
                     new_model_instance.save()
-            elif interval == "4PM-7PM":
+            elif interval == "4PM-8PM":
                 for doc in filtered_data_list:
                     new_model_instance = IntervalFive(**doc)
                     new_model_instance.save()
-            elif interval == "8PM-11PM":
+            elif interval == "8PM-12AM":
                 for doc in filtered_data_list:
                     new_model_instance = IntervalSix(**doc)
                     new_model_instance.save()
@@ -1488,61 +1495,61 @@ def create_new_grids():
     # return response files created
 
     create_grids((700, "meters", "All"))
-    create_grids((700, "meters", "12AM-3AM"))
-    create_grids((700, "meters", "4AM-7AM"))
-    create_grids((700, "meters", "8AM-11AM"))
-    create_grids((700, "meters", "12PM-3PM"))
-    create_grids((700, "meters", "4PM-7PM"))
-    create_grids((700, "meters", "8PM-11PM"))
+    create_grids((700, "meters", "12AM-4AM"))
+    create_grids((700, "meters", "4AM-8AM"))
+    create_grids((700, "meters", "8AM-12PM"))
+    create_grids((700, "meters", "12PM-4PM"))
+    create_grids((700, "meters", "4PM-8PM"))
+    create_grids((700, "meters", "8PM-12AM"))
     create_grids((750, "meters", "All"))
-    create_grids((750, "meters", "12AM-3AM"))
-    create_grids((750, "meters", "4AM-7AM"))
-    create_grids((750, "meters", "8AM-11AM"))
-    create_grids((750, "meters", "12PM-3PM"))
-    create_grids((750, "meters", "4PM-7PM"))
-    create_grids((750, "meters", "8PM-11PM"))
+    create_grids((750, "meters", "12AM-4AM"))
+    create_grids((750, "meters", "4AM-8AM"))
+    create_grids((750, "meters", "8AM-12PM"))
+    create_grids((750, "meters", "12PM-4PM"))
+    create_grids((750, "meters", "4PM-8PM"))
+    create_grids((750, "meters", "8PM-12AM"))
     create_grids((800, "meters", "All"))
-    create_grids((800, "meters", "12AM-3AM"))
-    create_grids((800, "meters", "4AM-7AM"))
-    create_grids((800, "meters", "8AM-11AM"))
-    create_grids((800, "meters", "12PM-3PM"))
-    create_grids((800, "meters", "4PM-7PM"))
-    create_grids((800, "meters", "8PM-11PM"))
+    create_grids((800, "meters", "12AM-4AM"))
+    create_grids((800, "meters", "4AM-8AM"))
+    create_grids((800, "meters", "8AM-12PM"))
+    create_grids((800, "meters", "12PM-4PM"))
+    create_grids((800, "meters", "4PM-8PM"))
+    create_grids((800, "meters", "8PM-12AM"))
     create_grids((850, "meters", "All"))
-    create_grids((850, "meters", "12AM-3AM"))
-    create_grids((850, "meters", "4AM-7AM"))
-    create_grids((850, "meters", "8AM-11AM"))
-    create_grids((850, "meters", "12PM-3PM"))
-    create_grids((850, "meters", "4PM-7PM"))
-    create_grids((850, "meters", "8PM-11PM"))
+    create_grids((850, "meters", "12AM-4AM"))
+    create_grids((850, "meters", "4AM-8AM"))
+    create_grids((850, "meters", "8AM-12PM"))
+    create_grids((850, "meters", "12PM-4PM"))
+    create_grids((850, "meters", "4PM-8PM"))
+    create_grids((850, "meters", "8PM-12AM"))
     create_grids((900, "meters", "All"))
-    create_grids((900, "meters", "12AM-3AM"))
-    create_grids((900, "meters", "4AM-7AM"))
-    create_grids((900, "meters", "8AM-11AM"))
-    create_grids((900, "meters", "12PM-3PM"))
-    create_grids((900, "meters", "4PM-7PM"))
-    create_grids((900, "meters", "8PM-11PM"))
+    create_grids((900, "meters", "12AM-4AM"))
+    create_grids((900, "meters", "4AM-8AM"))
+    create_grids((900, "meters", "8AM-12PM"))
+    create_grids((900, "meters", "12PM-4PM"))
+    create_grids((900, "meters", "4PM-8PM"))
+    create_grids((900, "meters", "8PM-12AM"))
     create_grids((950, "meters", "All"))
-    create_grids((950, "meters", "12AM-3AM"))
-    create_grids((950, "meters", "4AM-7AM"))
-    create_grids((950, "meters", "8AM-11AM"))
-    create_grids((950, "meters", "12PM-3PM"))
-    create_grids((950, "meters", "4PM-7PM"))
-    create_grids((950, "meters", "8PM-11PM"))
+    create_grids((950, "meters", "12AM-4AM"))
+    create_grids((950, "meters", "4AM-8AM"))
+    create_grids((950, "meters", "8AM-12PM"))
+    create_grids((950, "meters", "12PM-4PM"))
+    create_grids((950, "meters", "4PM-8PM"))
+    create_grids((950, "meters", "8PM-12AM"))
     create_grids((1, "kilometer", "All"))
-    create_grids((1, "kilometer", "12AM-3AM"))
-    create_grids((1, "kilometer", "4AM-7AM"))
-    create_grids((1, "kilometer", "8AM-11AM"))
-    create_grids((1, "kilometer", "12PM-3PM"))
-    create_grids((1, "kilometer", "4PM-7PM"))
-    create_grids((1, "kilometer", "8PM-11PM"))
+    create_grids((1, "kilometer", "12AM-4AM"))
+    create_grids((1, "kilometer", "4AM-8AM"))
+    create_grids((1, "kilometer", "8AM-12PM"))
+    create_grids((1, "kilometer", "12PM-4PM"))
+    create_grids((1, "kilometer", "4PM-8PM"))
+    create_grids((1, "kilometer", "8PM-12AM"))
     create_grids((1, "mile", "All"))
-    create_grids((1, "mile", "12AM-3AM"))
-    create_grids((1, "mile", "4AM-7AM"))
-    create_grids((1, "mile", "8AM-11AM"))
-    create_grids((1, "mile", "12PM-3PM"))
-    create_grids((1, "mile", "4PM-7PM"))
-    create_grids((1, "mile", "8PM-11PM"))
+    create_grids((1, "mile", "12AM-4AM"))
+    create_grids((1, "mile", "4AM-8AM"))
+    create_grids((1, "mile", "8AM-12PM"))
+    create_grids((1, "mile", "12PM-4PM"))
+    create_grids((1, "mile", "4PM-8PM"))
+    create_grids((1, "mile", "8PM-12AM"))
 
     return "Files Created", 200
 
@@ -1577,57 +1584,6 @@ def create_grids(element):
     # create_bar_json(histogram_response[0], histogram_response[1], file_name)
 
     # return get_data2(json_data_list)
-
-
-# @app.route('/createhistogramdfs')
-# def process_histogram_todf():
-#     distances = ["700meters", "750meters", "800meters", "850meters", "900meters", "950meters", "1kilometer", "1mile"]
-#     time_ranges = ["All", "12AM-3AM", "4AM-7AM", "8AM-11AM", "12PM-3PM", "4PM-7PM", "8PM-11PM"]
-#
-#     errors = []
-#     for distance in distances:
-#         for time_range in time_ranges:
-#             file_path = os.path.join(PROJECT_DIR, 'static', 'data', 'histogram', f'{distance}{time_range}.json')
-#
-#             try:
-#                 with open(file_path, 'r') as file:
-#                     datajson = json.load(file)
-#                     appended_list = datajson.get("appended_list", [])
-#                     neighborhood_list = datajson.get("new_neighborhood_list", [])
-#
-#                     # Ensure lists have at least one element
-#                     if not appended_list:
-#                         appended_list = [0]  # Default to zero count
-#                     if not neighborhood_list:
-#                         neighborhood_list = ["NA"]  # Default to "N/A"
-#
-#                     # Count zeros and modify lists
-#                     count_zeros = appended_list.count(0)
-#                     filtered_appended_list = [num for num in appended_list if num != 0]
-#                     new_appended_list = [count_zeros] + filtered_appended_list
-#                     new_neighborhood_list = ["NA"] + neighborhood_list
-#
-#                     print("new_appended_list", new_appended_list)
-#                     print("new_neighborhood_list", new_neighborhood_list)
-#
-#                     # Save DataFrame as JSON
-#                     output_path = os.path.join(PROJECT_DIR, 'static', 'data', 'histogramdf',
-#                                                f'{distance}{time_range}.json')
-#                     df = pd.DataFrame({'col1': new_neighborhood_list, 'col2': new_appended_list})
-#
-#                     # Ensure the DataFrame is not empty before saving
-#                     if not df.empty:
-#                         df.to_json(output_path, orient="records")
-#                     else:
-#                         print(f"Skipping empty DataFrame for {file_path}")
-#
-#             except (FileNotFoundError, json.JSONDecodeError) as e:
-#                 print(f"Error reading file: {file_path}")
-#                 errors.append({"file": file_path, "error": str(e)})
-#
-#     if errors:
-#         return jsonify({"status": "error", "message": "Some files failed", "details": errors}), 500
-#     return jsonify({"status": "success", "message": "All files processed"}), 200
 
 
 # Model add hour field aggregate to police_cinci_data_new
