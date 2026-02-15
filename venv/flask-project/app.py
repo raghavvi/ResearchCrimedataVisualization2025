@@ -1920,7 +1920,7 @@ def success(safe, work, current, destination, interval, gridsize):
 @app.route("/", methods=["GET", "POST"])
 def home():
     if request.method == 'POST':
-        safe = request.form.get("safe")
+        safe = request.form.get("home")
         work = request.form.get("work")
         current = request.form.get("current")
         destination = request.form.get("destination")

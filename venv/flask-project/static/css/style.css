@@ -195,10 +195,9 @@
 
         .visual-button-container {
             position: absolute;
-            display: block;
-            z-index: 999998;
+            z-index: 1000000;
             padding: 10px;
-            bottom: 0;
+            bottom: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -220,6 +219,11 @@
           -webkit-transform: rotate(-135deg);
         }
 
+        .down {
+          transform: rotate(45deg);
+          -webkit-transform: rotate(45deg);
+        }
+
         .bottom-element {
             position: absolute;
             width: 100%; /* Take up half of the container */
@@ -227,7 +231,7 @@
             display: none;
             background-color: white;
             height: 85%;
-            bottom: 0;
+            bottom: 40px;
             left: 0;
              z-index: 999999;
         }
@@ -241,12 +245,19 @@
 
           .select-container {
             width: 100%;
-            display: block;
+            display: flex;
             left: 0;
             position: absolute;
             top: 0;
             z-index: 900;
             padding: 10px;
+            background-color: #3bd6c6;
+            height: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex-direction: row;
+            align-content: center;
+            align-items: center;
         }
 
 
@@ -393,10 +404,26 @@
             z-index: 1;
         }
 
+        .map-box {
+            position: absolute;
+            top: 65px;
+            right: 20px;
+            z-index: 9990;
+            background-color: #a1b2b0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .map-box-inner {
+            margin-bottom: 20px;
+        }
+
 .text-container {
   display: flex;
   justify-content: space-between;
   width: 340px;
+  margin-top: 5px;
 }
 
 #textelement,
@@ -411,6 +438,8 @@
   align-items: center;
   gap: 10px;
   font-family: Arial, sans-serif;
+  position: relative;
+  justify-content: center;
 }
 
 .toggle-container {

@@ -24,21 +24,30 @@
 
 <script>
 
-    function initMap() {
-        var latitude = 39.134556;
-        var longitude = -84.515413;
-        var mapProp= {
-          center:new google.maps.LatLng(latitude,longitude),
-          zoom:17,
-        };
+<!--    function initMap() {-->
+<!--        var latitude = 39.134556;-->
+<!--        var longitude = -84.515413;-->
+<!--        console.log("initMap() called");-->
+<!--        var mapProp= {-->
+<!--          center:new google.maps.LatLng(latitude,longitude),-->
+<!--          zoom: 15,-->
+<!--        };-->
 
-        var map = new google.maps.Map(document.getElementById("map"),mapProp);
+<!--        var map = new google.maps.Map(document.getElementById("map"),mapProp);-->
 
-    }
+<!--    }-->
 
+function initMap() {
+    loadMap(39.134556, -84.515413, 18);
+}
 
-
-
+function loadMap(lat, lng, zoomLevel) {
+    console.log("loadMap:", zoomLevel);
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat, lng },
+        zoom: zoomLevel
+    });
+}
 
 </script>
 
@@ -67,7 +76,7 @@
                              <form method="post" id="formElement">
                                  <br>
                                  <label>Enter your home location</label>
-                                 <input class="search" name="safe" id="safe" type="text" placeholder="Search Location..."/>
+                                 <input class="search" name="home" id="home" type="text" placeholder="Search Location..."/>
                                  <br>
                                  <br>
                                  <label>Enter a work location</label>
@@ -82,7 +91,7 @@
                                  <input class="search" name="destination" id="destination" type="text" placeholder="Search Location..."/>
                                  <br>
                                  <br>
-                                 <label>Select 3 hour time interval values</label>
+                                 <label>Select 4 hour time interval values</label>
                                  <select name="interval" id="interval">
                                      <option value="12AM-11PM">Full day</option>
                                      <option value="12AM-4AM">12AM-4AM</option>

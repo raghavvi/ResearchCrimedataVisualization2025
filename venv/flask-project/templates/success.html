@@ -28,7 +28,7 @@
                     <div class="select-container">
                         <select name="location" id="location">
                             <option value="current" selected>current</option>
-                            <option value="safe">home</option>
+                            <option value="home">home</option>
                             <option value="work">work</option>
                             <option value="destination">destination</option>
                         </select>
@@ -38,27 +38,46 @@
 
                     <div class="map-container">
                         <div id="map"></div>
-                            <div style="position:absolute; z-index: 9999; bottom: 100px; left: 30px;">
-<!--                                <select name="colorscale">-->
-<!--                                    <option value="relative" selected>relative to this location</option>-->
-<!--                                    <option value="city">relative to whole city</option>-->
-<!--                                </select>-->
-                                <div id="select-colorscale"></div>
+<!--                        <div class="map-box">-->
+<!--                            <div style="position:absolute; z-index: 9999; bottom: 100px; left: 30px;">-->
+<!--                                &lt;!&ndash; <select name="colorscale">&ndash;&gt;-->
+<!--                                &lt;!&ndash;<option value="relative" selected>relative to this location</option>&ndash;&gt;-->
+<!--                                &lt;!&ndash;<option value="city">relative to whole city</option>&ndash;&gt;-->
+<!--                                &lt;!&ndash;</select>&ndash;&gt;-->
+<!--                                <div id="select-colorscale"></div>-->
+<!--                            </div>-->
+<!--                            <div id="legend" style="position:absolute; bottom:30px; left:30px; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>-->
+
+                            <div class="map-box">
+                                <div class="map-box-inner">
+                                    <div id="select-colorscale"></div>
+                                </div>
+
+                                <div id="legend" style="padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>
                             </div>
-                        <div id="legend" style="position:absolute; bottom:30px; left:30px; padding:10px; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.3); z-index: 9999;"></div>
+
+                        </div>
                     </div>
-                    <div class="visual-button-container">
-                        <i onclick="openVisualization()" class="arrow up"></i>
+
+                    <div class="visual-button-container" id="visualBtn">
+                        <i class="arrow up" onclick="openVisualization()"></i>
                     </div>
+
                     <div class="bottom-element" id="visualizationForm">
-                        <span class="closeVis" onclick="closeVisualization()" style="float: right; margin-right: 10px">&times;</span>
+<!--                        <span class="closeVis" onclick="closeVisualization()" style="float: right; margin-right: 10px">&times;</span>-->
                         <ul class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#menu1">Histogram</a></li>
-                            <li><a data-toggle="tab" href="#menu2">Area</a></li>
-                            <li><a data-toggle="tab" href="#menu3">Dial</a></li>
+                            <li class="active"><a data-toggle="tab" href="#menu1">Introduction</a></li>
+                            <li><a data-toggle="tab" href="#menu2">Histogram</a></li>
+                            <li><a data-toggle="tab" href="#menu3">Area</a></li>
+                            <li><a data-toggle="tab" href="#menu4">Dial</a></li>
                         </ul>
                         <div class="tab-content">
+
                             <div id="menu1" class="tab-pane fade in active">
+                                <p>This is the introduction tab</p>
+                            </div>
+
+                            <div id="menu2" class="tab-pane fade">
                                 <div style="height: 380px;">
                                     <div class="text-container">
                                         <span id="textelement2"></span>
@@ -68,14 +87,6 @@
                                         <div id="histogram"></div>
                                 </div>
                                 <br>
-
-<!--                                <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">-->
-<!--                                    <span id="toggle-text" style="font-size: 12px; color: #333; max-width: 100px; word-break: break-word;">View details in logarithmic distribution</span>-->
-<!--                                    <button id="toggle-chart" style="font-size: 10px; padding: 8px; background-color: #cccccc">-->
-<!--                                        Click Here-->
-<!--                                    </button>-->
-<!--                                </div>-->
-
                                 <div class="toggle-wrapper">
                                     <span class="toggle-label">Linear</span>
                                     <div class="toggle-container" id="myToggleButton">
@@ -83,21 +94,26 @@
                                     </div>
                                     <span class="toggle-label">Logarithm</span>
                                 </div>
-
                                 <br>
                                 <br>
-                                <p>Note: hazardous crimes are violent crimes in categories such as assault, burglary, robbery, rape, and murder</p>
+                                <p style="margin-left: 18px;"><strong>Note:</strong> hazardous crimes are violent crimes in categories such as assault, burglary, robbery, rape, and murder</p>
                             </div>
-                            <div id="menu2" class="tab-pane fade">
+
+                            <div id="menu3" class="tab-pane fade">
                                 <div id="container2" style="height: 285px; width: 285px;">
                                 </div>
                             </div>
-                            <div id="menu3" class="tab-pane fade">
+
+                            <div id="menu4" class="tab-pane fade">
                                 <br>
                                 <div id="container" style="height: 300px;">
                                 </div>
+                                <!--  <p style="margin-left: 18px;"><strong>Note:</strong> End of gauge indicates the max crimes committed in a 700m area in Cincinnati</p>-->
+                                <div id="textelement3" style="margin-left: 18px;"></div>
                             </div>
+
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -109,12 +125,24 @@
 <script>
 function openVisualization() {
 	console.log("Button is clicked.");
-	document.getElementById("visualizationForm").style.display = "block";
+    document.getElementById("visualizationForm").style.display = "block";
+
+    const btn = document.getElementById("visualBtn").querySelector("i");
+    btn.classList.remove("up");
+    btn.classList.add("down");
+
+    btn.setAttribute("onclick", "closeVisualization()");
 }
 
 function closeVisualization() {
 	console.log("Close Button is clicked Function is accessed");
-	document.getElementById("visualizationForm").style.display = "none";
+    document.getElementById("visualizationForm").style.display = "none";
+
+    const btn = document.getElementById("visualBtn").querySelector("i");
+    btn.classList.remove("down");
+    btn.classList.add("up");
+
+    btn.setAttribute("onclick", "openVisualization()");
 }
 </script>
 <script>
@@ -162,27 +190,40 @@ let locationType = "current";
 var rectangles = [];
 let markers = [];
 
-function updatedMap() {
-    var latitude = 39.134556;
-    var longitude = -84.515413;
-    var mapProp = {
-        center: new google.maps.LatLng(latitude, longitude),
-        zoom: 17,
-    };
-    map = new google.maps.Map(document.getElementById("map"), mapProp);
+<!--function updatedMap() {-->
+<!--    var latitude = 39.134556;-->
+<!--    var longitude = -84.515413;-->
+<!--    var mapProp = {-->
+<!--        center: new google.maps.LatLng(latitude, longitude),-->
+<!--        zoom: 15,-->
+<!--    };-->
+<!--    console.log("updatedMap() called");-->
+<!--    map = new google.maps.Map(document.getElementById("map"), mapProp);-->
+<!--}-->
+
+function loadMap(lat, lng, zoomLevel) {
+    console.log("loadMap:", zoomLevel);
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat, lng },
+        zoom: zoomLevel
+    });
+}
+
+function initMap() {
+    loadMap(39.134556, -84.515413, 14);
 }
 
 // Shared config
 const latLngCoordinates = {
     current: { lat: latcurrentcoordinate, lng: loncurrentcoordinate },
-    safe: { lat: latsafecoordinate, lng: lonsafecoordinate },
+    home: { lat: latsafecoordinate, lng: lonsafecoordinate },
     work: { lat: latworkcoordinate, lng: lonworkcoordinate },
     destination: { lat: latdestinationcoordinate, lng: londestinationcoordinate }
 };
 
 const heatmapPaths = {
     current: "/static/data/heatmap/heatmap_data_current.csv",
-    safe: "/static/data/heatmap/heatmap_data_safe.csv",
+    home: "/static/data/heatmap/heatmap_data_safe.csv",
     work: "/static/data/heatmap/heatmap_data_work.csv",
     destination: "/static/data/heatmap/heatmap_data_destination.csv"
 };
@@ -194,7 +235,7 @@ const geoBounds = {
         west: JSON.parse("{{ current_west_list | tojson }}"),
         east: JSON.parse("{{ current_east_list | tojson }}")
     },
-    safe: {
+    home: {
         north: JSON.parse("{{ safe_north_list | tojson }}"),
         south: JSON.parse("{{ safe_south_list | tojson }}"),
         west: JSON.parse("{{ safe_west_list | tojson }}"),
@@ -226,7 +267,7 @@ function drawHeatmap(selectedValue, colorscaleValue) {
 
     // Zoom in
     map.setCenter(latLng);
-    map.setZoom(16);
+    // map.setZoom(16);
 
     // Clear previous rectangles
     rectangles.forEach(rect => rect.setMap(null));
@@ -283,7 +324,7 @@ function drawHeatmap(selectedValue, colorscaleValue) {
                 strokeColor: '#000',
                 strokeWeight: 2,
                 fillColor: fillColor,
-                fillOpacity: 1.0,
+                fillOpacity: 0.5,
                 map: map,
                 bounds: bounds
             });
@@ -376,7 +417,7 @@ function drawHeatmap(selectedValue, colorscaleValue) {
 
   document.getElementById("select-colorscale").innerHTML = `
     <select name="colorscale">
-      <option value="relative" selected>${radius} ${units} relative to this location</option>
+      <option value="relative" selected>${radius} ${units} relative to this area</option>
       <option value="city">${radius} ${units} relative to whole city</option>
     </select>
   `;
@@ -394,7 +435,7 @@ document.querySelector("select[name='colorscale']").addEventListener("change", f
 
 // Auto-run on page load
 window.addEventListener("load", function () {
-    updatedMap();
+    initMap();
     const colorscaleValue = document.querySelector("select[name='colorscale']").value;
     drawHeatmap(locationType, colorscaleValue);
 });
@@ -407,7 +448,7 @@ let selectedLocation = document.getElementById("location").value;
 
 const locationValue = {
   current: parseFloat("{{ middle_element_current_count }}"),
-  safe: parseFloat("{{ middle_element_safe_count }}"),
+  home: parseFloat("{{ middle_element_safe_count }}"),
   work: parseFloat("{{ middle_element_work_count }}"),
   destination: parseFloat("{{ middle_element_destination_count }}")
 };
@@ -418,7 +459,7 @@ document.getElementById("interval-text").innerHTML = `${interval}`;
 
 const histogramLocation = {
   current: "Current Location",
-  safe: "Home Location",
+  home: "Home Location",
   work: "Work Location",
   destination: "Destination",
 };
@@ -476,7 +517,7 @@ function addHistogram(currentValue) {
 
 <!--	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;-->
 
-	const margin = { top: 40, right: 20, bottom: 60, left: 52 },
+	const margin = { top: 40, right: 20, bottom: 60, left: 62 },
 		width = 350 - margin.left - margin.right,
 		height = 285 - margin.top - margin.bottom;
 
@@ -616,7 +657,7 @@ function addHistogram(currentValue) {
 		.attr("text-anchor", "middle")
 		.attr("transform", "rotate(-90)")
 		.attr("x", -height / 2)
-		.attr("y", -margin.left + 10)
+		.attr("y", -(margin.left - 20))
 		.attr("font-size", "10px")
 		.text("Frequency");
 
@@ -683,7 +724,7 @@ function addHistogram2(currentValue) {
 
 <!--	document.getElementById("histogram-title").innerHTML = `<strong>Distribution of hazardous crimes from ${interval} within ${radius}${units} over 13 years</strong>`;-->
 
-	const margin = { top: 40, right: 20, bottom: 60, left: 52 },
+	const margin = { top: 40, right: 20, bottom: 60, left: 62 },
 		width = 350 - margin.left - margin.right,
 		height = 285 - margin.top - margin.bottom;
 
@@ -816,7 +857,7 @@ function addHistogram2(currentValue) {
 		.attr("text-anchor", "middle")
 		.attr("transform", "rotate(-90)")
 		.attr("x", -height / 2)
-		.attr("y", -margin.left + 10)
+		.attr("y", -(margin.left - 20))
 		.attr("font-size", "10px")
 		.text("Frequency");
 
@@ -888,7 +929,7 @@ function createAreaChart() {
     const areaChartSelections = {
         current: { counts: current_counts, years: current_years, label:  areaCurrent },
         work: { counts: work_counts, years: work_years, label: areaWork },
-        safe: { counts: safe_counts, years: safe_years, label: areaSafe },
+        home: { counts: safe_counts, years: safe_years, label: areaSafe },
         destination: { counts: destination_counts, years: destination_years, label: areaDestination }
     };
 
@@ -935,14 +976,14 @@ function createAreaChart() {
 
 const locationCount = {
     current: currentCount,
-    safe: safeCount,
+    home: safeCount,
     work: workCount,
     destination: destinationCount
 };
 
 const locationNameGauge = {
     current: "Current Location",
-    safe: "Home Location",
+    home: "Home Location",
     work: "Work Location",
     destination: "Destination Location"
 };
@@ -972,21 +1013,21 @@ const destinationPercentage = parseFloat("{{destination_percentage}}");
 
 const locationName = {
     current: currentLocation,
-    safe: safeLocation,
+    home: safeLocation,
     work: workLocation,
     destination: destinationLocation
 };
 
 const locationText = {
     current: currentText,
-    safe: safeText,
+    home: safeText,
     work: workText,
     destination: destinationText
 };
 
 const locationPercentage = {
     current: currentPercentage,
-    safe: safePercentage,
+    home: safePercentage,
     work: workPercentage,
     destination: destinationPercentage
 };
@@ -1031,13 +1072,9 @@ function createGauge(selectedKey) {
 			height: '80%'
 		},
 		title: {
-			text: selectedDialName + ' Crime Intensity (Relative to maximum city grid count)',
+			text: selectedDialName + ' Crime Intensity (Past 13 years)',
 			style: { fontSize: '13px' }
 		},
-		subtitle: {
-            text: radius + units + ' Grid | ' + interval + ' | 13-Years',
-            style: { fontSize: '12px', color: '#666' }
-        },
 		pane: {
 			startAngle: -90,
 			endAngle: 89.9,
@@ -1104,7 +1141,8 @@ function createGauge(selectedKey) {
 			color: '#DF5353',
 			data: [],
 			showInLegend: true
-		}]
+		}
+		]
 	});
 }
 
@@ -1116,8 +1154,9 @@ document.getElementById("location").addEventListener("change", function () {
     createGauge(selectedKey);
 });
 
+document.getElementById("textelement3").innerHTML = `<strong>Note:</strong> The maximum value of the gauge indicates the max crimes committed in a ${radius} ${units} area in Cincinnati`
 
 createAreaChart()
 
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=updatedMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{key}}" async defer></script>
