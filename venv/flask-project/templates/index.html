@@ -24,28 +24,18 @@
 
 <script>
 
-<!--    function initMap() {-->
-<!--        var latitude = 39.134556;-->
-<!--        var longitude = -84.515413;-->
-<!--        console.log("initMap() called");-->
-<!--        var mapProp= {-->
-<!--          center:new google.maps.LatLng(latitude,longitude),-->
-<!--          zoom: 15,-->
-<!--        };-->
-
-<!--        var map = new google.maps.Map(document.getElementById("map"),mapProp);-->
-
-<!--    }-->
+const mapId = "{{mapId}}";
 
 function initMap() {
-    loadMap(39.134556, -84.515413, 18);
+    loadMap(39.134556, -84.515413, 18, mapId);
 }
 
-function loadMap(lat, lng, zoomLevel) {
+function loadMap(lat, lng, zoomLevel, mapId) {
     console.log("loadMap:", zoomLevel);
     map = new google.maps.Map(document.getElementById("map"), {
         center: { lat, lng },
-        zoom: zoomLevel
+        zoom: zoomLevel,
+        mapId: mapId
     });
 }
 
@@ -162,53 +152,6 @@ function loadMap(lat, lng, zoomLevel) {
         console.log("Close Button is clicked");
         document.getElementById("myForm").style.display = "none";
     }
-</script>
-
-<script>
-
-<!--    function validateLocations(locations) {-->
-<!--        const missingLocations = [];-->
-<!--       // Check for missing location data-->
-<!--       if (!locations.current || !locations.current.center) {-->
-<!--            missingLocations.push("Current Location");-->
-<!--       }-->
-<!--       if (!locations.safe || !locations.safe.center) {-->
-<!--            missingLocations.push("Safe Location");-->
-<!--       }-->
-<!--       if (!locations.work || !locations.work.center) {-->
-<!--            missingLocations.push("Work Location");-->
-<!--       }-->
-<!--       if (!locations.destination || !locations.destination.center) {-->
-<!--           missingLocations.push("Destination Location");-->
-<!--       }-->
-
-<!--       // If any locations are missing, return a message-->
-<!--       if (missingLocations.length > 0) {-->
-<!--           const message = `Missing location data for: ${missingLocations.join(", ")}`;-->
-<!--           console.error(message);-->
-<!--           alert(message); // Display the message to the user-->
-<!--           return false; // Stop further execution-->
-<!--       }-->
-<!--       return true; // All locations are valid-->
-<!--    }-->
-
-<!--// Example usage-->
-<!--    const locations = {-->
-<!--    current: { center: { lat: 39.134556, lng: -84.515413 }, radius: 100 },-->
-<!--    safe: null, // Missing safe location-->
-<!--    work: { center: { lat: 39.140000, lng: -84.520000 }, radius: 100 },-->
-<!--    destination: { center: { lat: 39.130000, lng: -84.510000 }, radius: 100 },-->
-<!--    };-->
-
-<!--   if (validateLocations(locations)) {-->
-<!--   // Proceed with map rendering-->
-<!--   console.log("All locations are valid. Proceeding...");-->
-<!--   } else {-->
-<!--   console.log("Validation failed. Cannot proceed.");-->
-<!--  -->
-<!--}-->
-
-
 </script>
 
 <script type="text/javascript">

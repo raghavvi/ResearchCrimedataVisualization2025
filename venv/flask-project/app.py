@@ -10,7 +10,7 @@ from shapely.geometry import box
 from pyproj import Transformer, Proj, transform
 from geopy.exc import GeocoderTimedOut
 import geopandas as gpd
-from key import key
+from key import key, mapId
 from geopy.geocoders import Nominatim
 from dotenv import load_dotenv
 import os
@@ -1846,7 +1846,7 @@ def success(safe, work, current, destination, interval, gridsize):
         # print("number_of_years",number_of_years)
         logger.info("=== Total time taken: %s seconds === ", time.time() - total_start_time)
 
-        return render_template('success.html', key=key, maxgridelement=max(user.grid),
+        return render_template('success.html', key=key, mapId=mapId, maxgridelement=max(user.grid),
                                radius=user.radius, units=user.units,
                                interval=user.interval,
                                dial_list=dial_list,
@@ -1935,7 +1935,7 @@ def home():
         return redirect(url_for('success', safe=safe, work=work, current=current, destination=destination,
                                 interval=interval, gridsize=gridsize))
 
-    return render_template("index.html")
+    return render_template("index.html",key=key,mapId=mapId)
 
 
 if __name__ == '__main__':

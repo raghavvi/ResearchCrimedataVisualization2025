@@ -189,28 +189,19 @@ let destinationArray = [];
 let locationType = "current";
 var rectangles = [];
 let markers = [];
+const mapId = "{{mapId}}";
 
-<!--function updatedMap() {-->
-<!--    var latitude = 39.134556;-->
-<!--    var longitude = -84.515413;-->
-<!--    var mapProp = {-->
-<!--        center: new google.maps.LatLng(latitude, longitude),-->
-<!--        zoom: 15,-->
-<!--    };-->
-<!--    console.log("updatedMap() called");-->
-<!--    map = new google.maps.Map(document.getElementById("map"), mapProp);-->
-<!--}-->
-
-function loadMap(lat, lng, zoomLevel) {
+function loadMap(lat, lng, zoomLevel, mapId) {
     console.log("loadMap:", zoomLevel);
     map = new google.maps.Map(document.getElementById("map"), {
         center: { lat, lng },
-        zoom: zoomLevel
+        zoom: zoomLevel,
+        mapId: mapId
     });
 }
 
 function initMap() {
-    loadMap(39.134556, -84.515413, 14);
+    loadMap(39.134556, -84.515413, 14, mapId);
 }
 
 // Shared config
@@ -353,7 +344,6 @@ function drawHeatmap(selectedValue, colorscaleValue) {
                 }
             });
             markers.push(marker);
-
         }
 
         // --- Draw Legend ---
@@ -433,9 +423,46 @@ document.querySelector("select[name='colorscale']").addEventListener("change", f
     drawHeatmap(locationType, colorscaleValue);
 });
 
+const pinMarkerColors = [
+    {backgroundColor: "#4285F4", borderColor: "#007bff"},
+    {backgroundColor: "#5eb865", borderColor: "#3e7843"},
+    {backgroundColor: "#d39df2", borderColor: "#a87ac2"},
+    {backgroundColor: "#f2f079", borderColor: "#fadd5c"}
+]
+
+async function drawLocationMarkers(latLngCoordinates){
+    const { AdvancedMarkerElement, PinElement  } = await google.maps.importLibrary("marker");
+
+    let colorIndex = 0;
+
+    for (const key in latLngCoordinates) {
+        if (latLngCoordinates.hasOwnProperty(key)) {
+            const location = latLngCoordinates[key];
+
+            const color = pinMarkerColors[colorIndex % pinMarkerColors.length];
+
+            const pinBackground = new PinElement({
+                background: color.backgroundColor,
+                glyphColor: color.backgroundColor,
+                borderColor: color.borderColor
+            });
+
+            const markerElement = new AdvancedMarkerElement({
+                map: map,
+                position: location,
+                title: key,
+            });
+            markerElement.append(pinBackground);
+
+            colorIndex++;
+        }
+    }
+}
+
 // Auto-run on page load
 window.addEventListener("load", function () {
     initMap();
+    drawLocationMarkers(latLngCoordinates);
     const colorscaleValue = document.querySelector("select[name='colorscale']").value;
     drawHeatmap(locationType, colorscaleValue);
 });
