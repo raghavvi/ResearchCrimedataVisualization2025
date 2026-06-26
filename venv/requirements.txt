@@ -1,0 +1,9 @@
+dnspython==2.7.0
+numpy==1.26.4
+pandas==2.2.3
+pymongo==3.12.3
+python-dateutil==2.9.0.post0
+pytz==2025.2
+shapely==2.1.0
+six==1.17.0
+tzdata==2025.2
