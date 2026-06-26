@@ -14,7 +14,7 @@
 
 <script>
 
-    function initMap() {
+    function testMap() {
         var latitude = 39.134556;
         var longitude = -84.515413;
         var mapProp= {
@@ -22,22 +22,9 @@
           zoom:17,
         };
 
-        var bbox = [-84.8192049318631, 39.0533271607855, -84.2545822217415, 39.3599982625544];
-
-        var x = bbox[1];
-        var xf = bbox[3];
-        var y = bbox[0];
-        var yf = bbox[2];
-
-        x0 = x;
-        y0 = y;
-
         var map = new google.maps.Map(document.getElementById("map"),mapProp);
 
-        document.addEventListener('DOMContentLoaded', function () {
-            var gridGeoJSON = {{ polygon | safe }};
-
-            // Use gridGeoJSON in your JavaScript code to add it to the map
+            var gridGeoJSON = {{polygon | safe}};
             console.log('Grid GeoJSON:', gridGeoJSON);
 
             var googleMapsPolygons = turfCoordToGoogleMapsPolygons(gridGeoJSON);
@@ -55,11 +42,6 @@
                     });
             }
 
-
-        });
-
-        // Function to convert Turf.js coordinates to Google Maps API polygons
-
         function turfCoordToGoogleMapsPolygons(geojson) {
            var polygons = [];
 
@@ -72,12 +54,11 @@
            });
            return polygons;
         }
-
     }
 
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=testMap" async defer></script>
 <script src="https://unpkg.com/@turf/turf"></script>
 
 

@@ -1,4 +1,3 @@
-
          .phone-container {
             width: 393px;
             height: 852px;
@@ -33,8 +32,6 @@
             height: 35px;
         }
 
-
-        //updated width and height of text box
         input[type=text].search {
           background-position: right top;
           background-repeat: no-repeat;
@@ -55,7 +52,7 @@
             position: flex;
             height: 90%;
             margin-bottom: 15px;
-            overflow: hidden; /* Clearfix to contain floats */
+            overflow: hidden;
             background-color: blue;
         }
 
@@ -107,8 +104,8 @@
         }
 
         .app-screen {
-            width: 100%; /* Take up half of the container */
-            box-sizing: border-box; /* Include padding and border in the width */
+            width: 100%;
+            box-sizing: border-box;
             display: block;
             background-color: #434445;
             height: 100%;
@@ -116,9 +113,9 @@
         }
 
         .right {
-            float: right; /* Float right for right section */
-            width: 55%; /* Take up half of the container */
-            box-sizing: border-box; /* Include padding and border in the width */
+            float: right;
+            width: 55%;
+            box-sizing: border-box;
             display: block;
             padding: 20px;
             background-color: red;
@@ -132,7 +129,7 @@
         .map-container {
             position: relative;
             height: 740px;
-            width: 100%; /* Adjust width as needed */
+            width: 100%;
             transition: margin-left 0.3s ease-in-out;
         }
 
@@ -226,8 +223,8 @@
 
         .bottom-element {
             position: absolute;
-            width: 100%; /* Take up half of the container */
-            box-sizing: border-box; /* Include padding and border in the width */
+            width: 100%;
+            box-sizing: border-box;
             display: none;
             background-color: white;
             height: 85%;
@@ -352,7 +349,6 @@
             top: 150px;
         }
 
-        //updated width and height of text box
         input[type=text].search {
           background-position: right top;
           background-repeat: no-repeat;
@@ -419,60 +415,60 @@
             margin-bottom: 20px;
         }
 
-.text-container {
-  display: flex;
-  justify-content: space-between;
-  width: 340px;
-  margin-top: 5px;
-}
+        .text-container {
+          display: flex;
+          justify-content: space-between;
+          width: 340px;
+          margin-top: 5px;
+        }
 
-#textelement,
-#textelement2 {
-  width: 180px;
-  color: #0F52BA;
-  margin-left: 25px;
-}
+        #textelement,
+        #textelement2 {
+          width: 180px;
+          color: #0F52BA;
+          margin-left: 25px;
+        }
 
-.toggle-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: Arial, sans-serif;
-  position: relative;
-  justify-content: center;
-}
+        .toggle-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-family: Arial, sans-serif;
+          position: relative;
+          justify-content: center;
+        }
 
-.toggle-container {
-  width: 60px;
-  height: 30px;
-  background-color: #ccc;
-  border-radius: 15px;
-  position: relative;
-  cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth background color change */
-}
+        .toggle-container {
+          width: 60px;
+          height: 30px;
+          background-color: #ccc;
+          border-radius: 15px;
+          position: relative;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
 
-.toggle-slider {
-  width: 26px;
-  height: 26px;
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.3s ease; /* Smooth slider movement */
-}
+        .toggle-slider {
+          width: 26px;
+          height: 26px;
+          background-color: white;
+          border-radius: 50%;
+          position: absolute;
+          top: 2px;
+          left: 2px;
+          transition: transform 0.3s ease;
+        }
 
-.toggle-container.on {
-  background-color: #4caf50;
-}
+        .toggle-container.on {
+          background-color: #4caf50;
+        }
 
-.toggle-container.on .toggle-slider {
-  transform: translateX(30px);
-}
+        .toggle-container.on .toggle-slider {
+          transform: translateX(30px);
+        }
 
-.toggle-label {
-  font-size: 14px;
-  color: #333;
-}
+        .toggle-label {
+          font-size: 14px;
+          color: #333;
+        }
 
